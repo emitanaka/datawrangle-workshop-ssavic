@@ -1,0 +1,22 @@
+---
+title: "Data Wrangling with R: Day 2"
+author: "Emi Tanaka"
+date: "2nd December 2020"
+---
+
+## Slides
+
+We recommend that you open the html slides <i class="fas fa-link"></i> with [Google Chrome web browser](https://www.google.com/intl/en_au/chrome/). 
+
+1. Revisiting data wrangling starring `janitor` and `broom` [<i class="fas fa-link"></i>](slides/day2-session1.html) [<i class="fas fa-file-pdf"></i>](slides/day2-session1.pdf)
+2. Formating factors with `forcats` [<i class="fas fa-link"></i>](slides/day2-session2.html) [<i class="fas fa-file-pdf"></i>](slides/day2-session2.pdf)
+3. Dealing with dates with `lubridate` [<i class="fas fa-link"></i>](slides/day2-session3.html) [<i class="fas fa-file-pdf"></i>](slides/day2-session3.pdf)
+4. Advanced data wrangling starring `purrr` [<i class="fas fa-link"></i>](slides/day2-session4.html) [<i class="fas fa-file-pdf"></i>](slides/day2-session4.pdf)
+
+## Schedule
+
+```{r day2, echo = FALSE, results="asis"}
+cat(readLines("schedule/schedule-day2.md"), sep = "\n")
+```
+
+## Exercises

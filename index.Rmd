@@ -1,0 +1,46 @@
+---
+title: "Data Wrangling with R"
+author: "Emi Tanaka"
+date: "1-2 December 2020"
+---
+
+
+Welcome to the Data Wrangling with R Workshop!
+
+This workshop is organised by [Statistical Society of Australia](https://www.statsoc.org.au/event-4012234) and delivered by Dr Emi Tanaka.
+
+## About the workshop:
+
+Data wrangling is one of the first key steps necessary before downstream analysis such as visualization or modelling. This workshop will teach you how to wrangle data in the statistical language R using the tidyverse suite of packages, i.e. dplyr, tidyr, stringr, lubridate and forcats. This will include learning about the concept of tidy data and learning the new verbs in dplyr v1.0.0 released early this year. The workshop will be hands-on with plenty of practical examples and time for participants to work through exercises to put what they learnt into practice. 
+
+## About the presenters:
+
+Emi Tanaka is a Lecturer in Statistics at Monash University and the Vice President of the SSA Victorian Branch. Her research interest is in producing useful statistical tools for practitioners, motivated primarily by applications in bioinformatics and agriculture. She is an experienced and enthusiastic R user and instructor, and regularly teaches university courses and workshops to the broader community on a variety of R-related workshops.
+
+## Target audience:
+
+The workshop is suitable for those who know R but are not familiar or comfortable with using the tidyverse suite of R packages to do data wrangling.
+
+## Learning objectives:
+
+* Transform messy data into tidy data using various R packages
+* Learn to pivot data from longer to wider format and vice versa using the tidyr R package
+* Complex data wrangling with the dplyr R package
+* All about factors and how to manipulate it easily using the forcats R package
+* Dealing with dates using the lubridate R package
+* Manipulating characters with the stringr R package
+
+## Requirements:
+
+* Basic R knowledge (e.g. you have used R to load data, create simple visualisations, perform basic analyses and write simple functions or more specifically, you are familiar with concepts in [Cookbook for R by Winston Chang](http://www.cookbook-r.com/))
+* Basic statistics (e.g. simple linear regression, hypothesis testing, basic summary statistics and plots)
+* Computer (with ability to install R and R-packages), microphone and web camera
+* Stable internet connection
+* Install the video conferencing software, Zoom and know how to use Zoom
+
+
+## Desirable:
+
+* Know about tidy data
+* Some familiarity with tidyverse or ggplot2
+* Know about regular expressions

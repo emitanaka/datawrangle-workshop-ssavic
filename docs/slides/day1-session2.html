@@ -1,0 +1,3551 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Data Wrangling with R: Day 1</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Emi Tanaka" />
+    <script src="libs/header-attrs-2.5/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <link href="libs/font-awesome-animation-1.0/font-awesome-animation-emi.css" rel="stylesheet" />
+    <script src="libs/fontawesome-5.0.13/js/fontawesome-all.min.js"></script>
+    <link rel="stylesheet" href="assets/animate.css" type="text/css" />
+    <link rel="stylesheet" href="assets/custom.css" type="text/css" />
+    <link rel="stylesheet" href="assets/fira-code.css" type="text/css" />
+    <link rel="stylesheet" href="assets/boxes.css" type="text/css" />
+    <link rel="stylesheet" href="assets/styles.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-brand.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class: monash-bg-blue center middle hide-slide-number 
+
+
+
+&lt;div class="bg-black white"  style="width:45%;right:0;bottom:0;padding-left:5px;border: solid 4px white;margin: auto;"&gt;
+&lt;i class="fas fa-exclamation-circle"&gt;&lt;/i&gt; These slides are viewed best by Chrome and occasionally need to be refreshed if elements did not load properly. See here for &lt;a href=day1-session2.pdf&gt;PDF &lt;i class="fas fa-file-pdf"&gt;&lt;/i&gt;&lt;/a&gt;. 
+&lt;/div&gt;
+
+&lt;br&gt;
+
+.white[Press the **right arrow** to progress to the next slide!]
+
+
+---
+
+count: false
+background-image: url(images/bg2.jpg)
+background-size: cover
+class: hide-slide-number title-slide
+
+
+&lt;div class="grid-row" style="grid: 1fr / 2fr;"&gt;
+
+.item.center[
+
+# &lt;span style="text-shadow: 2px 2px 30px white;"&gt;Data Wrangling with R: Day 1&lt;/span&gt;
+
+&lt;!-- ## &lt;span style="color:;text-shadow: 2px 2px 30px black;"&gt;Data manipulation with `dplyr`&lt;/span&gt; --&gt;
+
+]
+
+.center.shade_black.animated.bounceInUp.slower[
+&lt;br&gt;&lt;br&gt;
+## &lt;span style="color: #ccf2ff; text-shadow: 10px 10px 100px white;"&gt;Data manipulation with `dplyr`&lt;/span&gt;
+
+&lt;br&gt;
+
+Presented by Emi Tanaka
+
+Department of Econometrics and Business Statistics
+
+&lt;img src="images/monash-one-line-reversed.png" style="width:500px"&gt;&lt;br&gt;
+<span>&lt;i class="fas  fa-envelope faa-float animated "&gt;&lt;/i&gt;</span>  emi.tanaka@monash.edu
+<span>&lt;i class="fab  fa-twitter faa-float animated faa-fast "&gt;&lt;/i&gt;</span>  @statsgen
+
+.bottom_abs.width100.bg-black[
+1st December 2020 @ Statistical Society of Australia | Zoom
+]
+
+
+]
+
+&lt;/div&gt;
+
+
+
+
+
+
+---
+
+# Grammar of data manipulation
+
+
+```r
+library(dplyr) # or library(tidyverse)
+```
+* `dplyr` is a core package in `tidyverse` 
+* The earlier concept of `dplyr` (first on CRAN in 2014-01-29) was implemented in `plyr` (first on CRAN in 2008-10-08)
+* The functions in `dplyr` has been evolving frequently but `dplyr` v1.0.0 was released on CRAN in 2020-05-29
+* This new version contained new "verbs"
+* The major release suggests that functions in `dplyr` are maturing and thus the user interface is unlikely to change
+
+
+
+
+
+.footnote[
+Hadley Wickham, Romain François, Lionel Henry and Kirill Müller
+  (2020). dplyr: A Grammar of Data Manipulation. R package version
+  1.0.2. 
+  
+Hadley Wickham (2011). The Split-Apply-Combine Strategy for Data
+  Analysis. Journal of Statistical Software, 40(1), 1-29.
+]
+
+
+---
+
+# Lifecycle
+
+.grid[
+.item[
+&lt;br&gt;
+&lt;img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/vignettes/figures/lifecycle.svg" width = "550px"&gt;
+]
+.item[
+
+&lt;img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-archived.svg"&gt;
+&lt;img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-defunct.svg"&gt;
+&lt;img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-deprecated.svg"&gt;
+&lt;img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-experimental.svg"&gt;
+&lt;img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-maturing.svg"&gt;
+&lt;img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-questioning.svg"&gt;
+&lt;img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-retired.svg"&gt;
+&lt;img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-soft-deprecated.svg"&gt;
+&lt;img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-stable.svg"&gt;
+&lt;img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-superseded.svg"&gt;
+
+* Functions (and sometimes arguments of functions) in `tidyverse` packages often are labelled with a badge like above
+* Find definitions of badges [here](https://lifecycle.r-lib.org/articles/lifecycle.html)
+* Check out documentations below
+
+```r
+help(mutate, package = "dplyr")
+help(mutate_each, package = "dplyr")
+```
+
+]
+
+]
+
+.footnote[
+Lionel Henry (2020). lifecycle: Manage the Life Cycle of your
+  Package Functions. R package version 0.2.0.
+]
+
+
+---
+
+# `dplyr` "verbs"
+
+
+* The main functions of `dplyr` include: 
+&lt;center&gt;
+&lt;table style="width:60%"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;code&gt;arrange&lt;/code&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;code&gt;select&lt;/code&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;code&gt;mutate&lt;/code&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;code&gt;rename&lt;/code&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;code&gt;group_by&lt;/code&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;code&gt;summarise&lt;/code&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;/center&gt;
+--
+
+* Notice that these functions are _verbs_
+--
+
+* Functions in `dplyr` generally have the form:
+
+.center[
+`verb(data, args)`
+]
+
+--
+
+* I.e., the first argument `data` is a `data.frame` object
+--
+
+* What do you think the following will do?
+
+.center[
+`rename(mtcars, miles_per_gallon = mpg)`
+
+{{content}}
+]
+--
+
+`arrange(mtcars, wt)`
+
+---
+
+# Pipe operator %&gt;%
+
+* Almost all tidyverse packages import the `magrittr` package to use `%&gt;%`
+
+.footnote[
+Stefan Milton Bache and Hadley Wickham (2020). magrittr: A
+  Forward-Pipe Operator for R. R package version 2.0.1.
+]
+--
+
+* `x %&gt;% f(y)` is the same as `f(x, y)`
+--
+
+* `x %&gt;% f(y) %&gt;% g(z)` is the same as `g(f(x, y), z)`
+--
+
+* When you see the pipe operator `%&gt;%`, read it as "and then"
+--
+
+
+```r
+mtcars %&gt;%                          # take mtcars data, and then
+ rename(miles_per_gallon = mpg) %&gt;% # rename mpg as miles_per_gallon, and then
+ arrange(wt)                        # arrange row by wt
+```
+
+```
+##                     miles_per_gallon cyl  disp  hp drat    wt  qsec vs am gear
+## Lotus Europa                    30.4   4  95.1 113 3.77 1.513 16.90  1  1    5
+## Honda Civic                     30.4   4  75.7  52 4.93 1.615 18.52  1  1    4
+## Toyota Corolla                  33.9   4  71.1  65 4.22 1.835 19.90  1  1    4
+## Fiat X1-9                       27.3   4  79.0  66 4.08 1.935 18.90  1  1    4
+## Porsche 914-2                   26.0   4 120.3  91 4.43 2.140 16.70  0  1    5
+## Fiat 128                        32.4   4  78.7  66 4.08 2.200 19.47  1  1    4
+## Datsun 710                      22.8   4 108.0  93 3.85 2.320 18.61  1  1    4
+## Toyota Corona                   21.5   4 120.1  97 3.70 2.465 20.01  1  0    3
+## Mazda RX4                       21.0   6 160.0 110 3.90 2.620 16.46  0  1    4
+## Ferrari Dino                    19.7   6 145.0 175 3.62 2.770 15.50  0  1    5
+## Volvo 142E                      21.4   4 121.0 109 4.11 2.780 18.60  1  1    4
+## Mazda RX4 Wag                   21.0   6 160.0 110 3.90 2.875 17.02  0  1    4
+## Merc 230                        22.8   4 140.8  95 3.92 3.150 22.90  1  0    4
+## Ford Pantera L                  15.8   8 351.0 264 4.22 3.170 14.50  0  1    5
+## Merc 240D                       24.4   4 146.7  62 3.69 3.190 20.00  1  0    4
+## Hornet 4 Drive                  21.4   6 258.0 110 3.08 3.215 19.44  1  0    3
+## AMC Javelin                     15.2   8 304.0 150 3.15 3.435 17.30  0  0    3
+## Hornet Sportabout               18.7   8 360.0 175 3.15 3.440 17.02  0  0    3
+## Merc 280                        19.2   6 167.6 123 3.92 3.440 18.30  1  0    4
+## Merc 280C                       17.8   6 167.6 123 3.92 3.440 18.90  1  0    4
+## Valiant                         18.1   6 225.0 105 2.76 3.460 20.22  1  0    3
+## Dodge Challenger                15.5   8 318.0 150 2.76 3.520 16.87  0  0    3
+## Duster 360                      14.3   8 360.0 245 3.21 3.570 15.84  0  0    3
+## Maserati Bora                   15.0   8 301.0 335 3.54 3.570 14.60  0  1    5
+## Merc 450SL                      17.3   8 275.8 180 3.07 3.730 17.60  0  0    3
+## Merc 450SLC                     15.2   8 275.8 180 3.07 3.780 18.00  0  0    3
+## Camaro Z28                      13.3   8 350.0 245 3.73 3.840 15.41  0  0    3
+## Pontiac Firebird                19.2   8 400.0 175 3.08 3.845 17.05  0  0    3
+## Merc 450SE                      16.4   8 275.8 180 3.07 4.070 17.40  0  0    3
+## Cadillac Fleetwood              10.4   8 472.0 205 2.93 5.250 17.98  0  0    3
+## Chrysler Imperial               14.7   8 440.0 230 3.23 5.345 17.42  0  0    3
+## Lincoln Continental             10.4   8 460.0 215 3.00 5.424 17.82  0  0    3
+##                     carb
+## Lotus Europa           2
+## Honda Civic            2
+## Toyota Corolla         1
+## Fiat X1-9              1
+## Porsche 914-2          2
+## Fiat 128               1
+## Datsun 710             1
+## Toyota Corona          1
+## Mazda RX4              4
+## Ferrari Dino           6
+## Volvo 142E             2
+## Mazda RX4 Wag          4
+## Merc 230               2
+## Ford Pantera L         4
+## Merc 240D              2
+## Hornet 4 Drive         1
+## AMC Javelin            2
+## Hornet Sportabout      2
+## Merc 280               4
+## Merc 280C              4
+## Valiant                1
+## Dodge Challenger       2
+## Duster 360             4
+## Maserati Bora          8
+## Merc 450SL             3
+## Merc 450SLC            3
+## Camaro Z28             4
+## Pontiac Firebird       2
+## Merc 450SE             3
+## Cadillac Fleetwood     4
+## Chrysler Imperial      4
+## Lincoln Continental    4
+```
+
+---
+
+# Lazy and non-standard evaluation
+
+* Remember in Base R:
+
+
+```r
+subset(mtcars, mpg &gt; 31)
+```
+
+```
+##                 mpg cyl disp hp drat    wt  qsec vs am gear carb
+## Fiat 128       32.4   4 78.7 66 4.08 2.200 19.47  1  1    4    1
+## Toyota Corolla 33.9   4 71.1 65 4.22 1.835 19.90  1  1    4    1
+```
+--
+
+* But the second argument cannot be evaluated:
+
+
+```r
+mpg &gt; 31
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'mpg' not found
+```
+--
+
+* R employs what is called **lazy evaluation** for function inputs 
+--
+
+* **Non-standard evaluation** uses this feature to capture the input expression within the function and evaluate only when requested
+
+---
+
+# Tidy evaluation .font_small[.font_small[Part] 1]
+
+* Tidy evaluation builds on the lazy and non-standard evaluation and is implemented in `rlang`
+* All core tidyverse packages import `rlang`
+* So what does it do?
+* Let's consider `filter`, the Tidyverse version of `subset`
+
+
+```r
+filter(mtcars, mpg &gt; 31)
+```
+
+```
+##                 mpg cyl disp hp drat    wt  qsec vs am gear carb
+## Fiat 128       32.4   4 78.7 66 4.08 2.200 19.47  1  1    4    1
+## Toyota Corolla 33.9   4 71.1 65 4.22 1.835 19.90  1  1    4    1
+```
+
+* &lt;i class="fas fa-exclamation-triangle animated flash red"&gt;&lt;/i&gt; If you get an error using `filter`, replace it with `dplyr::filter`&lt;br&gt; .font_small[for those interested, `dplyr::filter` is a conflict with `stats::filter` and it may be using `stats::filter` instead... I've fallen into this trap so many times!]
+
+.footnote[
+Lionel Henry and Hadley Wickham (2020). rlang: Functions for Base
+  Types and Core R and 'Tidyverse' Features. R package version
+  0.4.8.
+]
+
+---
+
+# Tidy evaluation .font_small[.font_small[Part] 2]
+
+* Suppose we have a silly function that subsets `mtcars` for a given condition
+
+
+```r
+myCarSubset &lt;- function(cond) subset(mtcars, cond)
+myCarFilter &lt;- function(cond) filter(mtcars, cond)
+```
+
+* This causes an issue because `cond` is evaluated before it is parsed into `subset` or `filter`
+
+
+```r
+myCarSubset(mpg &gt; 31)
+```
+
+```
+## Error in eval(e, x, parent.frame()): object 'mpg' not found
+```
+
+```r
+myCarFilter(mpg &gt; 31)
+```
+
+```
+## Error: Problem with `filter()` input `..1`.
+## x object 'mpg' not found
+## ℹ Input `..1` is `cond`.
+```
+
+---
+
+# Tidy evaluation .font_small[.font_small[Part] 3]
+
+* Functions that use non-standard evaluation is problematic
+
+
+
+&lt;code class ='r hljs remark-code'&gt;myCarSubsetNew &lt;- function(cond) subset(mtcars, &lt;span style="background-color:#ffff7f"&gt;{{&lt;/span&gt; cond &lt;span style="background-color:#ffff7f"&gt;}}&lt;/span&gt;)&lt;br&gt;myCarFilterNew &lt;- function(cond) filter(mtcars, &lt;span style="background-color:#ffff7f"&gt;{{&lt;/span&gt; cond &lt;span style="background-color:#ffff7f"&gt;}}&lt;/span&gt;)&lt;br&gt;&lt;br&gt;myCarSubsetNew(mpg &gt; 31)&lt;/code&gt;
+
+```
+
+## Error in eval(e, x, parent.frame()): object 'mpg' not found
+
+```
+
+
+
+&lt;code class ='r hljs remark-code'&gt;myCarFilterNew(mpg &gt; 31)&lt;/code&gt;
+
+```
+
+##                 mpg cyl disp hp drat    wt  qsec vs am gear carb
+## Fiat 128       32.4   4 78.7 66 4.08 2.200 19.47  1  1    4    1
+## Toyota Corolla 33.9   4 71.1 65 4.22 1.835 19.90  1  1    4    1
+
+```
+
+
+* .monash-blue[`{{ }}`] only works if the underlying function implements `rlang`
+
+---
+
+# Data masking .font_small[.font_small[Part] 1]
+
+.grid[
+.item[
+
+```r
+ind &lt;- 1:nrow(cars) # nrow(cars) = 50
+subset(cars, ind &gt; 49)
+```
+
+```
+##    speed dist
+## 50    25   85
+```
+
+```r
+filter(cars, ind &gt; 49)
+```
+
+```
+##   speed dist
+## 1    25   85
+```
+* For any variables that don't exist in the data, R searches the parental environment for evaluation.
+]
+.item[
+
+{{content}}
+]
+
+]
+
+
+--
+
+```r
+speed &lt;- c(40, 51)
+subset(cars, speed &gt; 24)
+```
+{{content}}
+--
+
+```
+##    speed dist
+## 50    25   85
+```
+{{content}}
+--
+
+```r
+filter(cars, speed &gt; 24)
+```
+{{content}}
+--
+
+```
+##   speed dist
+## 1    25   85
+```
+{{content}}
+--
+
+* The variables in data take priority for reference over those in parental environment
+
+---
+
+# Data masking .font_small[.font_small[Part] 2]
+
+
+.grid[
+.item[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;speed &lt;- 1:nrow(cars)&lt;br&gt;filter(cars, &lt;span style="background-color:#ffff7f"&gt;.data&lt;/span&gt;$speed &gt; 24)&lt;/code&gt;
+
+```
+
+##   speed dist
+## 1    25   85
+
+```
+
+
+
+&lt;code class ='r hljs remark-code'&gt;filter(cars, &lt;span style="background-color:#ffff7f"&gt;.env&lt;/span&gt;$speed &gt; 24)&lt;/code&gt;
+
+```
+
+##    speed dist
+## 1     15   26
+## 2     15   54
+## 3     16   32
+## 4     16   40
+## 5     17   32
+## 6     17   40
+## 7     17   50
+## 8     18   42
+## 9     18   56
+## 10    18   76
+## 11    18   84
+## 12    19   36
+## 13    19   46
+## 14    19   68
+## 15    20   32
+## 16    20   48
+## 17    20   52
+## 18    20   56
+## 19    20   64
+## 20    22   66
+## 21    23   54
+## 22    24   70
+## 23    24   92
+## 24    24   93
+## 25    24  120
+## 26    25   85
+
+```
+
+]
+.item[
+
+* In Tidyverse, you can be explicit whether the variable is in the data or in the parental environment
+* .monash-blue[`.data`] is a special pronoun referring to variables in the data parsed in the first argument
+* .monash-blue[`.env`] is a special pronoun referring to variables in the environment (i.e. _not_ in the data parsed in the first argument)
+
+]
+
+]
+
+---
+
+# Tidy select .font_small[.font_small[Part] 1]
+
+* Tidyverse packages generally use syntax from the `tidyselect` package for variable/column selection
+
+
+```r
+data(frogsignal, package = "dwexercise")
+str(frogsignal) 
+```
+
+```
+## 'data.frame':	535 obs. of  22 variables:
+##  $ FrogID            : num  13196 13197 13198 13206 13207 ...
+##  $ AlternativeCD     : num  28 27 31 33 26 31 33 28 29 34 ...
+##  $ AlternativeCR     : num  12 15 13 15 11 6 15 12 14 12 ...
+##  $ AlternativeDF     : num  2315 2304 2646 2281 2789 ...
+##  $ AlternativeRA     : num  -10 -8 -12 -7 -8 -6 -12 -16 -12 -10 ...
+##  $ AlternativePR     : num  46 49 43 50 57 51 46 55 56 45 ...
+##  $ Standard1         : num  47 69 139 112 101 90 79 262 123 47 ...
+##  $ Standard2         : num  46 44 102 112 101 68 41 237 106 62 ...
+##  $ Standard3         : num  42 36 85 117 80 73 46 166 95 63 ...
+##  $ Alternative1      : num  28 33 227 101 126 143 50 123 76 53 ...
+##  $ Alternative2      : num  48 27 111 81 60 103 36 122 80 48 ...
+##  $ Alternative3      : num  43 37 126 61 76 113 29 188 84 57 ...
+##  $ TwoChoiceLatency  : num  134 47 273 281 110 107 187 113 70 63 ...
+##  $ TwoChoice         : chr  "Standard" "Alternative" "Alternative" "Standard" ...
+##  $ ChoiceBinary      : num  0 1 1 0 1 0 1 1 1 0 ...
+##  $ StandardAverage   : chr  "45" "50" "109" "114" ...
+##  $ AlternativeAverage: num  40 32 155 81 87 120 38 144 80 53 ...
+##  $ PhonotaxisScore   : num  0.0588 0.2195 -0.1742 0.1692 0.0387 ...
+##  $ ScorePreference   : num  1 1 0 1 1 0 1 1 1 1 ...
+##  $ Mismatch          : num  1 0 1 1 0 0 0 0 0 1 ...
+##  $ SpeakerPosition   : chr  "left" "left" "left" "left" ...
+##  $ FirstPresented    : chr  "Alternative" "Alternative" "Alternative" "Standard" ...
+```
+
+---
+
+# Tidy select .font_small[.font_small[Part] 2]
+
+.grid[
+.item50[
+
+
+&lt;code class ='r hljs remark-code'&gt;frogsignal %&gt;% &lt;br&gt;&amp;nbsp;&lt;span style="background-color:#ffff7f"&gt;select&lt;/span&gt;(Standard1, Standard2, Standard3)&lt;/code&gt;
+
+```
+
+##     Standard1 Standard2 Standard3
+## 1          47        46        42
+## 2          69        44        36
+## 3         139       102        85
+## 4         112       112       117
+## 5         101       101        80
+## 6          90        68        73
+## 7          79        41        46
+## 8         262       237       166
+## 9         123       106        95
+## 10         47        62        63
+## 11         95       117        84
+## 12         56        52        41
+## 13         41        51        57
+## 14         57        41        30
+## 15        144       128       166
+## 16         68        41        52
+## 17         62        68        84
+## 18         52        89        63
+## 19        101        80       106
+## 20         69        80        57
+## 21        134       112       102
+## 22        167       118       123
+## 23         51        52        62
+## 24         73        84       136
+## 25         89       106        90
+## 26         55        78        63
+## 27         74        77        83
+## 28         69        70        95
+## 29        117        73       111
+## 30        244       242        85
+## 31        208       102       124
+## 32         95        42        45
+## 33         62        46        57
+## 34        148       134       112
+## 35         96        57        67
+## 36         28        36        39
+## 37        101        52        95
+## 38         58        68        62
+## 39         73        63        62
+## 40        173        69        38
+## 41         84        90        87
+## 42         51        62        50
+## 43         95        95       104
+## 44         52        57        69
+## 45         74       107        82
+## 46         47        52        69
+## 47         68        60        41
+## 48         58        52        52
+## 49         47        40        47
+## 50         51        52        41
+## 51         96        99        79
+## 52         63        41        24
+## 53        102       129        52
+## 54         80        57        62
+## 55         62        52        56
+## 56         46        57        98
+## 57         87        82        83
+## 58        100        59        62
+## 59        111       101       111
+## 60         96        79        68
+## 61        177       156       145
+## 62        150       131       134
+## 63        172       107       116
+## 64        133        95       117
+## 65         68       100        79
+## 66        112        69        79
+## 67        112       125        90
+## 68         68        56        57
+## 69         90       215       117
+## 70         90       200        89
+## 71        113       127        95
+## 72         47        47        48
+## 73         50        97        91
+## 74         96       112        80
+## 75         80        38        74
+## 76         78        63        59
+## 77         29        48        47
+## 78        105        63       151
+## 79         42        41        53
+## 80         59        68       155
+## 81         91       101        74
+## 82         68        86        91
+## 83         53        47        47
+## 84         64        73        62
+## 85         83        57        90
+## 86         52        36        55
+## 87        117       106       101
+## 88         84       100        86
+## 89         57        57        33
+## 90        101        61        69
+## 91         51        70        57
+## 92         63        68        84
+## 93         41        52        48
+## 94         67        95        90
+## 95         53        47        75
+## 96         75       103        86
+## 97         53        79        47
+## 98        155       129       139
+## 99         79       128       107
+## 100        95       120       112
+## 101       120        41       134
+## 102        41        52        80
+## 103       150        90        86
+## 104        63        96        97
+## 105       130       100       102
+## 106        83        53        39
+## 107       118        64       102
+## 108        80        79        53
+## 109        96        85       118
+## 110        58        47        62
+## 111        70        81        59
+## 112        31        67        64
+## 113        65        75        89
+## 114       113        88       102
+## 115        58        85        70
+## 116       129       117        90
+## 117        69        80       117
+## 118        95        69        63
+## 119        69        63        68
+## 120       168        79        56
+## 121       171       188       139
+## 122       106        90       101
+## 123       136       129        79
+## 124        73        80        80
+## 125        79        47        51
+## 126        47        41        35
+## 127        52        49        57
+## 128        90        96        68
+## 129        50        58        35
+## 130       106        84        95
+## 131        57        36        63
+## 132        68        52        52
+## 133       154       161        79
+## 134        68        76        53
+## 135        53        32        46
+## 136        62        86        61
+## 137        89        68        54
+## 138       113        53        53
+## 139        58       268        96
+## 140        58        52        53
+## 141        53        92        58
+## 142        32        74        90
+## 143        47        57        75
+## 144       155       136        96
+## 145        62        41        50
+## 146        41        37        74
+## 147        79        41        52
+## 148       112        86        89
+## 149        88        57        85
+## 150        57        30        53
+## 151        96       123       158
+## 152        63        84        89
+## 153        72        90       100
+## 154       107        74        52
+## 155        79        52        68
+## 156        52        42        45
+## 157        26        57        74
+## 158       106        95       255
+## 159        34        52        45
+## 160        73        89        62
+## 161        41        45        39
+## 162        29        51        47
+## 163        58        68        67
+## 164       119        68        30
+## 165        51        63        56
+## 166        62        77        78
+## 167        35       106        82
+## 168       133        90       172
+## 169       139        91        68
+## 170        85        51        55
+## 171        57        34        67
+## 172        25        66        56
+## 173        69        73        75
+## 174        78        79        49
+## 175        56        73        68
+## 176        70        56        73
+## 177       112        74        73
+## 178        46        61        63
+## 179        62        35        63
+## 180        63        45        79
+## 181        63        57       105
+## 182       105        87        53
+## 183        52        57        41
+## 184        79        52       101
+## 185       162        90        62
+## 186        35        24        25
+## 187        90        57        79
+## 188        62       101        89
+## 189        43        41        41
+## 190        58        46        45
+## 191       133        83        90
+## 192        68        79        64
+## 193        35        35        51
+## 194        55        91        51
+## 195        13        16        30
+## 196        24        41        46
+## 197        41        85        90
+## 198        68       112        47
+## 199        46       265        65
+## 200        85        89       107
+## 201        57        40        30
+## 202        36        31        41
+## 203        41        72        61
+## 204        74        62        84
+## 205        59        52        57
+## 206        66        47        46
+## 207       118        46        62
+## 208        75        39       112
+## 209        36        63        68
+## 210        36        59        41
+## 211        90        74        50
+## 212        69        63        57
+## 213        62        52        67
+## 214        64        57        52
+## 215        53        46        39
+## 216        74        57        73
+## 217        74        84        80
+## 218        35        19        34
+## 219        38        46        68
+## 220       106        91       102
+## 221       107        46        83
+## 222        89        73        78
+## 223        25        69        41
+## 224        51        63        37
+## 225        61        78        50
+## 226        24        30        41
+## 227       102        69        47
+## 228        25        30        25
+## 229        68        47        90
+## 230        63        73        30
+## 231       107       104        74
+## 232        35        41        44
+## 233        96        67        67
+## 234        67        52        96
+## 235        58        36        36
+## 236        35        34        29
+## 237        62        44        45
+## 238        62        48        52
+## 239        63        79        35
+## 240        83        89        63
+## 241        50        49        56
+## 242        79        94        57
+## 243       100        58        63
+## 244        70        83        79
+## 245       123        74        61
+## 246        86        79       224
+## 247        79        86        56
+## 248        46        57        35
+## 249        84        63        63
+## 250        36        53       173
+## 251        84        69        90
+## 252        52        29        30
+## 253        73        69        69
+## 254        36        45        62
+## 255        51        30        36
+## 256       166        88        62
+## 257        46        40        58
+## 258        30        30        49
+## 259        90        46        45
+## 260        85        41        48
+## 261        72        74       100
+## 262       128        56        46
+## 263        51        36        46
+## 264        68        78        89
+## 265       101       158        68
+## 266        57        63        73
+## 267        94        63        69
+## 268        95        71        73
+## 269       107        74        57
+## 270        86        52        42
+## 271        74       106        79
+## 272        68        74        63
+## 273        95        73        79
+## 274        84        73        63
+## 275        36        42        47
+## 276        90       105       123
+## 277        46        52        65
+## 278        79        88        75
+## 279       112        85        85
+## 280       107       112       132
+## 281        80       165        NA
+## 282       177        85       100
+## 283        58        53        57
+## 284        63        84        69
+## 285        79        68        90
+## 286        63        79        57
+## 287        62        80        74
+## 288        84        58        79
+## 289        94       102        79
+## 290       117        95       102
+## 291        56       107        52
+## 292       135       101        79
+## 293       200       167       199
+## 294        96        58        98
+## 295        80        58        73
+## 296        52        47        60
+## 297        52        46        54
+## 298       150       134        92
+## 299        74        75        83
+## 300       106       116       139
+## 301        99        74        90
+## 302        78        46        29
+## 303        52        41        56
+## 304        61        46        60
+## 305       117       260        79
+## 306       117       100        94
+## 307       148        90       139
+## 308        86        81        79
+## 309       112        80        93
+## 310        52        57        57
+## 311        74        73        62
+## 312        68        83        78
+## 313        40        41        58
+## 314        62        54        56
+## 315        40        46        40
+## 316        46        57        57
+## 317       106        89        40
+## 318        63        46        73
+## 319        62        94        79
+## 320        84        69        68
+## 321        56        62        52
+## 322        38        64        72
+## 323        68        60        61
+## 324        46        46        73
+## 325       117       168        73
+## 326       150        79        67
+## 327        79        62        63
+## 328        88        78        73
+## 329        84        63        79
+## 330        51        53        90
+## 331        84        78        67
+## 332        89        84        73
+## 333       101        45        52
+## 334        90       104        78
+## 335        84        93        89
+## 336        40        68        47
+## 337        84       118       112
+## 338        61       106        68
+## 339        74        61        74
+## 340        51        52        47
+## 341        89        77        90
+## 342        62        57        57
+## 343        43        52        38
+## 344        68        56        53
+## 345        80        79        73
+## 346        80        52        63
+## 347        30        35        45
+## 348        95        72        57
+## 349        67       123        80
+## 350        74        74        80
+## 351        62        94       133
+## 352        25        52        65
+## 353       111        58        52
+## 354        59        55        50
+## 355        44        61        47
+## 356        46        46        40
+## 357        68        72        55
+## 358       100        61       167
+## 359        68       112        86
+## 360        63        74       123
+## 361        79        52        56
+## 362        58        41        53
+## 363        52        42        47
+## 364        53        67        88
+## 365        33        47        63
+## 366        69        74        91
+## 367        86        85        74
+## 368        64        52        91
+## 369        64        73        52
+## 370       166        77        69
+## 371        68        62        58
+## 372        73        64        57
+## 373        78       100        80
+## 374        79        63        52
+## 375        30        56        62
+## 376        57        52        46
+## 377        30        29        31
+## 378        42        46        57
+## 379        56        58        57
+## 380       172       128        79
+## 381        52        46        57
+## 382        41        52        52
+## 383       112        57        57
+## 384        79        90        90
+## 385        68        85        68
+## 386        57        68        79
+## 387        95       107       111
+## 388        74        63        74
+## 389        66        74        74
+## 390        73        48        50
+## 391        52        69        30
+## 392        58        37        68
+## 393        90       107        69
+## 394        57        63       117
+## 395        62        94        79
+## 396        68        67        46
+## 397       139       122       106
+## 398       106        62        62
+## 399        68        57        57
+## 400        36        64        75
+## 401        74        59        47
+## 402        70        85        96
+## 403        53        52        63
+## 404        80        85       118
+## 405        74        47        63
+## 406        79        42        58
+## 407        75        72       106
+## 408        52        90        78
+## 409        47        53        63
+## 410        46        46        28
+## 411       118       150       160
+## 412       165        79        67
+## 413        78        57        57
+## 414        95        76        57
+## 415        94        51        59
+## 416        66        57        45
+## 417        74        62        46
+## 418        39        54        40
+## 419        95        85       145
+## 420        73        58       182
+## 421       182       139       106
+## 422        62        51        62
+## 423       139        75       113
+## 424        89       106       259
+## 425        99        57        69
+## 426        58        91        59
+## 427        42        36        54
+## 428        57        85        64
+## 429        64        72       183
+## 430        85        75        70
+## 431       185        69        52
+## 432        91        58       102
+## 433       127       123       106
+## 434        85        52        90
+## 435        67        96        62
+## 436        85        57       135
+## 437       123        73        84
+## 438       100        40        39
+## 439       160       134        83
+## 440        58        51        52
+## 441        62        46        57
+## 442        73        84        63
+## 443        89        63        62
+## 444        44        57        74
+## 445        68        74        63
+## 446       100        63        52
+## 447       151       100       106
+## 448        68        68        73
+## 449        62        47        56
+## 450        58        62        46
+## 451        67        46        84
+## 452       107        95       101
+## 453        47        37        31
+## 454        90        95        73
+## 455       149        85        74
+## 456        84        84        62
+## 457        79        60        68
+## 458        63        85        58
+## 459        95       119        84
+## 460        75        51        66
+## 461        75        51        66
+## 462        89        95       154
+## 463        79        85       101
+## 464       151       117       128
+## 465       139       123       101
+## 466        63        79        68
+## 467        52        85        63
+## 468        80        85        83
+## 469       101        76        73
+## 470       171       168       135
+## 471        69        69        69
+## 472        98       119        97
+## 473        90        93       111
+## 474        35        38        38
+## 475        62        46        51
+## 476        62        79        52
+## 477       117        79        63
+## 478       112        91        98
+## 479        96        81        64
+## 480       145       129       124
+## 481        69        53        74
+## 482       212        96       101
+## 483        68        85        75
+## 484        95        93        86
+## 485       291       118       119
+## 486        91        83        64
+## 487       102        86        NA
+## 488        59        97        75
+## 489        58        51        97
+## 490        69        75       195
+## 491       140        85        80
+## 492        48        70        97
+## 493        47        58        69
+## 494       134       101        75
+## 495       129        70        58
+## 496        46        40        41
+## 497        52        63        89
+## 498        95        79        84
+## 499        74       100        80
+## 500       145       101        84
+## 501        79        62        41
+## 502        74        68        63
+## 503        79        65        63
+## 504        63        74        69
+## 505        90        90        96
+## 506        89        63        63
+## 507        80        84       101
+## 508        62        90       149
+## 509        40        42        36
+## 510       101        71        46
+## 511        29        35        38
+## 512       114        36       101
+## 513        60        63        85
+## 514        68        47        46
+## 515        24        42        41
+## 516       106       183        96
+## 517        90        79        47
+## 518       146       106        96
+## 519        37        42        48
+## 520        70        69       112
+## 521        48        37        80
+## 522       112        90       122
+## 523        85       220        52
+## 524       128       110       128
+## 525        63        40        46
+## 526       100        73        85
+## 527        73        68        61
+## 528        51        84        52
+## 529       172        52        40
+## 530        62        84        79
+## 531       139        73        86
+## 532        89        95        90
+## 533       112       134       123
+## 534       117        79        49
+## 535        51        29        41
+
+```
+
+]
+.item50[
+{{content}}
+]
+
+]
+--
+
+
+
+&lt;code class ='r hljs remark-code'&gt;frogsignal %&gt;% &lt;br&gt;&amp;nbsp;&amp;nbsp;select(Standard1&lt;span style="background-color:#ffff7f"&gt;:&lt;/span&gt;Standard3)&lt;/code&gt;
+
+```
+
+##     Standard1 Standard2 Standard3
+## 1          47        46        42
+## 2          69        44        36
+## 3         139       102        85
+## 4         112       112       117
+## 5         101       101        80
+## 6          90        68        73
+## 7          79        41        46
+## 8         262       237       166
+## 9         123       106        95
+## 10         47        62        63
+## 11         95       117        84
+## 12         56        52        41
+## 13         41        51        57
+## 14         57        41        30
+## 15        144       128       166
+## 16         68        41        52
+## 17         62        68        84
+## 18         52        89        63
+## 19        101        80       106
+## 20         69        80        57
+## 21        134       112       102
+## 22        167       118       123
+## 23         51        52        62
+## 24         73        84       136
+## 25         89       106        90
+## 26         55        78        63
+## 27         74        77        83
+## 28         69        70        95
+## 29        117        73       111
+## 30        244       242        85
+## 31        208       102       124
+## 32         95        42        45
+## 33         62        46        57
+## 34        148       134       112
+## 35         96        57        67
+## 36         28        36        39
+## 37        101        52        95
+## 38         58        68        62
+## 39         73        63        62
+## 40        173        69        38
+## 41         84        90        87
+## 42         51        62        50
+## 43         95        95       104
+## 44         52        57        69
+## 45         74       107        82
+## 46         47        52        69
+## 47         68        60        41
+## 48         58        52        52
+## 49         47        40        47
+## 50         51        52        41
+## 51         96        99        79
+## 52         63        41        24
+## 53        102       129        52
+## 54         80        57        62
+## 55         62        52        56
+## 56         46        57        98
+## 57         87        82        83
+## 58        100        59        62
+## 59        111       101       111
+## 60         96        79        68
+## 61        177       156       145
+## 62        150       131       134
+## 63        172       107       116
+## 64        133        95       117
+## 65         68       100        79
+## 66        112        69        79
+## 67        112       125        90
+## 68         68        56        57
+## 69         90       215       117
+## 70         90       200        89
+## 71        113       127        95
+## 72         47        47        48
+## 73         50        97        91
+## 74         96       112        80
+## 75         80        38        74
+## 76         78        63        59
+## 77         29        48        47
+## 78        105        63       151
+## 79         42        41        53
+## 80         59        68       155
+## 81         91       101        74
+## 82         68        86        91
+## 83         53        47        47
+## 84         64        73        62
+## 85         83        57        90
+## 86         52        36        55
+## 87        117       106       101
+## 88         84       100        86
+## 89         57        57        33
+## 90        101        61        69
+## 91         51        70        57
+## 92         63        68        84
+## 93         41        52        48
+## 94         67        95        90
+## 95         53        47        75
+## 96         75       103        86
+## 97         53        79        47
+## 98        155       129       139
+## 99         79       128       107
+## 100        95       120       112
+## 101       120        41       134
+## 102        41        52        80
+## 103       150        90        86
+## 104        63        96        97
+## 105       130       100       102
+## 106        83        53        39
+## 107       118        64       102
+## 108        80        79        53
+## 109        96        85       118
+## 110        58        47        62
+## 111        70        81        59
+## 112        31        67        64
+## 113        65        75        89
+## 114       113        88       102
+## 115        58        85        70
+## 116       129       117        90
+## 117        69        80       117
+## 118        95        69        63
+## 119        69        63        68
+## 120       168        79        56
+## 121       171       188       139
+## 122       106        90       101
+## 123       136       129        79
+## 124        73        80        80
+## 125        79        47        51
+## 126        47        41        35
+## 127        52        49        57
+## 128        90        96        68
+## 129        50        58        35
+## 130       106        84        95
+## 131        57        36        63
+## 132        68        52        52
+## 133       154       161        79
+## 134        68        76        53
+## 135        53        32        46
+## 136        62        86        61
+## 137        89        68        54
+## 138       113        53        53
+## 139        58       268        96
+## 140        58        52        53
+## 141        53        92        58
+## 142        32        74        90
+## 143        47        57        75
+## 144       155       136        96
+## 145        62        41        50
+## 146        41        37        74
+## 147        79        41        52
+## 148       112        86        89
+## 149        88        57        85
+## 150        57        30        53
+## 151        96       123       158
+## 152        63        84        89
+## 153        72        90       100
+## 154       107        74        52
+## 155        79        52        68
+## 156        52        42        45
+## 157        26        57        74
+## 158       106        95       255
+## 159        34        52        45
+## 160        73        89        62
+## 161        41        45        39
+## 162        29        51        47
+## 163        58        68        67
+## 164       119        68        30
+## 165        51        63        56
+## 166        62        77        78
+## 167        35       106        82
+## 168       133        90       172
+## 169       139        91        68
+## 170        85        51        55
+## 171        57        34        67
+## 172        25        66        56
+## 173        69        73        75
+## 174        78        79        49
+## 175        56        73        68
+## 176        70        56        73
+## 177       112        74        73
+## 178        46        61        63
+## 179        62        35        63
+## 180        63        45        79
+## 181        63        57       105
+## 182       105        87        53
+## 183        52        57        41
+## 184        79        52       101
+## 185       162        90        62
+## 186        35        24        25
+## 187        90        57        79
+## 188        62       101        89
+## 189        43        41        41
+## 190        58        46        45
+## 191       133        83        90
+## 192        68        79        64
+## 193        35        35        51
+## 194        55        91        51
+## 195        13        16        30
+## 196        24        41        46
+## 197        41        85        90
+## 198        68       112        47
+## 199        46       265        65
+## 200        85        89       107
+## 201        57        40        30
+## 202        36        31        41
+## 203        41        72        61
+## 204        74        62        84
+## 205        59        52        57
+## 206        66        47        46
+## 207       118        46        62
+## 208        75        39       112
+## 209        36        63        68
+## 210        36        59        41
+## 211        90        74        50
+## 212        69        63        57
+## 213        62        52        67
+## 214        64        57        52
+## 215        53        46        39
+## 216        74        57        73
+## 217        74        84        80
+## 218        35        19        34
+## 219        38        46        68
+## 220       106        91       102
+## 221       107        46        83
+## 222        89        73        78
+## 223        25        69        41
+## 224        51        63        37
+## 225        61        78        50
+## 226        24        30        41
+## 227       102        69        47
+## 228        25        30        25
+## 229        68        47        90
+## 230        63        73        30
+## 231       107       104        74
+## 232        35        41        44
+## 233        96        67        67
+## 234        67        52        96
+## 235        58        36        36
+## 236        35        34        29
+## 237        62        44        45
+## 238        62        48        52
+## 239        63        79        35
+## 240        83        89        63
+## 241        50        49        56
+## 242        79        94        57
+## 243       100        58        63
+## 244        70        83        79
+## 245       123        74        61
+## 246        86        79       224
+## 247        79        86        56
+## 248        46        57        35
+## 249        84        63        63
+## 250        36        53       173
+## 251        84        69        90
+## 252        52        29        30
+## 253        73        69        69
+## 254        36        45        62
+## 255        51        30        36
+## 256       166        88        62
+## 257        46        40        58
+## 258        30        30        49
+## 259        90        46        45
+## 260        85        41        48
+## 261        72        74       100
+## 262       128        56        46
+## 263        51        36        46
+## 264        68        78        89
+## 265       101       158        68
+## 266        57        63        73
+## 267        94        63        69
+## 268        95        71        73
+## 269       107        74        57
+## 270        86        52        42
+## 271        74       106        79
+## 272        68        74        63
+## 273        95        73        79
+## 274        84        73        63
+## 275        36        42        47
+## 276        90       105       123
+## 277        46        52        65
+## 278        79        88        75
+## 279       112        85        85
+## 280       107       112       132
+## 281        80       165        NA
+## 282       177        85       100
+## 283        58        53        57
+## 284        63        84        69
+## 285        79        68        90
+## 286        63        79        57
+## 287        62        80        74
+## 288        84        58        79
+## 289        94       102        79
+## 290       117        95       102
+## 291        56       107        52
+## 292       135       101        79
+## 293       200       167       199
+## 294        96        58        98
+## 295        80        58        73
+## 296        52        47        60
+## 297        52        46        54
+## 298       150       134        92
+## 299        74        75        83
+## 300       106       116       139
+## 301        99        74        90
+## 302        78        46        29
+## 303        52        41        56
+## 304        61        46        60
+## 305       117       260        79
+## 306       117       100        94
+## 307       148        90       139
+## 308        86        81        79
+## 309       112        80        93
+## 310        52        57        57
+## 311        74        73        62
+## 312        68        83        78
+## 313        40        41        58
+## 314        62        54        56
+## 315        40        46        40
+## 316        46        57        57
+## 317       106        89        40
+## 318        63        46        73
+## 319        62        94        79
+## 320        84        69        68
+## 321        56        62        52
+## 322        38        64        72
+## 323        68        60        61
+## 324        46        46        73
+## 325       117       168        73
+## 326       150        79        67
+## 327        79        62        63
+## 328        88        78        73
+## 329        84        63        79
+## 330        51        53        90
+## 331        84        78        67
+## 332        89        84        73
+## 333       101        45        52
+## 334        90       104        78
+## 335        84        93        89
+## 336        40        68        47
+## 337        84       118       112
+## 338        61       106        68
+## 339        74        61        74
+## 340        51        52        47
+## 341        89        77        90
+## 342        62        57        57
+## 343        43        52        38
+## 344        68        56        53
+## 345        80        79        73
+## 346        80        52        63
+## 347        30        35        45
+## 348        95        72        57
+## 349        67       123        80
+## 350        74        74        80
+## 351        62        94       133
+## 352        25        52        65
+## 353       111        58        52
+## 354        59        55        50
+## 355        44        61        47
+## 356        46        46        40
+## 357        68        72        55
+## 358       100        61       167
+## 359        68       112        86
+## 360        63        74       123
+## 361        79        52        56
+## 362        58        41        53
+## 363        52        42        47
+## 364        53        67        88
+## 365        33        47        63
+## 366        69        74        91
+## 367        86        85        74
+## 368        64        52        91
+## 369        64        73        52
+## 370       166        77        69
+## 371        68        62        58
+## 372        73        64        57
+## 373        78       100        80
+## 374        79        63        52
+## 375        30        56        62
+## 376        57        52        46
+## 377        30        29        31
+## 378        42        46        57
+## 379        56        58        57
+## 380       172       128        79
+## 381        52        46        57
+## 382        41        52        52
+## 383       112        57        57
+## 384        79        90        90
+## 385        68        85        68
+## 386        57        68        79
+## 387        95       107       111
+## 388        74        63        74
+## 389        66        74        74
+## 390        73        48        50
+## 391        52        69        30
+## 392        58        37        68
+## 393        90       107        69
+## 394        57        63       117
+## 395        62        94        79
+## 396        68        67        46
+## 397       139       122       106
+## 398       106        62        62
+## 399        68        57        57
+## 400        36        64        75
+## 401        74        59        47
+## 402        70        85        96
+## 403        53        52        63
+## 404        80        85       118
+## 405        74        47        63
+## 406        79        42        58
+## 407        75        72       106
+## 408        52        90        78
+## 409        47        53        63
+## 410        46        46        28
+## 411       118       150       160
+## 412       165        79        67
+## 413        78        57        57
+## 414        95        76        57
+## 415        94        51        59
+## 416        66        57        45
+## 417        74        62        46
+## 418        39        54        40
+## 419        95        85       145
+## 420        73        58       182
+## 421       182       139       106
+## 422        62        51        62
+## 423       139        75       113
+## 424        89       106       259
+## 425        99        57        69
+## 426        58        91        59
+## 427        42        36        54
+## 428        57        85        64
+## 429        64        72       183
+## 430        85        75        70
+## 431       185        69        52
+## 432        91        58       102
+## 433       127       123       106
+## 434        85        52        90
+## 435        67        96        62
+## 436        85        57       135
+## 437       123        73        84
+## 438       100        40        39
+## 439       160       134        83
+## 440        58        51        52
+## 441        62        46        57
+## 442        73        84        63
+## 443        89        63        62
+## 444        44        57        74
+## 445        68        74        63
+## 446       100        63        52
+## 447       151       100       106
+## 448        68        68        73
+## 449        62        47        56
+## 450        58        62        46
+## 451        67        46        84
+## 452       107        95       101
+## 453        47        37        31
+## 454        90        95        73
+## 455       149        85        74
+## 456        84        84        62
+## 457        79        60        68
+## 458        63        85        58
+## 459        95       119        84
+## 460        75        51        66
+## 461        75        51        66
+## 462        89        95       154
+## 463        79        85       101
+## 464       151       117       128
+## 465       139       123       101
+## 466        63        79        68
+## 467        52        85        63
+## 468        80        85        83
+## 469       101        76        73
+## 470       171       168       135
+## 471        69        69        69
+## 472        98       119        97
+## 473        90        93       111
+## 474        35        38        38
+## 475        62        46        51
+## 476        62        79        52
+## 477       117        79        63
+## 478       112        91        98
+## 479        96        81        64
+## 480       145       129       124
+## 481        69        53        74
+## 482       212        96       101
+## 483        68        85        75
+## 484        95        93        86
+## 485       291       118       119
+## 486        91        83        64
+## 487       102        86        NA
+## 488        59        97        75
+## 489        58        51        97
+## 490        69        75       195
+## 491       140        85        80
+## 492        48        70        97
+## 493        47        58        69
+## 494       134       101        75
+## 495       129        70        58
+## 496        46        40        41
+## 497        52        63        89
+## 498        95        79        84
+## 499        74       100        80
+## 500       145       101        84
+## 501        79        62        41
+## 502        74        68        63
+## 503        79        65        63
+## 504        63        74        69
+## 505        90        90        96
+## 506        89        63        63
+## 507        80        84       101
+## 508        62        90       149
+## 509        40        42        36
+## 510       101        71        46
+## 511        29        35        38
+## 512       114        36       101
+## 513        60        63        85
+## 514        68        47        46
+## 515        24        42        41
+## 516       106       183        96
+## 517        90        79        47
+## 518       146       106        96
+## 519        37        42        48
+## 520        70        69       112
+## 521        48        37        80
+## 522       112        90       122
+## 523        85       220        52
+## 524       128       110       128
+## 525        63        40        46
+## 526       100        73        85
+## 527        73        68        61
+## 528        51        84        52
+## 529       172        52        40
+## 530        62        84        79
+## 531       139        73        86
+## 532        89        95        90
+## 533       112       134       123
+## 534       117        79        49
+## 535        51        29        41
+
+```
+
+&lt;div class="info-box pad20" style="position:absolute;right:10px;bottom:10px;"&gt;
+The &lt;code&gt;tidyselect&lt;/code&gt; syntax &lt;code class="monash-blue"&gt;:&lt;/code&gt; can be used to select contiguous columns in the data
+&lt;/div&gt;
+
+---
+
+# Tidy select .font_small[.font_small[Part] 3]
+
+.grid[
+.item50[
+
+```r
+frogsignal %&gt;% 
+  select(starts_with("Standard"))
+```
+
+```
+##     Standard1 Standard2 Standard3 StandardAverage
+## 1          47        46        42              45
+## 2          69        44        36              50
+## 3         139       102        85             109
+## 4         112       112       117             114
+## 5         101       101        80              94
+## 6          90        68        73              77
+## 7          79        41        46              55
+## 8         262       237       166             222
+## 9         123       106        95             108
+## 10         47        62        63              57
+## 11         95       117        84              99
+## 12         56        52        41              50
+## 13         41        51        57              50
+## 14         57        41        30              43
+## 15        144       128       166             146
+## 16         68        41        52              54
+## 17         62        68        84              71
+## 18         52        89        63              68
+## 19        101        80       106              96
+## 20         69        80        57              69
+## 21        134       112       102             116
+## 22        167       118       123             136
+## 23         51        52        62              55
+## 24         73        84       136              98
+## 25         89       106        90              95
+## 26         55        78        63              65
+## 27         74        77        83              78
+## 28         69        70        95              78
+## 29        117        73       111             100
+## 30        244       242        85             190
+## 31        208       102       124             145
+## 32         95        42        45              61
+## 33         62        46        57              55
+## 34        148       134       112             131
+## 35         96        57        67              73
+## 36         28        36        39              34
+## 37        101        52        95              83
+## 38         58        68        62              63
+## 39         73        63        62              66
+## 40        173        69        38              93
+## 41         84        90        87              87
+## 42         51        62        50              54
+## 43         95        95       104              98
+## 44         52        57        69              59
+## 45         74       107        82              88
+## 46         47        52        69              56
+## 47         68        60        41              56
+## 48         58        52        52              54
+## 49         47        40        47              45
+## 50         51        52        41              48
+## 51         96        99        79              91
+## 52         63        41        24              43
+## 53        102       129        52              94
+## 54         80        57        62              66
+## 55         62        52        56              57
+## 56         46        57        98              67
+## 57         87        82        83              84
+## 58        100        59        62              74
+## 59        111       101       111             108
+## 60         96        79        68              81
+## 61        177       156       145             159
+## 62        150       131       134             138
+## 63        172       107       116             132
+## 64        133        95       117             115
+## 65         68       100        79              82
+## 66        112        69        79              87
+## 67        112       125        90             109
+## 68         68        56        57              60
+## 69         90       215       117             141
+## 70         90       200        89             126
+## 71        113       127        95             112
+## 72         47        47        48              47
+## 73         50        97        91              79
+## 74         96       112        80              96
+## 75         80        38        74              64
+## 76         78        63        59              67
+## 77         29        48        47              41
+## 78        105        63       151             106
+## 79         42        41        53              45
+## 80         59        68       155              94
+## 81         91       101        74              89
+## 82         68        86        91              82
+## 83         53        47        47              49
+## 84         64        73        62              66
+## 85         83        57        90              77
+## 86         52        36        55              48
+## 87        117       106       101             108
+## 88         84       100        86              90
+## 89         57        57        33              49
+## 90        101        61        69              77
+## 91         51        70        57              59
+## 92         63        68        84              72
+## 93         41        52        48              47
+## 94         67        95        90              84
+## 95         53        47        75              58
+## 96         75       103        86              88
+## 97         53        79        47              60
+## 98        155       129       139             141
+## 99         79       128       107             105
+## 100        95       120       112             109
+## 101       120        41       134              98
+## 102        41        52        80              58
+## 103       150        90        86             109
+## 104        63        96        97              85
+## 105       130       100       102             111
+## 106        83        53        39              58
+## 107       118        64       102              95
+## 108        80        79        53              71
+## 109        96        85       118             100
+## 110        58        47        62              56
+## 111        70        81        59              70
+## 112        31        67        64              54
+## 113        65        75        89              76
+## 114       113        88       102             101
+## 115        58        85        70              71
+## 116       129       117        90             112
+## 117        69        80       117              89
+## 118        95        69        63              76
+## 119        69        63        68              67
+## 120       168        79        56             101
+## 121       171       188       139             166
+## 122       106        90       101              99
+## 123       136       129        79             115
+## 124        73        80        80              78
+## 125        79        47        51              59
+## 126        47        41        35              41
+## 127        52        49        57              53
+## 128        90        96        68              85
+## 129        50        58        35              48
+## 130       106        84        95              95
+## 131        57        36        63              52
+## 132        68        52        52              57
+## 133       154       161        79             131
+## 134        68        76        53              66
+## 135        53        32        46              44
+## 136        62        86        61              70
+## 137        89        68        54              70
+## 138       113        53        53              73
+## 139        58       268        96             141
+## 140        58        52        53              54
+## 141        53        92        58              68
+## 142        32        74        90              65
+## 143        47        57        75              60
+## 144       155       136        96             129
+## 145        62        41        50              51
+## 146        41        37        74              51
+## 147        79        41        52              57
+## 148       112        86        89              96
+## 149        88        57        85              77
+## 150        57        30        53              47
+## 151        96       123       158             126
+## 152        63        84        89              79
+## 153        72        90       100              87
+## 154       107        74        52              78
+## 155        79        52        68              66
+## 156        52        42        45              46
+## 157        26        57        74              52
+## 158       106        95       255             152
+## 159        34        52        45              44
+## 160        73        89        62              75
+## 161        41        45        39              42
+## 162        29        51        47              42
+## 163        58        68        67              64
+## 164       119        68        30              72
+## 165        51        63        56              57
+## 166        62        77        78              72
+## 167        35       106        82              74
+## 168       133        90       172             132
+## 169       139        91        68              99
+## 170        85        51        55              64
+## 171        57        34        67              53
+## 172        25        66        56              49
+## 173        69        73        75              72
+## 174        78        79        49              69
+## 175        56        73        68              66
+## 176        70        56        73              66
+## 177       112        74        73              86
+## 178        46        61        63              57
+## 179        62        35        63              53
+## 180        63        45        79              62
+## 181        63        57       105              75
+## 182       105        87        53              82
+## 183        52        57        41              50
+## 184        79        52       101              77
+## 185       162        90        62             105
+## 186        35        24        25              28
+## 187        90        57        79              75
+## 188        62       101        89              84
+## 189        43        41        41              42
+## 190        58        46        45              50
+## 191       133        83        90             102
+## 192        68        79        64              70
+## 193        35        35        51              40
+## 194        55        91        51              66
+## 195        13        16        30              20
+## 196        24        41        46              37
+## 197        41        85        90              72
+## 198        68       112        47              76
+## 199        46       265        65             125
+## 200        85        89       107              94
+## 201        57        40        30              42
+## 202        36        31        41              36
+## 203        41        72        61              58
+## 204        74        62        84              73
+## 205        59        52        57              56
+## 206        66        47        46              53
+## 207       118        46        62              75
+## 208        75        39       112              75
+## 209        36        63        68              56
+## 210        36        59        41              45
+## 211        90        74        50              71
+## 212        69        63        57              63
+## 213        62        52        67              60
+## 214        64        57        52              58
+## 215        53        46        39              46
+## 216        74        57        73              68
+## 217        74        84        80              79
+## 218        35        19        34              29
+## 219        38        46        68              51
+## 220       106        91       102             100
+## 221       107        46        83              79
+## 222        89        73        78              80
+## 223        25        69        41              45
+## 224        51        63        37              50
+## 225        61        78        50              63
+## 226        24        30        41              32
+## 227       102        69        47              73
+## 228        25        30        25              27
+## 229        68        47        90              68
+## 230        63        73        30              55
+## 231       107       104        74              95
+## 232        35        41        44              40
+## 233        96        67        67              77
+## 234        67        52        96              72
+## 235        58        36        36              43
+## 236        35        34        29              33
+## 237        62        44        45              50
+## 238        62        48        52              54
+## 239        63        79        35              59
+## 240        83        89        63              78
+## 241        50        49        56              52
+## 242        79        94        57              77
+## 243       100        58        63              74
+## 244        70        83        79              77
+## 245       123        74        61              86
+## 246        86        79       224             130
+## 247        79        86        56              74
+## 248        46        57        35              46
+## 249        84        63        63              70
+## 250        36        53       173              87
+## 251        84        69        90              81
+## 252        52        29        30              37
+## 253        73        69        69              70
+## 254        36        45        62              48
+## 255        51        30        36              39
+## 256       166        88        62             105
+## 257        46        40        58              48
+## 258        30        30        49              36
+## 259        90        46        45              60
+## 260        85        41        48              58
+## 261        72        74       100              82
+## 262       128        56        46              77
+## 263        51        36        46              44
+## 264        68        78        89              78
+## 265       101       158        68             109
+## 266        57        63        73              64
+## 267        94        63        69              75
+## 268        95        71        73              80
+## 269       107        74        57              79
+## 270        86        52        42              60
+## 271        74       106        79              86
+## 272        68        74        63              68
+## 273        95        73        79              82
+## 274        84        73        63              73
+## 275        36        42        47              42
+## 276        90       105       123             106
+## 277        46        52        65              54
+## 278        79        88        75              81
+## 279       112        85        85              94
+## 280       107       112       132             117
+## 281        80       165        NA              82
+## 282       177        85       100             121
+## 283        58        53        57              56
+## 284        63        84        69              72
+## 285        79        68        90              79
+## 286        63        79        57              66
+## 287        62        80        74              72
+## 288        84        58        79              74
+## 289        94       102        79              92
+## 290       117        95       102             105
+## 291        56       107        52              72
+## 292       135       101        79             105
+## 293       200       167       199             189
+## 294        96        58        98              84
+## 295        80        58        73              70
+## 296        52        47        60              53
+## 297        52        46        54              51
+## 298       150       134        92             125
+## 299        74        75        83              77
+## 300       106       116       139             120
+## 301        99        74        90              88
+## 302        78        46        29              51
+## 303        52        41        56              50
+## 304        61        46        60              56
+## 305       117       260        79             152
+## 306       117       100        94             104
+## 307       148        90       139             126
+## 308        86        81        79              82
+## 309       112        80        93              95
+## 310        52        57        57              55
+## 311        74        73        62              70
+## 312        68        83        78              76
+## 313        40        41        58              46
+## 314        62        54        56              57
+## 315        40        46        40              42
+## 316        46        57        57              53
+## 317       106        89        40              78
+## 318        63        46        73              61
+## 319        62        94        79              78
+## 320        84        69        68              74
+## 321        56        62        52              57
+## 322        38        64        72              58
+## 323        68        60        61              63
+## 324        46        46        73              55
+## 325       117       168        73             119
+## 326       150        79        67              99
+## 327        79        62        63              68
+## 328        88        78        73              80
+## 329        84        63        79              75
+## 330        51        53        90              65
+## 331        84        78        67              76
+## 332        89        84        73              82
+## 333       101        45        52              66
+## 334        90       104        78              91
+## 335        84        93        89              89
+## 336        40        68        47              52
+## 337        84       118       112             105
+## 338        61       106        68              78
+## 339        74        61        74              70
+## 340        51        52        47              50
+## 341        89        77        90              85
+## 342        62        57        57              59
+## 343        43        52        38              44
+## 344        68        56        53              59
+## 345        80        79        73              77
+## 346        80        52        63              65
+## 347        30        35        45              37
+## 348        95        72        57              75
+## 349        67       123        80              90
+## 350        74        74        80              76
+## 351        62        94       133              96
+## 352        25        52        65              47
+## 353       111        58        52              74
+## 354        59        55        50              55
+## 355        44        61        47              51
+## 356        46        46        40              44
+## 357        68        72        55              65
+## 358       100        61       167             109
+## 359        68       112        86              89
+## 360        63        74       123              87
+## 361        79        52        56              62
+## 362        58        41        53              51
+## 363        52        42        47              47
+## 364        53        67        88              69
+## 365        33        47        63              48
+## 366        69        74        91              78
+## 367        86        85        74              82
+## 368        64        52        91              69
+## 369        64        73        52              63
+## 370       166        77        69             104
+## 371        68        62        58              63
+## 372        73        64        57              65
+## 373        78       100        80              86
+## 374        79        63        52              65
+## 375        30        56        62              49
+## 376        57        52        46              52
+## 377        30        29        31              30
+## 378        42        46        57              48
+## 379        56        58        57              57
+## 380       172       128        79             126
+## 381        52        46        57              52
+## 382        41        52        52              48
+## 383       112        57        57              75
+## 384        79        90        90              86
+## 385        68        85        68              74
+## 386        57        68        79              68
+## 387        95       107       111             104
+## 388        74        63        74              70
+## 389        66        74        74              71
+## 390        73        48        50              57
+## 391        52        69        30              50
+## 392        58        37        68              54
+## 393        90       107        69              89
+## 394        57        63       117              79
+## 395        62        94        79              78
+## 396        68        67        46              60
+## 397       139       122       106             122
+## 398       106        62        62              77
+## 399        68        57        57              61
+## 400        36        64        75              58
+## 401        74        59        47              60
+## 402        70        85        96              84
+## 403        53        52        63              56
+## 404        80        85       118              94
+## 405        74        47        63              61
+## 406        79        42        58              60
+## 407        75        72       106              84
+## 408        52        90        78              73
+## 409        47        53        63              54
+## 410        46        46        28              40
+## 411       118       150       160             143
+## 412       165        79        67             104
+## 413        78        57        57              64
+## 414        95        76        57              76
+## 415        94        51        59              68
+## 416        66        57        45              56
+## 417        74        62        46              61
+## 418        39        54        40              44
+## 419        95        85       145             108
+## 420        73        58       182             104
+## 421       182       139       106             142
+## 422        62        51        62              58
+## 423       139        75       113             109
+## 424        89       106       259             151
+## 425        99        57        69              75
+## 426        58        91        59              69
+## 427        42        36        54              44
+## 428        57        85        64              69
+## 429        64        72       183             106
+## 430        85        75        70              77
+## 431       185        69        52             102
+## 432        91        58       102              84
+## 433       127       123       106             119
+## 434        85        52        90              76
+## 435        67        96        62              75
+## 436        85        57       135              92
+## 437       123        73        84              93
+## 438       100        40        39              60
+## 439       160       134        83             126
+## 440        58        51        52              54
+## 441        62        46        57              55
+## 442        73        84        63              73
+## 443        89        63        62              71
+## 444        44        57        74              58
+## 445        68        74        63              68
+## 446       100        63        52              72
+## 447       151       100       106             119
+## 448        68        68        73              70
+## 449        62        47        56              55
+## 450        58        62        46              55
+## 451        67        46        84              66
+## 452       107        95       101             101
+## 453        47        37        31              38
+## 454        90        95        73              86
+## 455       149        85        74             103
+## 456        84        84        62              77
+## 457        79        60        68              69
+## 458        63        85        58              69
+## 459        95       119        84              99
+## 460        75        51        66              64
+## 461        75        51        66              64
+## 462        89        95       154             113
+## 463        79        85       101              88
+## 464       151       117       128             132
+## 465       139       123       101             121
+## 466        63        79        68              70
+## 467        52        85        63              67
+## 468        80        85        83              83
+## 469       101        76        73              83
+## 470       171       168       135             158
+## 471        69        69        69              69
+## 472        98       119        97             105
+## 473        90        93       111              98
+## 474        35        38        38              37
+## 475        62        46        51              53
+## 476        62        79        52              64
+## 477       117        79        63              86
+## 478       112        91        98             100
+## 479        96        81        64              80
+## 480       145       129       124             133
+## 481        69        53        74              65
+## 482       212        96       101             136
+## 483        68        85        75              76
+## 484        95        93        86              91
+## 485       291       118       119             176
+## 486        91        83        64              79
+## 487       102        86        NA              94
+## 488        59        97        75              77
+## 489        58        51        97              69
+## 490        69        75       195             113
+## 491       140        85        80             102
+## 492        48        70        97              72
+## 493        47        58        69              58
+## 494       134       101        75             103
+## 495       129        70        58              86
+## 496        46        40        41              42
+## 497        52        63        89              68
+## 498        95        79        84              86
+## 499        74       100        80              85
+## 500       145       101        84             110
+## 501        79        62        41              61
+## 502        74        68        63              68
+## 503        79        65        63              69
+## 504        63        74        69              69
+## 505        90        90        96              92
+## 506        89        63        63              72
+## 507        80        84       101              88
+## 508        62        90       149             100
+## 509        40        42        36              39
+## 510       101        71        46              73
+## 511        29        35        38              34
+## 512       114        36       101              84
+## 513        60        63        85              69
+## 514        68        47        46              54
+## 515        24        42        41              36
+## 516       106       183        96             128
+## 517        90        79        47              72
+## 518       146       106        96             116
+## 519        37        42        48              42
+## 520        70        69       112              84
+## 521        48        37        80              55
+## 522       112        90       122             108
+## 523        85       220        52             119
+## 524       128       110       128             122
+## 525        63        40        46              50
+## 526       100        73        85              86
+## 527        73        68        61              67
+## 528        51        84        52              62
+## 529       172        52        40              88
+## 530        62        84        79              75
+## 531       139        73        86              99
+## 532        89        95        90              91
+## 533       112       134       123             123
+## 534       117        79        49              82
+## 535        51        29        41              40
+```
+]
+.item[
+{{content}}
+]
+
+]
+
+--
+
+
+```r
+frogsignal %&gt;% 
+  select(num_range("Standard", 1:3))
+```
+
+```
+##     Standard1 Standard2 Standard3
+## 1          47        46        42
+## 2          69        44        36
+## 3         139       102        85
+## 4         112       112       117
+## 5         101       101        80
+## 6          90        68        73
+## 7          79        41        46
+## 8         262       237       166
+## 9         123       106        95
+## 10         47        62        63
+## 11         95       117        84
+## 12         56        52        41
+## 13         41        51        57
+## 14         57        41        30
+## 15        144       128       166
+## 16         68        41        52
+## 17         62        68        84
+## 18         52        89        63
+## 19        101        80       106
+## 20         69        80        57
+## 21        134       112       102
+## 22        167       118       123
+## 23         51        52        62
+## 24         73        84       136
+## 25         89       106        90
+## 26         55        78        63
+## 27         74        77        83
+## 28         69        70        95
+## 29        117        73       111
+## 30        244       242        85
+## 31        208       102       124
+## 32         95        42        45
+## 33         62        46        57
+## 34        148       134       112
+## 35         96        57        67
+## 36         28        36        39
+## 37        101        52        95
+## 38         58        68        62
+## 39         73        63        62
+## 40        173        69        38
+## 41         84        90        87
+## 42         51        62        50
+## 43         95        95       104
+## 44         52        57        69
+## 45         74       107        82
+## 46         47        52        69
+## 47         68        60        41
+## 48         58        52        52
+## 49         47        40        47
+## 50         51        52        41
+## 51         96        99        79
+## 52         63        41        24
+## 53        102       129        52
+## 54         80        57        62
+## 55         62        52        56
+## 56         46        57        98
+## 57         87        82        83
+## 58        100        59        62
+## 59        111       101       111
+## 60         96        79        68
+## 61        177       156       145
+## 62        150       131       134
+## 63        172       107       116
+## 64        133        95       117
+## 65         68       100        79
+## 66        112        69        79
+## 67        112       125        90
+## 68         68        56        57
+## 69         90       215       117
+## 70         90       200        89
+## 71        113       127        95
+## 72         47        47        48
+## 73         50        97        91
+## 74         96       112        80
+## 75         80        38        74
+## 76         78        63        59
+## 77         29        48        47
+## 78        105        63       151
+## 79         42        41        53
+## 80         59        68       155
+## 81         91       101        74
+## 82         68        86        91
+## 83         53        47        47
+## 84         64        73        62
+## 85         83        57        90
+## 86         52        36        55
+## 87        117       106       101
+## 88         84       100        86
+## 89         57        57        33
+## 90        101        61        69
+## 91         51        70        57
+## 92         63        68        84
+## 93         41        52        48
+## 94         67        95        90
+## 95         53        47        75
+## 96         75       103        86
+## 97         53        79        47
+## 98        155       129       139
+## 99         79       128       107
+## 100        95       120       112
+## 101       120        41       134
+## 102        41        52        80
+## 103       150        90        86
+## 104        63        96        97
+## 105       130       100       102
+## 106        83        53        39
+## 107       118        64       102
+## 108        80        79        53
+## 109        96        85       118
+## 110        58        47        62
+## 111        70        81        59
+## 112        31        67        64
+## 113        65        75        89
+## 114       113        88       102
+## 115        58        85        70
+## 116       129       117        90
+## 117        69        80       117
+## 118        95        69        63
+## 119        69        63        68
+## 120       168        79        56
+## 121       171       188       139
+## 122       106        90       101
+## 123       136       129        79
+## 124        73        80        80
+## 125        79        47        51
+## 126        47        41        35
+## 127        52        49        57
+## 128        90        96        68
+## 129        50        58        35
+## 130       106        84        95
+## 131        57        36        63
+## 132        68        52        52
+## 133       154       161        79
+## 134        68        76        53
+## 135        53        32        46
+## 136        62        86        61
+## 137        89        68        54
+## 138       113        53        53
+## 139        58       268        96
+## 140        58        52        53
+## 141        53        92        58
+## 142        32        74        90
+## 143        47        57        75
+## 144       155       136        96
+## 145        62        41        50
+## 146        41        37        74
+## 147        79        41        52
+## 148       112        86        89
+## 149        88        57        85
+## 150        57        30        53
+## 151        96       123       158
+## 152        63        84        89
+## 153        72        90       100
+## 154       107        74        52
+## 155        79        52        68
+## 156        52        42        45
+## 157        26        57        74
+## 158       106        95       255
+## 159        34        52        45
+## 160        73        89        62
+## 161        41        45        39
+## 162        29        51        47
+## 163        58        68        67
+## 164       119        68        30
+## 165        51        63        56
+## 166        62        77        78
+## 167        35       106        82
+## 168       133        90       172
+## 169       139        91        68
+## 170        85        51        55
+## 171        57        34        67
+## 172        25        66        56
+## 173        69        73        75
+## 174        78        79        49
+## 175        56        73        68
+## 176        70        56        73
+## 177       112        74        73
+## 178        46        61        63
+## 179        62        35        63
+## 180        63        45        79
+## 181        63        57       105
+## 182       105        87        53
+## 183        52        57        41
+## 184        79        52       101
+## 185       162        90        62
+## 186        35        24        25
+## 187        90        57        79
+## 188        62       101        89
+## 189        43        41        41
+## 190        58        46        45
+## 191       133        83        90
+## 192        68        79        64
+## 193        35        35        51
+## 194        55        91        51
+## 195        13        16        30
+## 196        24        41        46
+## 197        41        85        90
+## 198        68       112        47
+## 199        46       265        65
+## 200        85        89       107
+## 201        57        40        30
+## 202        36        31        41
+## 203        41        72        61
+## 204        74        62        84
+## 205        59        52        57
+## 206        66        47        46
+## 207       118        46        62
+## 208        75        39       112
+## 209        36        63        68
+## 210        36        59        41
+## 211        90        74        50
+## 212        69        63        57
+## 213        62        52        67
+## 214        64        57        52
+## 215        53        46        39
+## 216        74        57        73
+## 217        74        84        80
+## 218        35        19        34
+## 219        38        46        68
+## 220       106        91       102
+## 221       107        46        83
+## 222        89        73        78
+## 223        25        69        41
+## 224        51        63        37
+## 225        61        78        50
+## 226        24        30        41
+## 227       102        69        47
+## 228        25        30        25
+## 229        68        47        90
+## 230        63        73        30
+## 231       107       104        74
+## 232        35        41        44
+## 233        96        67        67
+## 234        67        52        96
+## 235        58        36        36
+## 236        35        34        29
+## 237        62        44        45
+## 238        62        48        52
+## 239        63        79        35
+## 240        83        89        63
+## 241        50        49        56
+## 242        79        94        57
+## 243       100        58        63
+## 244        70        83        79
+## 245       123        74        61
+## 246        86        79       224
+## 247        79        86        56
+## 248        46        57        35
+## 249        84        63        63
+## 250        36        53       173
+## 251        84        69        90
+## 252        52        29        30
+## 253        73        69        69
+## 254        36        45        62
+## 255        51        30        36
+## 256       166        88        62
+## 257        46        40        58
+## 258        30        30        49
+## 259        90        46        45
+## 260        85        41        48
+## 261        72        74       100
+## 262       128        56        46
+## 263        51        36        46
+## 264        68        78        89
+## 265       101       158        68
+## 266        57        63        73
+## 267        94        63        69
+## 268        95        71        73
+## 269       107        74        57
+## 270        86        52        42
+## 271        74       106        79
+## 272        68        74        63
+## 273        95        73        79
+## 274        84        73        63
+## 275        36        42        47
+## 276        90       105       123
+## 277        46        52        65
+## 278        79        88        75
+## 279       112        85        85
+## 280       107       112       132
+## 281        80       165        NA
+## 282       177        85       100
+## 283        58        53        57
+## 284        63        84        69
+## 285        79        68        90
+## 286        63        79        57
+## 287        62        80        74
+## 288        84        58        79
+## 289        94       102        79
+## 290       117        95       102
+## 291        56       107        52
+## 292       135       101        79
+## 293       200       167       199
+## 294        96        58        98
+## 295        80        58        73
+## 296        52        47        60
+## 297        52        46        54
+## 298       150       134        92
+## 299        74        75        83
+## 300       106       116       139
+## 301        99        74        90
+## 302        78        46        29
+## 303        52        41        56
+## 304        61        46        60
+## 305       117       260        79
+## 306       117       100        94
+## 307       148        90       139
+## 308        86        81        79
+## 309       112        80        93
+## 310        52        57        57
+## 311        74        73        62
+## 312        68        83        78
+## 313        40        41        58
+## 314        62        54        56
+## 315        40        46        40
+## 316        46        57        57
+## 317       106        89        40
+## 318        63        46        73
+## 319        62        94        79
+## 320        84        69        68
+## 321        56        62        52
+## 322        38        64        72
+## 323        68        60        61
+## 324        46        46        73
+## 325       117       168        73
+## 326       150        79        67
+## 327        79        62        63
+## 328        88        78        73
+## 329        84        63        79
+## 330        51        53        90
+## 331        84        78        67
+## 332        89        84        73
+## 333       101        45        52
+## 334        90       104        78
+## 335        84        93        89
+## 336        40        68        47
+## 337        84       118       112
+## 338        61       106        68
+## 339        74        61        74
+## 340        51        52        47
+## 341        89        77        90
+## 342        62        57        57
+## 343        43        52        38
+## 344        68        56        53
+## 345        80        79        73
+## 346        80        52        63
+## 347        30        35        45
+## 348        95        72        57
+## 349        67       123        80
+## 350        74        74        80
+## 351        62        94       133
+## 352        25        52        65
+## 353       111        58        52
+## 354        59        55        50
+## 355        44        61        47
+## 356        46        46        40
+## 357        68        72        55
+## 358       100        61       167
+## 359        68       112        86
+## 360        63        74       123
+## 361        79        52        56
+## 362        58        41        53
+## 363        52        42        47
+## 364        53        67        88
+## 365        33        47        63
+## 366        69        74        91
+## 367        86        85        74
+## 368        64        52        91
+## 369        64        73        52
+## 370       166        77        69
+## 371        68        62        58
+## 372        73        64        57
+## 373        78       100        80
+## 374        79        63        52
+## 375        30        56        62
+## 376        57        52        46
+## 377        30        29        31
+## 378        42        46        57
+## 379        56        58        57
+## 380       172       128        79
+## 381        52        46        57
+## 382        41        52        52
+## 383       112        57        57
+## 384        79        90        90
+## 385        68        85        68
+## 386        57        68        79
+## 387        95       107       111
+## 388        74        63        74
+## 389        66        74        74
+## 390        73        48        50
+## 391        52        69        30
+## 392        58        37        68
+## 393        90       107        69
+## 394        57        63       117
+## 395        62        94        79
+## 396        68        67        46
+## 397       139       122       106
+## 398       106        62        62
+## 399        68        57        57
+## 400        36        64        75
+## 401        74        59        47
+## 402        70        85        96
+## 403        53        52        63
+## 404        80        85       118
+## 405        74        47        63
+## 406        79        42        58
+## 407        75        72       106
+## 408        52        90        78
+## 409        47        53        63
+## 410        46        46        28
+## 411       118       150       160
+## 412       165        79        67
+## 413        78        57        57
+## 414        95        76        57
+## 415        94        51        59
+## 416        66        57        45
+## 417        74        62        46
+## 418        39        54        40
+## 419        95        85       145
+## 420        73        58       182
+## 421       182       139       106
+## 422        62        51        62
+## 423       139        75       113
+## 424        89       106       259
+## 425        99        57        69
+## 426        58        91        59
+## 427        42        36        54
+## 428        57        85        64
+## 429        64        72       183
+## 430        85        75        70
+## 431       185        69        52
+## 432        91        58       102
+## 433       127       123       106
+## 434        85        52        90
+## 435        67        96        62
+## 436        85        57       135
+## 437       123        73        84
+## 438       100        40        39
+## 439       160       134        83
+## 440        58        51        52
+## 441        62        46        57
+## 442        73        84        63
+## 443        89        63        62
+## 444        44        57        74
+## 445        68        74        63
+## 446       100        63        52
+## 447       151       100       106
+## 448        68        68        73
+## 449        62        47        56
+## 450        58        62        46
+## 451        67        46        84
+## 452       107        95       101
+## 453        47        37        31
+## 454        90        95        73
+## 455       149        85        74
+## 456        84        84        62
+## 457        79        60        68
+## 458        63        85        58
+## 459        95       119        84
+## 460        75        51        66
+## 461        75        51        66
+## 462        89        95       154
+## 463        79        85       101
+## 464       151       117       128
+## 465       139       123       101
+## 466        63        79        68
+## 467        52        85        63
+## 468        80        85        83
+## 469       101        76        73
+## 470       171       168       135
+## 471        69        69        69
+## 472        98       119        97
+## 473        90        93       111
+## 474        35        38        38
+## 475        62        46        51
+## 476        62        79        52
+## 477       117        79        63
+## 478       112        91        98
+## 479        96        81        64
+## 480       145       129       124
+## 481        69        53        74
+## 482       212        96       101
+## 483        68        85        75
+## 484        95        93        86
+## 485       291       118       119
+## 486        91        83        64
+## 487       102        86        NA
+## 488        59        97        75
+## 489        58        51        97
+## 490        69        75       195
+## 491       140        85        80
+## 492        48        70        97
+## 493        47        58        69
+## 494       134       101        75
+## 495       129        70        58
+## 496        46        40        41
+## 497        52        63        89
+## 498        95        79        84
+## 499        74       100        80
+## 500       145       101        84
+## 501        79        62        41
+## 502        74        68        63
+## 503        79        65        63
+## 504        63        74        69
+## 505        90        90        96
+## 506        89        63        63
+## 507        80        84       101
+## 508        62        90       149
+## 509        40        42        36
+## 510       101        71        46
+## 511        29        35        38
+## 512       114        36       101
+## 513        60        63        85
+## 514        68        47        46
+## 515        24        42        41
+## 516       106       183        96
+## 517        90        79        47
+## 518       146       106        96
+## 519        37        42        48
+## 520        70        69       112
+## 521        48        37        80
+## 522       112        90       122
+## 523        85       220        52
+## 524       128       110       128
+## 525        63        40        46
+## 526       100        73        85
+## 527        73        68        61
+## 528        51        84        52
+## 529       172        52        40
+## 530        62        84        79
+## 531       139        73        86
+## 532        89        95        90
+## 533       112       134       123
+## 534       117        79        49
+## 535        51        29        41
+```
+
+---
+
+# Selection language .font_small[.font_small[Part] 1]
+
+* `:` for selecting contiguous variables
+* `!` for taking complement set of variables
+* `&amp;` or `|` for selecting intersection or union of two sets of variables, e.g. 
+
+```r
+frogsignal %&gt;% 
+  select(starts_with("Alt") &amp; ends_with("1")) %&gt;% 
+  str()
+```
+
+```
+## 'data.frame':	535 obs. of  1 variable:
+##  $ Alternative1: num  28 33 227 101 126 143 50 123 76 53 ...
+```
+
+* `c()` for combining selections
+* `everything()` to select all variables
+* `last_col()` to select last variable, with option of an offset
+
+---
+
+# Selection language .font_small[.font_small[Part] 2]
+
+
+* `starts_with()` selects columns with the given prefix
+* `ends_with()` selects columns with the given suffix
+* `contains()` selects columns with a literal string
+* `matches()` selects columns that match the regular expression .font_small[we'll learn this next!]
+* `num_range()` selects columns with a numerical range
+* `all_of()` for selecting columns based on a character vector
+* `any_of()` is the same as `all_of()` but no error when variables do not exist
+* `where()` selects based on where given function return TRUE
+
+
+```r
+help(language, package = "tidyselect")
+```
+
+
+---
+
+# Subsetting by column .font_small[Tidyverse]
+
+.grid[
+.item[
+
+```r
+select(mtcars, c(mpg, cyl))
+select(mtcars, c("mpg", "cyl"))
+select(mtcars, mpg, cyl)
+select(mtcars, "mpg", "cyl")
+```
+All the same result as below
+
+```r
+mtcars %&gt;% 
+  select(mpg, cyl)
+```
+
+```
+##                      mpg cyl
+## Mazda RX4           21.0   6
+## Mazda RX4 Wag       21.0   6
+## Datsun 710          22.8   4
+## Hornet 4 Drive      21.4   6
+## Hornet Sportabout   18.7   8
+## Valiant             18.1   6
+## Duster 360          14.3   8
+## Merc 240D           24.4   4
+## Merc 230            22.8   4
+## Merc 280            19.2   6
+## Merc 280C           17.8   6
+## Merc 450SE          16.4   8
+## Merc 450SL          17.3   8
+## Merc 450SLC         15.2   8
+## Cadillac Fleetwood  10.4   8
+## Lincoln Continental 10.4   8
+## Chrysler Imperial   14.7   8
+## Fiat 128            32.4   4
+## Honda Civic         30.4   4
+## Toyota Corolla      33.9   4
+## Toyota Corona       21.5   4
+## Dodge Challenger    15.5   8
+## AMC Javelin         15.2   8
+## Camaro Z28          13.3   8
+## Pontiac Firebird    19.2   8
+## Fiat X1-9           27.3   4
+## Porsche 914-2       26.0   4
+## Lotus Europa        30.4   4
+## Ford Pantera L      15.8   8
+## Ferrari Dino        19.7   6
+## Maserati Bora       15.0   8
+## Volvo 142E          21.4   4
+```
+
+]
+.item[
+{{content}}
+]
+
+]
+
+--
+
+
+```r
+mtcars %&gt;% select(mpg)
+```
+
+```
+##                      mpg
+## Mazda RX4           21.0
+## Mazda RX4 Wag       21.0
+## Datsun 710          22.8
+## Hornet 4 Drive      21.4
+## Hornet Sportabout   18.7
+## Valiant             18.1
+## Duster 360          14.3
+## Merc 240D           24.4
+## Merc 230            22.8
+## Merc 280            19.2
+## Merc 280C           17.8
+## Merc 450SE          16.4
+## Merc 450SL          17.3
+## Merc 450SLC         15.2
+## Cadillac Fleetwood  10.4
+## Lincoln Continental 10.4
+## Chrysler Imperial   14.7
+## Fiat 128            32.4
+## Honda Civic         30.4
+## Toyota Corolla      33.9
+## Toyota Corona       21.5
+## Dodge Challenger    15.5
+## AMC Javelin         15.2
+## Camaro Z28          13.3
+## Pontiac Firebird    19.2
+## Fiat X1-9           27.3
+## Porsche 914-2       26.0
+## Lotus Europa        30.4
+## Ford Pantera L      15.8
+## Ferrari Dino        19.7
+## Maserati Bora       15.0
+## Volvo 142E          21.4
+```
+
+--
+
+&lt;div class="info-box" style="position:absolute;right:20px;margin-right:0px!important;bottom:0px;margin-left:0;width:650px;"&gt;
+&lt;ul&gt;
+&lt;li&gt;Selecting one column doesn't "drop" it to a vector.&lt;/li&gt; &lt;li&gt;If you really want the vector then use &lt;code class="monash-blue"&gt;pull(mpg)&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+
+---
+
+# Subsetting by row .font_small[Tidyverse]
+
+
+```r
+mtcars %&gt;% 
+  slice(3:1)
+```
+
+```
+##                mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Datsun 710    22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## Mazda RX4 Wag 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## Mazda RX4     21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+```
+--
+
+```r
+mtcars %&gt;% 
+  filter(rownames(.) %in% c("Datsun 710", "Mazda RX4"))
+```
+
+```
+##             mpg cyl disp  hp drat   wt  qsec vs am gear carb
+## Mazda RX4  21.0   6  160 110 3.90 2.62 16.46  0  1    4    4
+## Datsun 710 22.8   4  108  93 3.85 2.32 18.61  1  1    4    1
+```
+* Use .monash-blue[`slice`] to subset by *index* and .monash-blue[`filter`] by *logical vector*
+
+--
+
+&lt;div class="info-box" style="position:absolute;right:20px;margin-right:0px!important;top:50px;margin-left:0;width:900px;font-size: 20pt;"&gt;
+&lt;ul&gt;
+&lt;li&gt;Placeholder binding&lt;/li&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;x %&gt;% f(y, g(.))&lt;/code&gt; is the same as &lt;code&gt;f(x, y, g(x))&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;x %&gt;% f(y, .)&lt;/code&gt; is the same as &lt;code&gt;f(y, x)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+{{content}}
+&lt;/ul&gt;
+&lt;/div&gt;
+
+--
+&lt;i class="fas fa-exclamation-triangle red"&gt;&lt;/i&gt; Note: row names do not follow tidy data principles&lt;br&gt;
+{{content}}
+--
+&lt;li&gt;Use &lt;code class="monash-blue"&gt;tibble::rownames_to_column()&lt;/code&gt; to convert rownames to a column to make into a tidy data&lt;/li&gt;
+
+
+
+---
+
+# Adding or modifying a column .font_small[Tidyverse]
+
+
+
+&lt;code class ='r hljs remark-code'&gt;mtcars %&gt;% &lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style="background-color:#ffff7f"&gt;mutate&lt;/span&gt;(gpm = 1 / mpg,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;wt = gpm^2,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;wt = if_else(cyl==6, 10, wt),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;hp = case_when(cyl==6 ~ 11,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;cyl==4 ~ 10,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;TRUE ~ 3))&lt;/code&gt;
+
+```
+
+##     mpg cyl  disp hp drat           wt  qsec vs am gear carb        gpm
+## 1  21.0   6 160.0 11 3.90 1.000000e+01 16.46  0  1    4    4 0.04761905
+## 2  21.0   6 160.0 11 3.90 1.000000e+01 17.02  0  1    4    4 0.04761905
+## 3  22.8   4 108.0 10 3.85 1.923669e-03 18.61  1  1    4    1 0.04385965
+## 4  21.4   6 258.0 11 3.08 1.000000e+01 19.44  1  0    3    1 0.04672897
+## 5  18.7   8 360.0  3 3.15 2.859676e-03 17.02  0  0    3    2 0.05347594
+## 6  18.1   6 225.0 11 2.76 1.000000e+01 20.22  1  0    3    1 0.05524862
+## 7  14.3   8 360.0  3 3.21 4.890215e-03 15.84  0  0    3    4 0.06993007
+## 8  24.4   4 146.7 10 3.69 1.679656e-03 20.00  1  0    4    2 0.04098361
+## 9  22.8   4 140.8 10 3.92 1.923669e-03 22.90  1  0    4    2 0.04385965
+## 10 19.2   6 167.6 11 3.92 1.000000e+01 18.30  1  0    4    4 0.05208333
+## 11 17.8   6 167.6 11 3.92 1.000000e+01 18.90  1  0    4    4 0.05617978
+## 12 16.4   8 275.8  3 3.07 3.718025e-03 17.40  0  0    3    3 0.06097561
+## 13 17.3   8 275.8  3 3.07 3.341241e-03 17.60  0  0    3    3 0.05780347
+## 14 15.2   8 275.8  3 3.07 4.328255e-03 18.00  0  0    3    3 0.06578947
+## 15 10.4   8 472.0  3 2.93 9.245562e-03 17.98  0  0    3    4 0.09615385
+## 16 10.4   8 460.0  3 3.00 9.245562e-03 17.82  0  0    3    4 0.09615385
+## 17 14.7   8 440.0  3 3.23 4.627701e-03 17.42  0  0    3    4 0.06802721
+## 18 32.4   4  78.7 10 4.08 9.525987e-04 19.47  1  1    4    1 0.03086420
+## 19 30.4   4  75.7 10 4.93 1.082064e-03 18.52  1  1    4    2 0.03289474
+## 20 33.9   4  71.1 10 4.22 8.701630e-04 19.90  1  1    4    1 0.02949853
+## 21 21.5   4 120.1 10 3.70 2.163332e-03 20.01  1  0    3    1 0.04651163
+## 22 15.5   8 318.0  3 2.76 4.162331e-03 16.87  0  0    3    2 0.06451613
+## 23 15.2   8 304.0  3 3.15 4.328255e-03 17.30  0  0    3    2 0.06578947
+## 24 13.3   8 350.0  3 3.73 5.653231e-03 15.41  0  0    3    4 0.07518797
+## 25 19.2   8 400.0  3 3.08 2.712674e-03 17.05  0  0    3    2 0.05208333
+## 26 27.3   4  79.0 10 4.08 1.341760e-03 18.90  1  1    4    1 0.03663004
+## 27 26.0   4 120.3 10 4.43 1.479290e-03 16.70  0  1    5    2 0.03846154
+## 28 30.4   4  95.1 10 3.77 1.082064e-03 16.90  1  1    5    2 0.03289474
+## 29 15.8   8 351.0  3 4.22 4.005768e-03 14.50  0  1    5    4 0.06329114
+## 30 19.7   6 145.0 11 3.62 1.000000e+01 15.50  0  1    5    6 0.05076142
+## 31 15.0   8 301.0  3 3.54 4.444444e-03 14.60  0  1    5    8 0.06666667
+## 32 21.4   4 121.0 10 4.11 2.183597e-03 18.60  1  1    4    2 0.04672897
+
+```
+--
+
+&lt;div class="info-box" style="position:absolute;right:20px;margin-right:0px!important;top:50px;margin-left:0;width:550px;font-size: 20pt;"&gt;
+&lt;ul&gt;
+&lt;li&gt;Evaluation in &lt;code&gt;mutate&lt;/code&gt; is done sequentially based on input order&lt;/li&gt;
+{{content}}
+&lt;/ul&gt;
+&lt;/div&gt;
+
+--
+
+&lt;li&gt;So you refer to the newly created variable in later input&lt;/li&gt;
+{{content}}
+--
+&lt;li&gt;You can call multiple &lt;code&gt;mutate&lt;/code&gt; but computational performance is usually better if done within the same &lt;code&gt;mutate&lt;/code&gt; call&lt;/li&gt;
+&lt;pre&gt;
+&lt;code&gt;mtcars %&gt;%
+  mutate(gpm = 1 / mpg) %&gt;% 
+  mutate(wt = gpm^2)
+&lt;/code&gt;&lt;/pre&gt;
+
+---
+
+# Sorting columns .font_small[Tidyverse]
+
+.grid[
+.item50[
+.s300[
+
+```r
+mtcars %&gt;% 
+  select(sort(names(.)))
+```
+
+```
+##                     am carb cyl  disp drat gear  hp  mpg  qsec vs    wt
+## Mazda RX4            1    4   6 160.0 3.90    4 110 21.0 16.46  0 2.620
+## Mazda RX4 Wag        1    4   6 160.0 3.90    4 110 21.0 17.02  0 2.875
+## Datsun 710           1    1   4 108.0 3.85    4  93 22.8 18.61  1 2.320
+## Hornet 4 Drive       0    1   6 258.0 3.08    3 110 21.4 19.44  1 3.215
+## Hornet Sportabout    0    2   8 360.0 3.15    3 175 18.7 17.02  0 3.440
+## Valiant              0    1   6 225.0 2.76    3 105 18.1 20.22  1 3.460
+## Duster 360           0    4   8 360.0 3.21    3 245 14.3 15.84  0 3.570
+## Merc 240D            0    2   4 146.7 3.69    4  62 24.4 20.00  1 3.190
+## Merc 230             0    2   4 140.8 3.92    4  95 22.8 22.90  1 3.150
+## Merc 280             0    4   6 167.6 3.92    4 123 19.2 18.30  1 3.440
+## Merc 280C            0    4   6 167.6 3.92    4 123 17.8 18.90  1 3.440
+## Merc 450SE           0    3   8 275.8 3.07    3 180 16.4 17.40  0 4.070
+## Merc 450SL           0    3   8 275.8 3.07    3 180 17.3 17.60  0 3.730
+## Merc 450SLC          0    3   8 275.8 3.07    3 180 15.2 18.00  0 3.780
+## Cadillac Fleetwood   0    4   8 472.0 2.93    3 205 10.4 17.98  0 5.250
+## Lincoln Continental  0    4   8 460.0 3.00    3 215 10.4 17.82  0 5.424
+## Chrysler Imperial    0    4   8 440.0 3.23    3 230 14.7 17.42  0 5.345
+## Fiat 128             1    1   4  78.7 4.08    4  66 32.4 19.47  1 2.200
+## Honda Civic          1    2   4  75.7 4.93    4  52 30.4 18.52  1 1.615
+## Toyota Corolla       1    1   4  71.1 4.22    4  65 33.9 19.90  1 1.835
+## Toyota Corona        0    1   4 120.1 3.70    3  97 21.5 20.01  1 2.465
+## Dodge Challenger     0    2   8 318.0 2.76    3 150 15.5 16.87  0 3.520
+## AMC Javelin          0    2   8 304.0 3.15    3 150 15.2 17.30  0 3.435
+## Camaro Z28           0    4   8 350.0 3.73    3 245 13.3 15.41  0 3.840
+## Pontiac Firebird     0    2   8 400.0 3.08    3 175 19.2 17.05  0 3.845
+## Fiat X1-9            1    1   4  79.0 4.08    4  66 27.3 18.90  1 1.935
+## Porsche 914-2        1    2   4 120.3 4.43    5  91 26.0 16.70  0 2.140
+## Lotus Europa         1    2   4  95.1 3.77    5 113 30.4 16.90  1 1.513
+## Ford Pantera L       1    4   8 351.0 4.22    5 264 15.8 14.50  0 3.170
+## Ferrari Dino         1    6   6 145.0 3.62    5 175 19.7 15.50  0 2.770
+## Maserati Bora        1    8   8 301.0 3.54    5 335 15.0 14.60  0 3.570
+## Volvo 142E           1    2   4 121.0 4.11    4 109 21.4 18.60  1 2.780
+```
+]
+.s300[
+
+```r
+mtcars %&gt;% 
+  relocate(am, carb, .before = cyl)
+```
+
+```
+##                      mpg am carb cyl  disp  hp drat    wt  qsec vs gear
+## Mazda RX4           21.0  1    4   6 160.0 110 3.90 2.620 16.46  0    4
+## Mazda RX4 Wag       21.0  1    4   6 160.0 110 3.90 2.875 17.02  0    4
+## Datsun 710          22.8  1    1   4 108.0  93 3.85 2.320 18.61  1    4
+## Hornet 4 Drive      21.4  0    1   6 258.0 110 3.08 3.215 19.44  1    3
+## Hornet Sportabout   18.7  0    2   8 360.0 175 3.15 3.440 17.02  0    3
+## Valiant             18.1  0    1   6 225.0 105 2.76 3.460 20.22  1    3
+## Duster 360          14.3  0    4   8 360.0 245 3.21 3.570 15.84  0    3
+## Merc 240D           24.4  0    2   4 146.7  62 3.69 3.190 20.00  1    4
+## Merc 230            22.8  0    2   4 140.8  95 3.92 3.150 22.90  1    4
+## Merc 280            19.2  0    4   6 167.6 123 3.92 3.440 18.30  1    4
+## Merc 280C           17.8  0    4   6 167.6 123 3.92 3.440 18.90  1    4
+## Merc 450SE          16.4  0    3   8 275.8 180 3.07 4.070 17.40  0    3
+## Merc 450SL          17.3  0    3   8 275.8 180 3.07 3.730 17.60  0    3
+## Merc 450SLC         15.2  0    3   8 275.8 180 3.07 3.780 18.00  0    3
+## Cadillac Fleetwood  10.4  0    4   8 472.0 205 2.93 5.250 17.98  0    3
+## Lincoln Continental 10.4  0    4   8 460.0 215 3.00 5.424 17.82  0    3
+## Chrysler Imperial   14.7  0    4   8 440.0 230 3.23 5.345 17.42  0    3
+## Fiat 128            32.4  1    1   4  78.7  66 4.08 2.200 19.47  1    4
+## Honda Civic         30.4  1    2   4  75.7  52 4.93 1.615 18.52  1    4
+## Toyota Corolla      33.9  1    1   4  71.1  65 4.22 1.835 19.90  1    4
+## Toyota Corona       21.5  0    1   4 120.1  97 3.70 2.465 20.01  1    3
+## Dodge Challenger    15.5  0    2   8 318.0 150 2.76 3.520 16.87  0    3
+## AMC Javelin         15.2  0    2   8 304.0 150 3.15 3.435 17.30  0    3
+## Camaro Z28          13.3  0    4   8 350.0 245 3.73 3.840 15.41  0    3
+## Pontiac Firebird    19.2  0    2   8 400.0 175 3.08 3.845 17.05  0    3
+## Fiat X1-9           27.3  1    1   4  79.0  66 4.08 1.935 18.90  1    4
+## Porsche 914-2       26.0  1    2   4 120.3  91 4.43 2.140 16.70  0    5
+## Lotus Europa        30.4  1    2   4  95.1 113 3.77 1.513 16.90  1    5
+## Ford Pantera L      15.8  1    4   8 351.0 264 4.22 3.170 14.50  0    5
+## Ferrari Dino        19.7  1    6   6 145.0 175 3.62 2.770 15.50  0    5
+## Maserati Bora       15.0  1    8   8 301.0 335 3.54 3.570 14.60  0    5
+## Volvo 142E          21.4  1    2   4 121.0 109 4.11 2.780 18.60  1    4
+```
+]
+]
+.item50[
+.s300[
+
+```r
+mtcars %&gt;% 
+  select(wt, gear, everything())
+```
+
+```
+##                        wt gear  mpg cyl  disp  hp drat  qsec vs am carb
+## Mazda RX4           2.620    4 21.0   6 160.0 110 3.90 16.46  0  1    4
+## Mazda RX4 Wag       2.875    4 21.0   6 160.0 110 3.90 17.02  0  1    4
+## Datsun 710          2.320    4 22.8   4 108.0  93 3.85 18.61  1  1    1
+## Hornet 4 Drive      3.215    3 21.4   6 258.0 110 3.08 19.44  1  0    1
+## Hornet Sportabout   3.440    3 18.7   8 360.0 175 3.15 17.02  0  0    2
+## Valiant             3.460    3 18.1   6 225.0 105 2.76 20.22  1  0    1
+## Duster 360          3.570    3 14.3   8 360.0 245 3.21 15.84  0  0    4
+## Merc 240D           3.190    4 24.4   4 146.7  62 3.69 20.00  1  0    2
+## Merc 230            3.150    4 22.8   4 140.8  95 3.92 22.90  1  0    2
+## Merc 280            3.440    4 19.2   6 167.6 123 3.92 18.30  1  0    4
+## Merc 280C           3.440    4 17.8   6 167.6 123 3.92 18.90  1  0    4
+## Merc 450SE          4.070    3 16.4   8 275.8 180 3.07 17.40  0  0    3
+## Merc 450SL          3.730    3 17.3   8 275.8 180 3.07 17.60  0  0    3
+## Merc 450SLC         3.780    3 15.2   8 275.8 180 3.07 18.00  0  0    3
+## Cadillac Fleetwood  5.250    3 10.4   8 472.0 205 2.93 17.98  0  0    4
+## Lincoln Continental 5.424    3 10.4   8 460.0 215 3.00 17.82  0  0    4
+## Chrysler Imperial   5.345    3 14.7   8 440.0 230 3.23 17.42  0  0    4
+## Fiat 128            2.200    4 32.4   4  78.7  66 4.08 19.47  1  1    1
+## Honda Civic         1.615    4 30.4   4  75.7  52 4.93 18.52  1  1    2
+## Toyota Corolla      1.835    4 33.9   4  71.1  65 4.22 19.90  1  1    1
+## Toyota Corona       2.465    3 21.5   4 120.1  97 3.70 20.01  1  0    1
+## Dodge Challenger    3.520    3 15.5   8 318.0 150 2.76 16.87  0  0    2
+## AMC Javelin         3.435    3 15.2   8 304.0 150 3.15 17.30  0  0    2
+## Camaro Z28          3.840    3 13.3   8 350.0 245 3.73 15.41  0  0    4
+## Pontiac Firebird    3.845    3 19.2   8 400.0 175 3.08 17.05  0  0    2
+## Fiat X1-9           1.935    4 27.3   4  79.0  66 4.08 18.90  1  1    1
+## Porsche 914-2       2.140    5 26.0   4 120.3  91 4.43 16.70  0  1    2
+## Lotus Europa        1.513    5 30.4   4  95.1 113 3.77 16.90  1  1    2
+## Ford Pantera L      3.170    5 15.8   8 351.0 264 4.22 14.50  0  1    4
+## Ferrari Dino        2.770    5 19.7   6 145.0 175 3.62 15.50  0  1    6
+## Maserati Bora       3.570    5 15.0   8 301.0 335 3.54 14.60  0  1    8
+## Volvo 142E          2.780    4 21.4   4 121.0 109 4.11 18.60  1  1    2
+```
+]
+.s300[
+
+```r
+mtcars %&gt;% 
+  relocate(wt, gear, .after = mpg)
+```
+
+```
+##                      mpg    wt gear cyl  disp  hp drat  qsec vs am carb
+## Mazda RX4           21.0 2.620    4   6 160.0 110 3.90 16.46  0  1    4
+## Mazda RX4 Wag       21.0 2.875    4   6 160.0 110 3.90 17.02  0  1    4
+## Datsun 710          22.8 2.320    4   4 108.0  93 3.85 18.61  1  1    1
+## Hornet 4 Drive      21.4 3.215    3   6 258.0 110 3.08 19.44  1  0    1
+## Hornet Sportabout   18.7 3.440    3   8 360.0 175 3.15 17.02  0  0    2
+## Valiant             18.1 3.460    3   6 225.0 105 2.76 20.22  1  0    1
+## Duster 360          14.3 3.570    3   8 360.0 245 3.21 15.84  0  0    4
+## Merc 240D           24.4 3.190    4   4 146.7  62 3.69 20.00  1  0    2
+## Merc 230            22.8 3.150    4   4 140.8  95 3.92 22.90  1  0    2
+## Merc 280            19.2 3.440    4   6 167.6 123 3.92 18.30  1  0    4
+## Merc 280C           17.8 3.440    4   6 167.6 123 3.92 18.90  1  0    4
+## Merc 450SE          16.4 4.070    3   8 275.8 180 3.07 17.40  0  0    3
+## Merc 450SL          17.3 3.730    3   8 275.8 180 3.07 17.60  0  0    3
+## Merc 450SLC         15.2 3.780    3   8 275.8 180 3.07 18.00  0  0    3
+## Cadillac Fleetwood  10.4 5.250    3   8 472.0 205 2.93 17.98  0  0    4
+## Lincoln Continental 10.4 5.424    3   8 460.0 215 3.00 17.82  0  0    4
+## Chrysler Imperial   14.7 5.345    3   8 440.0 230 3.23 17.42  0  0    4
+## Fiat 128            32.4 2.200    4   4  78.7  66 4.08 19.47  1  1    1
+## Honda Civic         30.4 1.615    4   4  75.7  52 4.93 18.52  1  1    2
+## Toyota Corolla      33.9 1.835    4   4  71.1  65 4.22 19.90  1  1    1
+## Toyota Corona       21.5 2.465    3   4 120.1  97 3.70 20.01  1  0    1
+## Dodge Challenger    15.5 3.520    3   8 318.0 150 2.76 16.87  0  0    2
+## AMC Javelin         15.2 3.435    3   8 304.0 150 3.15 17.30  0  0    2
+## Camaro Z28          13.3 3.840    3   8 350.0 245 3.73 15.41  0  0    4
+## Pontiac Firebird    19.2 3.845    3   8 400.0 175 3.08 17.05  0  0    2
+## Fiat X1-9           27.3 1.935    4   4  79.0  66 4.08 18.90  1  1    1
+## Porsche 914-2       26.0 2.140    5   4 120.3  91 4.43 16.70  0  1    2
+## Lotus Europa        30.4 1.513    5   4  95.1 113 3.77 16.90  1  1    2
+## Ford Pantera L      15.8 3.170    5   8 351.0 264 4.22 14.50  0  1    4
+## Ferrari Dino        19.7 2.770    5   6 145.0 175 3.62 15.50  0  1    6
+## Maserati Bora       15.0 3.570    5   8 301.0 335 3.54 14.60  0  1    8
+## Volvo 142E          21.4 2.780    4   4 121.0 109 4.11 18.60  1  1    2
+```
+]
+]
+
+]
+
+---
+
+# Calculating statistical summaries by group .font_small[Tidyverse]
+
+--
+
+.grid[.item50[
+
+🎯 Calculate the _average_ weight (`wt`) of a car for each gear type in (`gear`)  `mtcars`
+
+```r
+mtcars %&gt;% 
+  group_by(gear) %&gt;% 
+  summarise(avg_wt = mean(wt))
+```
+
+```
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+```
+## # A tibble: 3 x 2
+##    gear avg_wt
+##   &lt;dbl&gt;  &lt;dbl&gt;
+## 1     3   3.89
+## 2     4   2.62
+## 3     5   2.63
+```
+
+]
+.item[
+{{content}}
+]
+]
+--
+
+🎯 Calculate the _median_ weight (`wt`) of a car for each gear (`gear`) and engine (`vs`) type in  `mtcars`
+
+
+```r
+mtcars %&gt;% 
+  group_by(gear, vs) %&gt;% 
+  summarise(avg_wt = mean(wt),
+            med_wt = median(wt))
+```
+
+```
+## `summarise()` regrouping output by 'gear' (override with `.groups` argument)
+```
+
+```
+## # A tibble: 6 x 4
+## # Groups:   gear [3]
+##    gear    vs avg_wt med_wt
+##   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1     3     0   4.10   3.81
+## 2     3     1   3.05   3.22
+## 3     4     0   2.75   2.75
+## 4     4     1   2.59   2.55
+## 5     5     0   2.91   2.97
+## 6     5     1   1.51   1.51
+```
+
+
+---
+
+
+
+class: font_smaller
+background-color: #e5e5e5
+
+# Session Information
+
+.scroll-350[
+
+
+
+```r
+devtools::session_info()
+```
+
+```
+## ─ Session info ───────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       macOS Catalina 10.15.7      
+##  system   x86_64, darwin17.0          
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_AU.UTF-8                 
+##  ctype    en_AU.UTF-8                 
+##  tz       Australia/Melbourne         
+##  date     2020-11-26                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────
+##  package     * version date       lib source                           
+##  anicon        0.1.0   2020-06-21 [1] Github (emitanaka/anicon@0b756df)
+##  assertthat    0.2.1   2019-03-21 [2] CRAN (R 4.0.0)                   
+##  callr         3.5.1   2020-10-13 [1] CRAN (R 4.0.2)                   
+##  cli           2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  crayon        1.3.4   2017-09-16 [2] CRAN (R 4.0.0)                   
+##  desc          1.2.0   2018-05-01 [2] CRAN (R 4.0.0)                   
+##  devtools      2.3.2   2020-09-18 [1] CRAN (R 4.0.2)                   
+##  digest        0.6.27  2020-10-24 [1] CRAN (R 4.0.2)                   
+##  dplyr       * 1.0.2   2020-08-18 [1] CRAN (R 4.0.2)                   
+##  ellipsis      0.3.1   2020-05-15 [2] CRAN (R 4.0.0)                   
+##  evaluate      0.14    2019-05-28 [2] CRAN (R 4.0.0)                   
+##  fansi         0.4.1   2020-01-08 [2] CRAN (R 4.0.0)                   
+##  flair       * 0.0.2   2020-11-21 [1] Github (kbodwin/flair@b3054f2)   
+##  fs            1.5.0   2020-07-31 [1] CRAN (R 4.0.2)                   
+##  generics      0.1.0   2020-10-31 [2] CRAN (R 4.0.2)                   
+##  glue          1.4.2   2020-08-27 [1] CRAN (R 4.0.2)                   
+##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 4.0.2)                   
+##  icon          0.1.0   2020-06-21 [1] Github (emitanaka/icon@8458546)  
+##  knitr         1.30    2020-09-22 [1] CRAN (R 4.0.2)                   
+##  lifecycle     0.2.0   2020-03-06 [1] CRAN (R 4.0.0)                   
+##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.0.2)                   
+##  memoise       1.1.0   2017-04-21 [2] CRAN (R 4.0.0)                   
+##  pillar        1.4.7   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  pkgbuild      1.1.0   2020-07-13 [2] CRAN (R 4.0.1)                   
+##  pkgconfig     2.0.3   2019-09-22 [2] CRAN (R 4.0.0)                   
+##  pkgload       1.1.0   2020-05-29 [2] CRAN (R 4.0.0)                   
+##  prettyunits   1.1.1   2020-01-24 [2] CRAN (R 4.0.0)                   
+##  processx      3.4.4   2020-09-03 [1] CRAN (R 4.0.2)                   
+##  ps            1.4.0   2020-10-07 [1] CRAN (R 4.0.2)                   
+##  purrr         0.3.4   2020-04-17 [2] CRAN (R 4.0.0)                   
+##  R6            2.5.0   2020-10-28 [1] CRAN (R 4.0.2)                   
+##  remotes       2.2.0   2020-07-21 [1] CRAN (R 4.0.2)                   
+##  rlang         0.4.8   2020-10-08 [1] CRAN (R 4.0.2)                   
+##  rmarkdown     2.5     2020-10-21 [1] CRAN (R 4.0.1)                   
+##  rprojroot     2.0.2   2020-11-15 [1] CRAN (R 4.0.2)                   
+##  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.0.1)                   
+##  sessioninfo   1.1.1   2018-11-05 [2] CRAN (R 4.0.0)                   
+##  stringi       1.5.3   2020-09-09 [2] CRAN (R 4.0.2)                   
+##  stringr       1.4.0   2019-02-10 [2] CRAN (R 4.0.0)                   
+##  testthat      3.0.0   2020-10-31 [1] CRAN (R 4.0.2)                   
+##  tibble        3.0.4   2020-10-12 [1] CRAN (R 4.0.2)                   
+##  tidyselect    1.1.0   2020-05-11 [2] CRAN (R 4.0.0)                   
+##  usethis       1.6.3   2020-09-17 [1] CRAN (R 4.0.2)                   
+##  utf8          1.1.4   2018-05-24 [2] CRAN (R 4.0.0)                   
+##  vctrs         0.3.5   2020-11-17 [1] CRAN (R 4.0.2)                   
+##  withr         2.3.0   2020-09-22 [1] CRAN (R 4.0.2)                   
+##  xaringan      0.18    2020-10-21 [1] CRAN (R 4.0.2)                   
+##  xfun          0.19    2020-10-30 [1] CRAN (R 4.0.2)                   
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.0.2)                   
+## 
+## [1] /Users/etan0038/Library/R/4.0/library
+## [2] /Library/Frameworks/R.framework/Versions/4.0/Resources/library
+```
+]
+
+
+These slides are licensed under &lt;br&gt;&lt;center&gt;&lt;a href="https://creativecommons.org/licenses/by-sa/3.0/au/"&gt;&lt;img src="images/cc.svg" style="height:2em;"/&gt;&lt;img src="images/by.svg" style="height:2em;"/&gt;&lt;img src="images/sa.svg" style="height:2em;"/&gt;&lt;/a&gt;&lt;/center&gt;
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLanguage": "r",
+"highlightLines": true,
+"highlightSpans": false,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%",
+"navigation": {
+"scroll": false,
+"touch": true,
+"click": false
+},
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

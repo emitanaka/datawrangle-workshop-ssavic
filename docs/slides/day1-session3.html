@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Data Wrangling with R: Day 1</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Emi Tanaka" />
+    <script src="libs/header-attrs-2.5/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <link href="libs/font-awesome-animation-1.0/font-awesome-animation-emi.css" rel="stylesheet" />
+    <script src="libs/fontawesome-5.0.13/js/fontawesome-all.min.js"></script>
+    <script src="libs/htmlwidgets-1.5.2/htmlwidgets.js"></script>
+    <script src="libs/jquery-1.12.4/jquery.min.js"></script>
+    <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+    <script src="libs/datatables-binding-0.16/datatables.js"></script>
+    <link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+    <link href="libs/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+    <link href="libs/str_view-0.1.0/str_view.css" rel="stylesheet" />
+    <script src="libs/str_view-binding-1.4.0/str_view.js"></script>
+    <link rel="stylesheet" href="assets/animate.css" type="text/css" />
+    <link rel="stylesheet" href="assets/custom.css" type="text/css" />
+    <link rel="stylesheet" href="assets/fira-code.css" type="text/css" />
+    <link rel="stylesheet" href="assets/boxes.css" type="text/css" />
+    <link rel="stylesheet" href="assets/styles.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-brand.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class: monash-bg-blue center middle hide-slide-number 
+
+
+
+&lt;div class="bg-black white"  style="width:45%;right:0;bottom:0;padding-left:5px;border: solid 4px white;margin: auto;"&gt;
+&lt;i class="fas fa-exclamation-circle"&gt;&lt;/i&gt; These slides are viewed best by Chrome and occasionally need to be refreshed if elements did not load properly. See here for &lt;a href=day1-session3.pdf&gt;PDF &lt;i class="fas fa-file-pdf"&gt;&lt;/i&gt;&lt;/a&gt;. 
+&lt;/div&gt;
+
+&lt;br&gt;
+
+.white[Press the **right arrow** to progress to the next slide!]
+
+
+---
+
+count: false
+background-image: url(images/bg1.jpg)
+background-size: cover
+class: hide-slide-number title-slide
+
+
+&lt;div class="grid-row" style="grid: 1fr / 2fr;"&gt;
+
+.item.center[
+
+# &lt;span style="text-shadow: 2px 2px 30px white;"&gt;Data Wrangling with R: Day 1&lt;/span&gt;
+
+&lt;!-- ## &lt;span style="color:;text-shadow: 2px 2px 30px black;"&gt;Manipulating strings with `stringr`&lt;/span&gt; --&gt;
+
+]
+
+.center.shade_black.animated.bounceInUp.slower[
+&lt;br&gt;&lt;br&gt;
+## &lt;span style="color: #ccf2ff; text-shadow: 10px 10px 100px white;"&gt;Manipulating strings with `stringr`&lt;/span&gt;
+
+&lt;br&gt;
+
+Presented by Emi Tanaka
+
+Department of Econometrics and Business Statistics
+
+&lt;img src="images/monash-one-line-reversed.png" style="width:500px"&gt;&lt;br&gt;
+<span>&lt;i class="fas  fa-envelope faa-float animated "&gt;&lt;/i&gt;</span>  emi.tanaka@monash.edu
+<span>&lt;i class="fab  fa-twitter faa-float animated faa-fast "&gt;&lt;/i&gt;</span>  @statsgen
+
+.bottom_abs.width100.bg-black[
+1st December 2020 @ Statistical Society of Australia | Zoom
+]
+
+
+]
+
+&lt;/div&gt;
+
+
+
+
+
+
+---
+
+# Manipulating strings 
+
+* The `stringr` package is powered by the `stringi` package which in turn uses the [ICU](http://site.icu-project.org/) C library to provide fast peformance for string manipulation
+
+
+.footnote[
+Hadley Wickham (2019). stringr: Simple, Consistent Wrappers for
+  Common String Operations. R package version 1.4.0.
+  
+Gagolewski M. and others (2020). R package stringi: Character
+  string processing facilities.
+]
+
+--
+
+* Main functions in `stringr` **prefix with `str_`**  (`stringi` prefix with `stri_`) and the **first argument is string** (or a vector of strings)
+--
+
+* What do you think `str_trim` and `str_squish` do?
+
+```r
+str_trim(c("    Apple ", "  Goji    Berry     "))
+```
+
+```
+## [1] "Apple"         "Goji    Berry"
+```
+
+```r
+str_squish(c("    Apple ", "  Goji    Berry     "))
+```
+
+```
+## [1] "Apple"      "Goji Berry"
+```
+
+---
+
+# Base R and `stringr`
+
+<div id="htmlwidget-b166bc7abaa9a159a222" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b166bc7abaa9a159a222">{"x":{"filter":"none","data":[["gregexpr(pattern, x)","grep(pattern, x, value = TRUE)","grep(pattern, x)","grepl(pattern, x)","gsub(pattern, replacement, x)","nchar(x)","order(x)","regexec(pattern, x) + regmatches()","regexpr(pattern, x) + regmatches()","regexpr(pattern, x)","sort(x)","strrep(x, n)","strsplit(x, pattern)","strwrap(x)","sub(pattern, replacement, x)","substr(x, start, end)","tolower(x)","tools::toTitleCase(x)","toupper(x)","trimws(x)"],["str_locate_all(x, pattern)","str_subset(x, pattern)","str_which(x, pattern)","str_detect(x, pattern)","str_replace_all(x, pattern, replacement)","str_length(x)","str_order(x)","str_match(x, pattern)","str_extract(x, pattern)","str_locate(x, pattern)","str_sort(x)","str_dup(x, n)","str_split(x, pattern)","str_wrap(x)","str_replace(x, pattern, replacement)","str_sub(x, start, end)","str_to_lower(x)","str_to_title(x)","str_to_upper(x)","str_trim(x)"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Base R<\/th>\n      <th>stringr<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"lengthChange":false,"dom":"tp","columnDefs":[{"className":"dt-left"}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+
+.footnote[
+See more at https://stringr.tidyverse.org/articles/from-base.html
+]
+
+---
+
+# Why use `stringr`?
+
+* There are a number of considerations to ensure there is consistency in syntax and user expectation (both for input and output)
+--
+
+* For example, let's consider &lt;u&gt;combining multiple strings into one&lt;/u&gt;.
+--
+.grid[
+.item[
+**Base R**
+
+
+```r
+paste0("Area", "1", c("A", "B"))
+```
+
+```
+## [1] "Area1A" "Area1B"
+```
+
+]
+.item[
+**`stringr`**
+
+```r
+str_c("Area", "1", c("A", "B"))
+```
+
+```
+## [1] "Area1A" "Area1B"
+```
+]]
+
+---
+
+count: false
+
+# Why use `stringr`?
+
+* There are a number of considerations to ensure there is consistency in syntax and user expectation (both for input and output)
+
+* For example, let's consider &lt;u&gt;combining multiple strings into one&lt;/u&gt;.
+.grid[
+.item[
+**Base R**
+
+
+```r
+paste0("Area", "1", c("A", "B"))
+```
+
+```
+## [1] "Area1A" "Area1B"
+```
+
+```r
+paste0("Area", "1", c("A", NA, "C"))
+```
+
+]
+.item[
+**`stringr`**
+
+```r
+str_c("Area", "1", c("A", "B"))
+```
+
+```
+## [1] "Area1A" "Area1B"
+```
+
+```r
+str_c("Area", "1", c("A", NA, "C"))
+```
+]]
+
+
+---
+
+count: false
+
+# Why use `stringr`?
+
+* There are a number of considerations to ensure there is consistency in syntax and user expectation (both for input and output)
+
+* For example, let's consider &lt;u&gt;combining multiple strings into one&lt;/u&gt;.
+.grid[
+.item[
+**Base R**
+
+
+```r
+paste0("Area", "1", c("A", "B"))
+```
+
+```
+## [1] "Area1A" "Area1B"
+```
+
+```r
+paste0("Area", "1", c("A", NA, "C"))
+```
+
+```
+## [1] "Area1A"  "Area1NA" "Area1C"
+```
+
+]
+.item[
+**`stringr`**
+
+```r
+str_c("Area", "1", c("A", "B"))
+```
+
+```
+## [1] "Area1A" "Area1B"
+```
+
+```r
+str_c("Area", "1", c("A", NA, "C"))
+```
+
+```
+## [1] "Area1A" NA       "Area1C"
+```
+]]
+
+* If the Base R result is preferable then NA can be replaced with character with .monash-blue[`str_replace_na`]`("A", NA, "C")` first
+
+
+---
+
+# .orange[Case study &lt;i class="fas fa-search-plus"&gt;&lt;/i&gt;] Aussie Local Government Area
+
+
+```r
+LGA &lt;- ozmaps::abs_lga %&gt;% pull(NAME)
+LGA[1:7]
+```
+
+```
+## [1] "Broken Hill (C)" "Waroona (S)"     "Toowoomba (R)"   "West Arthur (S)"
+## [5] "Moreton Bay (R)" "Etheridge (S)"   "Cleve (DC)"
+```
+
+&lt;center&gt;
+&lt;table style="width:90%"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;C = Cities&lt;/td&gt;
+    &lt;td&gt;A = Areas&lt;/td&gt;
+    &lt;td&gt;RC = Rural Cities&lt;/td&gt;
+    
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;B = Boroughs&lt;/td&gt;
+    &lt;td&gt;S = Shires&lt;/td&gt;
+    &lt;td&gt;DC = District Councils&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;M = Municipalities&lt;/td&gt;
+    &lt;td&gt;T = Towns&lt;/td&gt;
+    &lt;td&gt;AC = Aboriginal Councils &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+  &lt;td&gt;RegC = Regional Councils&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+&lt;/center&gt;
+
+&lt;br&gt;
+.center[
+🎯 **Extract the LGA status from the LGA names**
+
+{{content}}
+]
+
+.footnote[
+Michael Sumner (2020). ozmaps: Australia Maps. R package version
+  0.3.6. 
+]
+
+--
+
+How?
+
+
+---
+
+name: lga
+
+# Extracting the string
+
+
+
+```r
+str_extract(LGA, "\\(.+\\)") 
+```
+
+```
+##   [1] "(C)"        "(S)"        "(R)"        "(S)"        "(R)"       
+##   [6] "(S)"        "(DC)"       "(R)"        "(DC)"       "(C)"       
+##  [11] "(DC)"       "(S)"        "(S)"        "(S)"        "(DC)"      
+##  [16] "(A)"        "(C)"        "(A)"        "(T)"        "(RC)"      
+##  [21] "(A)"        "(S)"        "(S)"        "(S)"        "(C)"       
+##  [26] "(DC)"       "(R)"        "(A)"        "(C)"        "(DC)"      
+##  [31] "(S)"        "(S)"        "(A)"        "(S)"        "(S)"       
+##  [36] "(R)"        "(M)"        "(A)"        "(C)"        "(S)"       
+##  [41] "(S)"        "(C)"        "(A)"        "(S)"        "(C)"       
+##  [46] "(AC)"       "(A)"        "(S)"        "(A)"        "(C)"       
+##  [51] "(A)"        "(R)"        "(S)"        "(T)"        "(C)"       
+##  [56] "(S)"        "(S)"        "(R)"        "(C)"        "(T)"       
+##  [61] "(C)"        "(S)"        "(C)"        "(C)"        "(C)"       
+##  [66] "(C)"        "(S)"        "(DC)"       "(DC)"       "(S)"       
+##  [71] "(R)"        "(R)"        "(S)"        "(B)"        "(DC)"      
+##  [76] "(M)"        "(A)"        "(C)"        "(S)"        "(S)"       
+##  [81] "(S)"        "(S)"        "(S)"        "(S)"        "(S)"       
+##  [86] "(C)"        "(A)"        "(C)"        "(A)"        "(S)"       
+##  [91] "(C)"        "(A)"        "(S)"        "(S)"        "(S)"       
+##  [96] "(S)"        "(DC)"       "(S)"        "(S)"        "(S)"       
+## [101] "(C)"        "(C)"        "(DC)"       "(S)"        "(S)"       
+## [106] "(C)"        "(S)"        "(DC)"       "(C)"        "(C)"       
+## [111] "(S)"        "(S)"        "(S)"        "(S)"        "(S)"       
+## [116] "(S)"        "(A)"        "(DC)"       "(S)"        "(A)"       
+## [121] "(C)"        "(A)"        "(S)"        "(A)"        "(DC)"      
+## [126] "(S)"        "(C)"        "(S)"        "(A)"        "(S)"       
+## [131] "(M)"        "(S)"        "(DC)"       "(R)"        "(C)"       
+## [136] "(C)"        "(S)"        "(C)"        "(S)"        "(T)"       
+## [141] "(S)"        "(S)"        "(DC)"       "(S)"        "(T)"       
+## [146] "(C)"        "(S)"        "(M)"        "(S)"        "(DC)"      
+## [151] "(C)"        "(S)"        "(M)"        "(C)"        "(S)"       
+## [156] "(C)"        "(C)"        "(R)"        "(S)"        "(C)"       
+## [161] "(C)"        "(R)"        "(S)"        "(C)"        "(A)"       
+## [166] "(T)"        "(S)"        "(RC)"       "(C)"        "(A)"       
+## [171] "(A)"        "(A)"        "(S)"        "(A)"        "(S)"       
+## [176] "(S)"        "(T)"        "(S)"        "(S)"        "(S)"       
+## [181] "(A)"        "(DC)"       "(M)"        "(C)"        "(S)"       
+## [186] "(A)"        "(T)"        "(A)"        "(C)"        "(S)"       
+## [191] "(C)"        "(R)"        "(C)"        "(S)"        "(S)"       
+## [196] "(S)"        "(S)"        "(R)"        "(C)"        "(DC)"      
+## [201] "(A)"        "(DC)"       "(R)"        "(C)"        "(S)"       
+## [206] "(S)"        "(C)"        "(C)"        "(R)"        "(S)"       
+## [211] "(S)"        "(C)"        "(A)"        "(S)"        "(S)"       
+## [216] "(C)"        "(DC)"       "(S)"        "(M) (Tas.)" "(M) (Tas.)"
+## [221] "(C) (Vic.)" "(C) (Vic.)" "(S)"        "(DC)"       "(S)"       
+## [226] "(RC)"       "(S)"        "(DC)"       "(S)"        "(S)"       
+## [231] "(R)"        "(S)"        "(A)"        "(C)"        "(C)"       
+## [236] "(A)"        "(A)"        "(RC)"       "(S)"        "(C)"       
+## [241] "(S)"        "(S)"        "(S)"        "(C)"        "(C)"       
+## [246] "(S)"        "(C)"        "(C)"        "(C)"        "(A)"       
+## [251] "(C)"        "(S)"        "(S)"        "(S)"        "(S)"       
+## [256] "(S)"        "(A)"        "(A)"        "(A)"        "(S)"       
+## [261] "(A)"        "(A)"        "(S)"        "(S)"        "(C)"       
+## [266] "(A)"        "(M)"        "(S)"        "(S)"        "(C)"       
+## [271] "(R)"        "(S)"        "(R)"        "(DC)"       "(R)"       
+## [276] "(C)"        "(S)"        "(S)"        "(C)"        "(S)"       
+## [281] "(A)"        "(R)"        "(DC)"       "(A)"        "(C)"       
+## [286] "(A)"        "(S)"        "(S)"        "(A)"        "(C)"       
+## [291] "(C)"        "(A)"        "(T)"        "(S)"        "(C)"       
+## [296] "(A)"        "(A)"        "(S)"        "(S)"        "(T)"       
+## [301] "(C)"        "(A)"        "(A)"        "(DC)"       "(A)"       
+## [306] "(C)"        "(M)"        "(M)"        "(S)"        "(A)"       
+## [311] "(A)"        "(C)"        "(C)"        "(S)"        "(DC)"      
+## [316] "(S)"        "(C)"        "(S)"        "(S)"        "(DC)"      
+## [321] "(RegC)"     "(C)"        "(S)"        "(S)"        NA          
+## [326] "(A)"        "(S)"        "(A)"        "(S)"        "(A)"       
+## [331] "(S)"        "(C)"        "(R)"        "(C)"        "(S)"       
+## [336] "(A)"        "(DC)"       "(S)"        "(A)"        "(R)"       
+## [341] "(S)"        "(S)"        "(RC)"       "(T)"        "(A)"       
+## [346] "(M)"        "(A)"        "(S)"        "(S)"        "(S)"       
+## [351] "(S)"        "(A)"        "(RC)"       "(S)"        "(A)"       
+## [356] "(R)"        "(S)"        "(S)"        "(C)"        "(S)"       
+## [361] "(DC)"       "(M)"        "(M)"        "(AC)"       "(DC)"      
+## [366] "(A)"        "(A)"        "(S)"        "(S)"        "(A)"       
+## [371] "(C)"        "(S)"        "(S)"        "(C)"        "(R)"       
+## [376] "(S)"        "(S)"        NA           "(A)"        "(T)"       
+## [381] "(S)"        "(A)"        "(C)"        "(C)"        "(A)"       
+## [386] "(C)"        "(DC)"       "(C)"        "(A)"        "(A)"       
+## [391] "(A)"        "(S)"        "(DC)"       "(DC)"       "(S)"       
+## [396] "(M)"        "(R)"        "(DC)"       "(C)"        "(S)"       
+## [401] "(S)"        "(C)"        "(C)"        "(C)"        "(C)"       
+## [406] "(C)"        "(S)"        "(A)"        NA           "(S)"       
+## [411] "(C)"        "(S)"        "(M)"        "(C)"        "(S)"       
+## [416] "(S)"        NA           "(C)"        "(S)"        "(C)"       
+## [421] "(DC)"       "(S)"        "(C)"        "(S)"        "(C)"       
+## [426] "(M)"        "(A)"        "(A)"        "(A)"        "(S)"       
+## [431] "(C)"        "(S)"        "(S)"        "(S)"        "(A)"       
+## [436] "(A)"        "(A)"        "(S)"        "(S)"        "(S)"       
+## [441] "(C)"        "(S)"        "(C)"        "(C)"        "(C)"       
+## [446] "(C) (NSW)"  "(S) (Qld)"  "(R) (Qld)"  "(DC) (SA)"  "(C) (SA)"  
+## [451] "(M) (Tas.)" "(M) (Tas.)" "(C)"        "(R)"        "(M)"       
+## [456] "(C)"        "(R)"        "(S)"        "(RC)"       "(S)"       
+## [461] "(M)"        "(C)"        "(R)"        "(C)"        "(DC)"      
+## [466] "(C)"        "(C)"        "(M)"        "(C)"        "(S)"       
+## [471] "(C)"        "(DC)"       "(M)"        "(S)"        "(C)"       
+## [476] "(C)"        "(A)"        "(DC)"       "(R)"        "(C)"       
+## [481] "(C)"        "(A)"        "(M)"        "(C)"        "(C)"       
+## [486] "(S)"        "(S)"        "(S)"        "(A)"        "(R)"       
+## [491] "(M)"        "(A)"        "(R)"        "(A)"        "(A)"       
+## [496] "(R)"        "(R)"        "(R)"        "(S)"        "(C)"       
+## [501] "(C)"        "(S)"        "(A)"        "(S)"        "(M)"       
+## [506] "(M)"        "(S)"        "(A)"        "(A)"        "(S)"       
+## [511] "(A)"        "(C)"        "(DC)"       "(S)"        "(S)"       
+## [516] NA           "(A)"        NA           "(R)"        "(C)"       
+## [521] "(S)"        "(C)"        "(S)"        "(A)"        "(A)"       
+## [526] "(A)"        "(A)"        "(C)"        "(A)"        "(A)"       
+## [531] "(A)"        "(A)"        "(C) (NSW)"  "(A)"        "(C)"       
+## [536] "(R)"        "(S)"        "(A)"        "(R)"        "(C)"       
+## [541] "(A)"        "(S)"        "(A)"        "(A)"
+```
+
+--
+
+&lt;div class="info-box" style="position:absolute;right:20px;margin-right:0px!important;bottom:50px;margin-left:0;width:900px;font-size: 20pt;"&gt;
+&lt;ul&gt;
+&lt;li&gt;What is &lt;code&gt;"\\(.+\\)"&lt;/code&gt;???&lt;/li&gt;
+{{content}}
+&lt;/ul&gt;
+&lt;/div&gt;
+
+--
+
+&lt;li&gt;This is a pattern expressed as &lt;b&gt;regular expression&lt;/b&gt; or &lt;b&gt;regex&lt;/b&gt; for short&lt;/li&gt;
+
+{{content}}
+
+--
+
+&lt;li&gt;Note in R, you have to add an extra &lt;code&gt;\&lt;/code&gt; when  &lt;code&gt;\&lt;/code&gt; is included in the pattern &lt;span class="font_small"&gt;(yes this means that you can have a lot of backslashes... just keep adding &lt;code&gt;\&lt;/code&gt; until it works! Enjoy &lt;a href="https://xkcd.com/1638/"&gt;this xkcd comic&lt;/a&gt;.)&lt;/span&gt;&lt;/li&gt;
+
+{{content}}
+
+--
+
+&lt;li&gt;From R v4.0.0 onwards, you can use raw string to elimiate all the extra &lt;code&gt;\&lt;/code&gt;, e.g. &lt;code&gt;r"(&lt;span class="monash-blue"&gt;\(.+\)&lt;/span&gt;&lt;code&gt;)"&lt;/code&gt; is the same as &lt;code class="monash-blue"&gt;"\\(.+\\)"&lt;/code&gt;&lt;/li&gt;
+
+---
+
+# Regular expressions .font_small[.font_small[Part] 1]
+
+* **Regular expression**, or **regex**, is a string of characters that define a search pattern for text
+--
+
+* Regular expression is... 
+--
+hard
+--
+, but comes up often enough that it's worth learning
+--
+
+
+```r
+ozanimals &lt;- c("koala", "kangaroo", "kookaburra", "numbat")
+```
+--
+**.circle.bg-orange.white[=] Basic match**
+.grid[
+.item[
+
+```r
+str_detect(ozanimals, "oo")
+```
+
+```
+## [1] FALSE  TRUE  TRUE FALSE
+```
+
+```r
+str_extract(ozanimals, "oo")
+```
+
+```
+## [1] NA   "oo" "oo" NA
+```
+
+]
+.item[
+
+```r
+str_match(ozanimals, "oo")
+```
+
+```
+##      [,1]
+## [1,] NA  
+## [2,] "oo"
+## [3,] "oo"
+## [4,] NA
+```
+
+]
+
+]
+
+---
+
+# Regular expressions .font_small[.font_small[Part] 2]
+
+**.circle.bg-orange.white[=] Meta-characters**
+
+* `"."` a wildcard to match any character except a new line
+
+```r
+str_starts(c("color", "colouur", "colour", "red-column"), "col...")
+```
+
+```
+## [1] FALSE  TRUE  TRUE FALSE
+```
+--
+
+* `"(.|.)"` a marked subexpression with alternate possibilites marked with `|`
+
+```r
+str_replace(c("lovelove", "move", "stove", "drove"), "(l|dr|st)o", "ha")
+```
+
+```
+## [1] "havelove" "move"     "have"     "have"
+```
+--
+
+* `"[...]"` matches a single character contained in the bracket 
+
+```r
+str_replace_all(c("cake", "cookie", "lamington"), "[aeiou]", "_")
+```
+
+```
+## [1] "c_k_"      "c__k__"    "l_m_ngt_n"
+```
+---
+
+# Regular expressions .font_small[.font_small[Part] 3]
+
+**.circle.bg-orange.white[=] Meta-character quantifiers**
+
+
+* `"?"` zero or one occurence of preceding element
+
+```r
+str_extract(c("color", "colouur", "colour", "red"), "colou?r")
+```
+
+```
+## [1] "color"  NA       "colour" NA
+```
+--
+
+* `"*"` zero or more occurence of preceding element
+
+```r
+str_extract(c("color", "colouur", "colour", "red"), "colou*r")
+```
+
+```
+## [1] "color"   "colouur" "colour"  NA
+```
+--
+
+* `"+"` one or more occurence of preceding element
+
+```r
+str_extract(c("color", "colouur", "colour", "red"), "colou+r")
+```
+
+```
+## [1] NA        "colouur" "colour"  NA
+```
+
+---
+
+# Regular expressions .font_small[.font_small[Part] 4]
+
+* `"{n}"` preceding element is matched exactly `n` times
+
+```r
+str_replace(c("banana", "bananana", "bana", "banananana"), "ba(na){2}", "-")
+```
+
+```
+## [1] "-"     "-na"   "bana"  "-nana"
+```
+--
+
+* `"{min,}"` preceding element is matched `min` times or more
+
+```r
+str_replace(c("banana", "bananana", "bana", "banananana"), "ba(na){2,}", "-")
+```
+
+```
+## [1] "-"    "-"    "bana" "-"
+```
+--
+
+* `"{min,max}"` preceding element is matched at least `min` times but no more than `max` times
+
+```r
+str_replace(c("banana", "bananana", "bana", "banananana"), "ba(na){1,2}", "-")
+```
+
+```
+## [1] "-"     "-na"   "-"     "-nana"
+```
+
+---
+
+# Regular expressions .font_small[.font_small[Part] 5]
+
+**.circle.bg-orange.white[=] Character classes**
+
+* `[:alpha:]` or `[A-Za-z]` to match alphabetic characters
+* `[:alnum:]` or `[A-Za-z0-9]` to match alphanumeric characters
+* `[:digit:]` or `[0-9]` or `\\d` to match a digit
+* `[^0-9]` to match non-digits  
+* `[a-c]` to match a, b or c
+* `[A-Z]` to match uppercase letters
+* `[a-z]` to match lowercase letters
+* `[:space:]` or `[ \t\r\n\v\f]` to match whitespace characters
+* and more...
+
+---
+
+# View matches with regular expressions
+
+.grid-row[
+.item[
+
+```r
+str_view(c("banana", "bananana", "bana", "banabanana"), "ba(na){1,2}")
+```
+
+<div id="htmlwidget-fbb2d086f278390fd98b" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-fbb2d086f278390fd98b">{"x":{"html":"<ul>\n  <li><span class='match'>banana<\/span><\/li>\n  <li><span class='match'>banana<\/span>na<\/li>\n  <li><span class='match'>bana<\/span><\/li>\n  <li><span class='match'>bana<\/span>banana<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+
+]
+.item[
+
+```r
+str_view_all(c("banana", "bananana", "bana", "banabanana"), "ba(na){1,2}")
+```
+
+<div id="htmlwidget-3b82a4ca4ba9fb3cbc58" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3b82a4ca4ba9fb3cbc58">{"x":{"html":"<ul>\n  <li><span class='match'>banana<\/span><\/li>\n  <li><span class='match'>banana<\/span>na<\/li>\n  <li><span class='match'>bana<\/span><\/li>\n  <li><span class='match'>bana<\/span><span class='match'>banana<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+]
+]
+
+---
+
+count: false
+
+# View matches with regular expressions
+
+.grid-row[
+.item[
+
+```r
+str_view(c("banana", "bananana", "bana", "banabanana"), "ba(na){1,2}")
+```
+
+<div id="htmlwidget-8685c60dda6c40d9fe1e" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8685c60dda6c40d9fe1e">{"x":{"html":"<ul>\n  <li><span class='match'>banana<\/span><\/li>\n  <li><span class='match'>banana<\/span>na<\/li>\n  <li><span class='match'>bana<\/span><\/li>\n  <li><span class='match'>bana<\/span>banana<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+
+]
+.item[
+
+```r
+str_view_all(c("banana", "bananana", "bana", "banabanana"), "ba(na){1,2}")
+```
+
+<div id="htmlwidget-a4b60568e3db36e3acec" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a4b60568e3db36e3acec">{"x":{"html":"<ul>\n  <li><span class='match'>banana<\/span><\/li>\n  <li><span class='match'>banana<\/span>na<\/li>\n  <li><span class='match'>bana<\/span><\/li>\n  <li><span class='match'>bana<\/span><span class='match'>banana<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+]
+]
+
+&lt;div class="info-box" style="position:absolute;right:20px;margin-right:0px!important;top:100px;margin-left:0;width:900px;font-size: 20pt;"&gt;
+&lt;ul&gt;
+&lt;li&gt;When a function in &lt;code&gt;stringr&lt;/code&gt; ends with &lt;code&gt;_all&lt;/code&gt;, all matches of the pattern are considered&lt;/li&gt;
+&lt;li&gt;The one &lt;i&gt;without&lt;/i&gt; &lt;code&gt;_all&lt;/code&gt; only considers the first match&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+---
+
+# .font_small[Back to] Extracting the string
+
+
+```r
+str_extract(LGA, "\\(.+\\)")
+```
+
+```
+##   [1] "(C)"        "(S)"        "(R)"        "(S)"        "(R)"       
+##   [6] "(S)"        "(DC)"       "(R)"        "(DC)"       "(C)"       
+##  [11] "(DC)"       "(S)"        "(S)"        "(S)"        "(DC)"      
+##  [16] "(A)"        "(C)"        "(A)"        "(T)"        "(RC)"      
+##  [21] "(A)"        "(S)"        "(S)"        "(S)"        "(C)"       
+##  [26] "(DC)"       "(R)"        "(A)"        "(C)"        "(DC)"      
+##  [31] "(S)"        "(S)"        "(A)"        "(S)"        "(S)"       
+##  [36] "(R)"        "(M)"        "(A)"        "(C)"        "(S)"       
+##  [41] "(S)"        "(C)"        "(A)"        "(S)"        "(C)"       
+##  [46] "(AC)"       "(A)"        "(S)"        "(A)"        "(C)"       
+##  [51] "(A)"        "(R)"        "(S)"        "(T)"        "(C)"       
+##  [56] "(S)"        "(S)"        "(R)"        "(C)"        "(T)"       
+##  [61] "(C)"        "(S)"        "(C)"        "(C)"        "(C)"       
+##  [66] "(C)"        "(S)"        "(DC)"       "(DC)"       "(S)"       
+##  [71] "(R)"        "(R)"        "(S)"        "(B)"        "(DC)"      
+##  [76] "(M)"        "(A)"        "(C)"        "(S)"        "(S)"       
+##  [81] "(S)"        "(S)"        "(S)"        "(S)"        "(S)"       
+##  [86] "(C)"        "(A)"        "(C)"        "(A)"        "(S)"       
+##  [91] "(C)"        "(A)"        "(S)"        "(S)"        "(S)"       
+##  [96] "(S)"        "(DC)"       "(S)"        "(S)"        "(S)"       
+## [101] "(C)"        "(C)"        "(DC)"       "(S)"        "(S)"       
+## [106] "(C)"        "(S)"        "(DC)"       "(C)"        "(C)"       
+## [111] "(S)"        "(S)"        "(S)"        "(S)"        "(S)"       
+## [116] "(S)"        "(A)"        "(DC)"       "(S)"        "(A)"       
+## [121] "(C)"        "(A)"        "(S)"        "(A)"        "(DC)"      
+## [126] "(S)"        "(C)"        "(S)"        "(A)"        "(S)"       
+## [131] "(M)"        "(S)"        "(DC)"       "(R)"        "(C)"       
+## [136] "(C)"        "(S)"        "(C)"        "(S)"        "(T)"       
+## [141] "(S)"        "(S)"        "(DC)"       "(S)"        "(T)"       
+## [146] "(C)"        "(S)"        "(M)"        "(S)"        "(DC)"      
+## [151] "(C)"        "(S)"        "(M)"        "(C)"        "(S)"       
+## [156] "(C)"        "(C)"        "(R)"        "(S)"        "(C)"       
+## [161] "(C)"        "(R)"        "(S)"        "(C)"        "(A)"       
+## [166] "(T)"        "(S)"        "(RC)"       "(C)"        "(A)"       
+## [171] "(A)"        "(A)"        "(S)"        "(A)"        "(S)"       
+## [176] "(S)"        "(T)"        "(S)"        "(S)"        "(S)"       
+## [181] "(A)"        "(DC)"       "(M)"        "(C)"        "(S)"       
+## [186] "(A)"        "(T)"        "(A)"        "(C)"        "(S)"       
+## [191] "(C)"        "(R)"        "(C)"        "(S)"        "(S)"       
+## [196] "(S)"        "(S)"        "(R)"        "(C)"        "(DC)"      
+## [201] "(A)"        "(DC)"       "(R)"        "(C)"        "(S)"       
+## [206] "(S)"        "(C)"        "(C)"        "(R)"        "(S)"       
+## [211] "(S)"        "(C)"        "(A)"        "(S)"        "(S)"       
+## [216] "(C)"        "(DC)"       "(S)"        "(M) (Tas.)" "(M) (Tas.)"
+## [221] "(C) (Vic.)" "(C) (Vic.)" "(S)"        "(DC)"       "(S)"       
+## [226] "(RC)"       "(S)"        "(DC)"       "(S)"        "(S)"       
+## [231] "(R)"        "(S)"        "(A)"        "(C)"        "(C)"       
+## [236] "(A)"        "(A)"        "(RC)"       "(S)"        "(C)"       
+## [241] "(S)"        "(S)"        "(S)"        "(C)"        "(C)"       
+## [246] "(S)"        "(C)"        "(C)"        "(C)"        "(A)"       
+## [251] "(C)"        "(S)"        "(S)"        "(S)"        "(S)"       
+## [256] "(S)"        "(A)"        "(A)"        "(A)"        "(S)"       
+## [261] "(A)"        "(A)"        "(S)"        "(S)"        "(C)"       
+## [266] "(A)"        "(M)"        "(S)"        "(S)"        "(C)"       
+## [271] "(R)"        "(S)"        "(R)"        "(DC)"       "(R)"       
+## [276] "(C)"        "(S)"        "(S)"        "(C)"        "(S)"       
+## [281] "(A)"        "(R)"        "(DC)"       "(A)"        "(C)"       
+## [286] "(A)"        "(S)"        "(S)"        "(A)"        "(C)"       
+## [291] "(C)"        "(A)"        "(T)"        "(S)"        "(C)"       
+## [296] "(A)"        "(A)"        "(S)"        "(S)"        "(T)"       
+## [301] "(C)"        "(A)"        "(A)"        "(DC)"       "(A)"       
+## [306] "(C)"        "(M)"        "(M)"        "(S)"        "(A)"       
+## [311] "(A)"        "(C)"        "(C)"        "(S)"        "(DC)"      
+## [316] "(S)"        "(C)"        "(S)"        "(S)"        "(DC)"      
+## [321] "(RegC)"     "(C)"        "(S)"        "(S)"        NA          
+## [326] "(A)"        "(S)"        "(A)"        "(S)"        "(A)"       
+## [331] "(S)"        "(C)"        "(R)"        "(C)"        "(S)"       
+## [336] "(A)"        "(DC)"       "(S)"        "(A)"        "(R)"       
+## [341] "(S)"        "(S)"        "(RC)"       "(T)"        "(A)"       
+## [346] "(M)"        "(A)"        "(S)"        "(S)"        "(S)"       
+## [351] "(S)"        "(A)"        "(RC)"       "(S)"        "(A)"       
+## [356] "(R)"        "(S)"        "(S)"        "(C)"        "(S)"       
+## [361] "(DC)"       "(M)"        "(M)"        "(AC)"       "(DC)"      
+## [366] "(A)"        "(A)"        "(S)"        "(S)"        "(A)"       
+## [371] "(C)"        "(S)"        "(S)"        "(C)"        "(R)"       
+## [376] "(S)"        "(S)"        NA           "(A)"        "(T)"       
+## [381] "(S)"        "(A)"        "(C)"        "(C)"        "(A)"       
+## [386] "(C)"        "(DC)"       "(C)"        "(A)"        "(A)"       
+## [391] "(A)"        "(S)"        "(DC)"       "(DC)"       "(S)"       
+## [396] "(M)"        "(R)"        "(DC)"       "(C)"        "(S)"       
+## [401] "(S)"        "(C)"        "(C)"        "(C)"        "(C)"       
+## [406] "(C)"        "(S)"        "(A)"        NA           "(S)"       
+## [411] "(C)"        "(S)"        "(M)"        "(C)"        "(S)"       
+## [416] "(S)"        NA           "(C)"        "(S)"        "(C)"       
+## [421] "(DC)"       "(S)"        "(C)"        "(S)"        "(C)"       
+## [426] "(M)"        "(A)"        "(A)"        "(A)"        "(S)"       
+## [431] "(C)"        "(S)"        "(S)"        "(S)"        "(A)"       
+## [436] "(A)"        "(A)"        "(S)"        "(S)"        "(S)"       
+## [441] "(C)"        "(S)"        "(C)"        "(C)"        "(C)"       
+## [446] "(C) (NSW)"  "(S) (Qld)"  "(R) (Qld)"  "(DC) (SA)"  "(C) (SA)"  
+## [451] "(M) (Tas.)" "(M) (Tas.)" "(C)"        "(R)"        "(M)"       
+## [456] "(C)"        "(R)"        "(S)"        "(RC)"       "(S)"       
+## [461] "(M)"        "(C)"        "(R)"        "(C)"        "(DC)"      
+## [466] "(C)"        "(C)"        "(M)"        "(C)"        "(S)"       
+## [471] "(C)"        "(DC)"       "(M)"        "(S)"        "(C)"       
+## [476] "(C)"        "(A)"        "(DC)"       "(R)"        "(C)"       
+## [481] "(C)"        "(A)"        "(M)"        "(C)"        "(C)"       
+## [486] "(S)"        "(S)"        "(S)"        "(A)"        "(R)"       
+## [491] "(M)"        "(A)"        "(R)"        "(A)"        "(A)"       
+## [496] "(R)"        "(R)"        "(R)"        "(S)"        "(C)"       
+## [501] "(C)"        "(S)"        "(A)"        "(S)"        "(M)"       
+## [506] "(M)"        "(S)"        "(A)"        "(A)"        "(S)"       
+## [511] "(A)"        "(C)"        "(DC)"       "(S)"        "(S)"       
+## [516] NA           "(A)"        NA           "(R)"        "(C)"       
+## [521] "(S)"        "(C)"        "(S)"        "(A)"        "(A)"       
+## [526] "(A)"        "(A)"        "(C)"        "(A)"        "(A)"       
+## [531] "(A)"        "(A)"        "(C) (NSW)"  "(A)"        "(C)"       
+## [536] "(R)"        "(S)"        "(A)"        "(R)"        "(C)"       
+## [541] "(A)"        "(S)"        "(A)"        "(A)"
+```
+
+---
+
+count: false
+
+# .font_small[Back to] Extracting the string
+
+
+```r
+str_extract(LGA, "\\(.+\\)") %&gt;% 
+  table()
+```
+
+```
+## .
+##        (A)       (AC)        (B)        (C)  (C) (NSW)   (C) (SA) (C) (Vic.) 
+##        100          2          1        120          2          1          2 
+##       (DC)  (DC) (SA)        (M) (M) (Tas.)        (R)  (R) (Qld)       (RC) 
+##         40          1         23          4         38          1          7 
+##     (RegC)        (S)  (S) (Qld)        (T) 
+##          1        182          1         12
+```
+
+--
+
+&lt;blockquote&gt;
+Where the same Local Government Area name appears in different States or Territories, the State or Territory abbreviation appears in parenthesis after the name. Local Government Area names are therefore unique.&lt;br&gt;
+&lt;a href="https://www.abs.gov.au/ausstats/abs@.nsf/Lookup/by%20Subject/1270.0.55.003~June%202020~Main%20Features~Local%20Government%20Areas%20(LGAs)~3" style="float:right"&gt;-Australian Bureau of Statistics&lt;/a&gt;
+&lt;/blockquote&gt;
+
+---
+
+# .font_small[Retry] Extracting the string
+
+
+```r
+str_extract(LGA, "\\([^)]+\\)") %&gt;% 
+  table()
+```
+
+```
+## .
+##    (A)   (AC)    (B)    (C)   (DC)    (M)    (R)   (RC) (RegC)    (S)    (T) 
+##    100      2      1    125     41     27     39      7      1    183     12
+```
+
+---
+
+count: false
+
+
+# .font_small[Retry] Extracting the string
+
+
+
+```r
+str_extract(LGA, "\\([^)]+\\)") %&gt;% 
+  # remove the brackets
+  str_replace_all("[\\(\\)]", "") %&gt;% 
+  table()
+```
+
+```
+## .
+##    A   AC    B    C   DC    M    R   RC RegC    S    T 
+##  100    2    1  125   41   27   39    7    1  183   12
+```
+
+* `"[]"` for single character match
+* We want to match `(` and `)` but these are meta-characters
+* So we need to escape it to have it as a literal: `\(` and `\)`
+* But we must escape the escape character... so it's actually `\\(` `\\)`
+
+
+
+---
+
+# .font_small[R v4.0.0] Extracting the string
+
+
+&lt;pre&gt;
+&lt;code class="r hljs remark-code"&gt;
+&lt;div class="remark-code-line"&gt;str_extract(LGA, &lt;span style="background-color:yellow"&gt;r&lt;span class="hljs-string"&gt;"(&lt;/span&gt;&lt;/span&gt;&lt;span class="hljs-string"&gt;\([^)]+\)&lt;span style="background-color:yellow"&gt;)"&lt;/span&gt;&lt;/span&gt;) %&amp;gt;% &lt;/div&gt;
+&lt;div class="remark-code-line"&gt;  &lt;span class="hljs-comment"&gt;# remove the brackets&lt;/span&gt;&lt;/div&gt;
+&lt;div class="remark-code-line"&gt;  str_replace_all(&lt;span style="background-color:yellow"&gt;r&lt;span class="hljs-string"&gt;"(&lt;/span&gt;&lt;/span&gt;&lt;span class="hljs-string"&gt;[\(\)]&lt;span style="background-color:yellow"&gt;)"&lt;/span&gt;&lt;/span&gt;, &lt;span class="hljs-string"&gt;""&lt;/span&gt;) %&amp;gt;% &lt;/div&gt;
+&lt;div class="remark-code-line"&gt;  table()&lt;/div&gt;
+&lt;/code&gt;
+&lt;/pre&gt;
+&lt;pre&gt;
+&lt;code class="r hljs remark-code"&gt;&lt;div class="remark-code-line"&gt;&lt;span class="hljs-comment"&gt;## .&lt;/span&gt;&lt;/div&gt;
+&lt;div class="remark-code-line"&gt;&lt;span class="hljs-comment"&gt;##    A   AC    B    C   DC    M    R   RC RegC    S    T &lt;/span&gt;&lt;/div&gt;
+&lt;div class="remark-code-line"&gt;&lt;span class="hljs-comment"&gt;##  100    2    1  125   41   27   39    7    1  183   12&lt;/span&gt;&lt;/div&gt;
+&lt;/code&gt;
+&lt;/pre&gt;
+
+
+* If using R v4.0.0 onwards, you can use the raw string version instead
+
+---
+
+class: transition
+
+Regex still difficult? {{content}}
+
+&lt;img src="https://raw.githubusercontent.com/gadenbuie/regexplain/af4fe0988a10f34dc528b4d359b80bb06af7809a/docs/regexplain-selection.gif"&gt;
+--
+Try RStudio addin &lt;code class="yellow"&gt;regexplain&lt;/code&gt;
+
+---
+
+# `RVerbalExpressions`
+
+* If you still find it difficult, you may find an expressive piping approach to be easier for you:
+
+
+```r
+library(RVerbalExpressions)
+```
+
+```
+## Warning: package 'RVerbalExpressions' was built under R version 4.0.2
+```
+
+```r
+rx_start_of_line() %&gt;% 
+  rx_find('http') %&gt;% 
+  rx_maybe('s') %&gt;% 
+  rx_find('://') %&gt;% 
+  rx_maybe('www.') %&gt;% 
+  rx_anything_but(' ') %&gt;% 
+  rx_end_of_line()
+```
+
+```
+## [1] "^(http)(s)?(\\://)(www\\.)?([^ ]*)$"
+```
+
+.font_small[I don't use this but it sure is easier to understand!]
+
+.footnote[
+
+Tyler Littlefield (2019). RVerbalExpressions:
+  Create Regular Expressions Easily. R package
+  version 0.1.0
+]
+
+
+---
+
+# `stringr::str_glue` or `glue::glue` 
+
+
+```r
+animal &lt;- c("koala", "kangaroo", "numbat")
+quality &lt;- c("cuddly", "cool", "cute")
+paste0("I love ", animal, ", it's so ", quality, "!")
+```
+
+```
+## [1] "I love koala, it's so cuddly!"  "I love kangaroo, it's so cool!"
+## [3] "I love numbat, it's so cute!"
+```
+
+* It works, but we have to break out of the string constantly to refer to variables in the environment
+--
+, but `str_glue` saves you the trouble!
+
+```r
+str_glue("I love {animal}, it's so {quality}!")
+```
+
+```
+## I love koala, it's so cuddly!
+## I love kangaroo, it's so cool!
+## I love numbat, it's so cute!
+```
+
+
+
+.footnote[
+Jim Hester (2020). glue: Interpreted String Literals. R
+  package version 1.4.2.
+]
+
+--
+
+&lt;div class="info-box pad20" style="position:absolute;bottom:20px;right:10px;margin-right:0px;width:300px;"&gt;
+&lt;code&gt;str_glue&lt;/code&gt; is just a wrapper for &lt;code&gt;glue&lt;/code&gt; from the &lt;code&gt;glue&lt;/code&gt; package
+&lt;/div&gt;
+
+---
+
+# `stringr::str_glue_data` or `glue::glue_data` 
+
+
+```r
+df &lt;- data.frame(animal = animal,
+                 quality = quality)
+
+glue::glue_data(df, "I love {animal}, it's so {quality}!")
+```
+
+```
+## I love koala, it's so cuddly!
+## I love kangaroo, it's so cool!
+## I love numbat, it's so cute!
+```
+
+```r
+stringr::str_glue_data(df, "I love {animal}, it's so {quality}!")
+```
+
+```
+## I love koala, it's so cuddly!
+## I love kangaroo, it's so cool!
+## I love numbat, it's so cute!
+```
+
+---
+
+
+
+class: font_smaller
+background-color: #e5e5e5
+
+# Session Information
+
+.scroll-350[
+
+
+
+```r
+devtools::session_info()
+```
+
+```
+## ─ Session info ───────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       macOS Catalina 10.15.7      
+##  system   x86_64, darwin17.0          
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_AU.UTF-8                 
+##  ctype    en_AU.UTF-8                 
+##  tz       Australia/Melbourne         
+##  date     2020-11-26                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────
+##  package            * version    date       lib
+##  anicon               0.1.0      2020-06-21 [1]
+##  assertthat           0.2.1      2019-03-21 [2]
+##  backports            1.2.0      2020-11-02 [1]
+##  broom                0.7.2      2020-10-20 [1]
+##  callr                3.5.1      2020-10-13 [1]
+##  cellranger           1.1.0      2016-07-27 [2]
+##  class                7.3-17     2020-04-26 [2]
+##  classInt             0.4-3      2020-04-07 [1]
+##  cli                  2.2.0      2020-11-20 [1]
+##  colorspace           2.0-0      2020-11-11 [1]
+##  crayon               1.3.4      2017-09-16 [2]
+##  crosstalk            1.1.0.1    2020-03-13 [1]
+##  DBI                  1.1.0      2019-12-15 [1]
+##  dbplyr               2.0.0      2020-11-03 [1]
+##  desc                 1.2.0      2018-05-01 [2]
+##  devtools             2.3.2      2020-09-18 [1]
+##  digest               0.6.27     2020-10-24 [1]
+##  dplyr              * 1.0.2      2020-08-18 [1]
+##  DT                   0.16       2020-10-13 [1]
+##  e1071                1.7-4      2020-10-14 [1]
+##  ellipsis             0.3.1      2020-05-15 [2]
+##  evaluate             0.14       2019-05-28 [2]
+##  fansi                0.4.1      2020-01-08 [2]
+##  flair              * 0.0.2      2020-11-21 [1]
+##  forcats            * 0.5.0      2020-03-01 [2]
+##  fs                   1.5.0      2020-07-31 [1]
+##  generics             0.1.0      2020-10-31 [2]
+##  ggplot2            * 3.3.2      2020-06-19 [1]
+##  glue                 1.4.2      2020-08-27 [1]
+##  gtable               0.3.0      2019-03-25 [2]
+##  haven                2.3.1      2020-06-01 [2]
+##  hms                  0.5.3      2020-01-08 [2]
+##  htmltools            0.5.0      2020-06-16 [1]
+##  htmlwidgets          1.5.2      2020-10-03 [1]
+##  httr                 1.4.2      2020-07-20 [1]
+##  icon                 0.1.0      2020-06-21 [1]
+##  jsonlite             1.7.1      2020-09-07 [1]
+##  KernSmooth           2.23-18    2020-10-29 [2]
+##  knitr                1.30       2020-09-22 [1]
+##  lifecycle            0.2.0      2020-03-06 [1]
+##  lubridate            1.7.9      2020-06-08 [2]
+##  magrittr             2.0.1      2020-11-17 [1]
+##  memoise              1.1.0      2017-04-21 [2]
+##  modelr               0.1.8      2020-05-19 [2]
+##  munsell              0.5.0      2018-06-12 [2]
+##  oz                   1.0-21     2016-12-08 [1]
+##  ozmaps               0.3.6      2020-04-02 [1]
+##  pillar               1.4.7      2020-11-20 [1]
+##  pkgbuild             1.1.0      2020-07-13 [2]
+##  pkgconfig            2.0.3      2019-09-22 [2]
+##  pkgload              1.1.0      2020-05-29 [2]
+##  prettyunits          1.1.1      2020-01-24 [2]
+##  processx             3.4.4      2020-09-03 [1]
+##  ps                   1.4.0      2020-10-07 [1]
+##  purrr              * 0.3.4      2020-04-17 [2]
+##  R6                   2.5.0      2020-10-28 [1]
+##  Rcpp                 1.0.5      2020-07-06 [1]
+##  readr              * 1.4.0      2020-10-05 [2]
+##  readxl               1.3.1      2019-03-13 [2]
+##  remotes              2.2.0      2020-07-21 [1]
+##  reprex               0.3.0.9001 2020-08-08 [1]
+##  rlang                0.4.8      2020-10-08 [1]
+##  rmarkdown            2.5        2020-10-21 [1]
+##  rprojroot            2.0.2      2020-11-15 [1]
+##  rstudioapi           0.13       2020-11-12 [1]
+##  RVerbalExpressions * 0.1.0      2019-11-06 [1]
+##  rvest                0.3.6      2020-07-25 [1]
+##  scales               1.1.1      2020-05-11 [2]
+##  sessioninfo          1.1.1      2018-11-05 [2]
+##  sf                   0.9-6      2020-09-13 [1]
+##  stringi              1.5.3      2020-09-09 [2]
+##  stringr            * 1.4.0      2019-02-10 [2]
+##  testthat             3.0.0      2020-10-31 [1]
+##  tibble             * 3.0.4      2020-10-12 [1]
+##  tidyr              * 1.1.2      2020-08-27 [1]
+##  tidyselect           1.1.0      2020-05-11 [2]
+##  tidyverse          * 1.3.0      2019-11-21 [1]
+##  units                0.6-7      2020-06-13 [1]
+##  usethis              1.6.3      2020-09-17 [1]
+##  vctrs                0.3.5      2020-11-17 [1]
+##  withr                2.3.0      2020-09-22 [1]
+##  xaringan             0.18       2020-10-21 [1]
+##  xfun                 0.19       2020-10-30 [1]
+##  xml2                 1.3.2      2020-04-23 [2]
+##  yaml                 2.2.1      2020-02-01 [1]
+##  source                           
+##  Github (emitanaka/anicon@0b756df)
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.1)                   
+##  CRAN (R 4.0.1)                   
+##  CRAN (R 4.0.1)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.0)                   
+##  Github (kbodwin/flair@b3054f2)   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  Github (emitanaka/icon@8458546)  
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.1)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.1)                   
+##  CRAN (R 4.0.1)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.2)                   
+##  Github (tidyverse/reprex@9594ee9)
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.1)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.1)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.2)                   
+##  CRAN (R 4.0.0)                   
+##  CRAN (R 4.0.2)                   
+## 
+## [1] /Users/etan0038/Library/R/4.0/library
+## [2] /Library/Frameworks/R.framework/Versions/4.0/Resources/library
+```
+]
+
+
+These slides are licensed under &lt;br&gt;&lt;center&gt;&lt;a href="https://creativecommons.org/licenses/by-sa/3.0/au/"&gt;&lt;img src="images/cc.svg" style="height:2em;"/&gt;&lt;img src="images/by.svg" style="height:2em;"/&gt;&lt;img src="images/sa.svg" style="height:2em;"/&gt;&lt;/a&gt;&lt;/center&gt;
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLanguage": "r",
+"highlightLines": true,
+"highlightSpans": false,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%",
+"navigation": {
+"scroll": false,
+"touch": true,
+"click": false
+},
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

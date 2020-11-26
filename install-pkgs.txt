@@ -1,0 +1,8 @@
+tidyverse
+rmarkdown
+remotes
+shiny
+RVerbalExpressions
+janitor
+broom
+agridat

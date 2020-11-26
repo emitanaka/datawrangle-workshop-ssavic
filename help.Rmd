@@ -1,0 +1,15 @@
+---
+title: "Help!"
+author: "Emi Tanaka & Fan Cheng"
+date: "1-2 December 2020"
+---
+
+* If you need help, have any issues, or came late and missed the instructions, do let us know!
+* The workshop teaching team is Emi Tanaka and Fan Cheng.
+* If you'd like help, please flag Emi or Fan by sending a chat message in zoom or raising hand (you should see a control like below in zoom to raise your hand).
+
+<center>
+<img src="slides/images/zoom-help.png">
+</center>
+
+* One of us will take you to a separate break out room to try to resolve the issue.

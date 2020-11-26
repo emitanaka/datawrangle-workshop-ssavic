@@ -1,0 +1,4 @@
+rstudio/learnr
+rstudio-education/gradethis
+ropenscilabs/ozbabynames
+gadenbuie/regexplain

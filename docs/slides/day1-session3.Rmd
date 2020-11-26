@@ -1,0 +1,610 @@
+---
+title: "Data Wrangling with R: Day 1"
+subtitle: "Manipulating strings with `stringr`"
+author: "Emi Tanaka"
+email: "emi.tanaka@monash.edu"
+date: "1st December 2020 @ Statistical Society of Australia | Zoom"
+length: "30 minutes"
+titleslide_bgimg: "images/bg1.jpg"
+exercise: "day1-exercise-03"
+output:
+  xaringan::moon_reader:
+    css:
+      - ninjutsu 
+      - "assets/animate.css"
+      - "assets/custom.css"
+      - "assets/fira-code.css"
+      - "assets/boxes.css"
+      - "assets/styles.css"
+      - "assets/monash-brand.css"
+    self_contained: false 
+    seal: false 
+    chakra: 'libs/remark-latest.min.js'
+    lib_dir: libs
+    mathjax: "assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+    nature:
+      highlightStyle: github
+      highlightLanguage: r 
+      highlightLines: true
+      highlightSpans: false 
+      countIncrementalSlides: false
+      slideNumberFormat: '%current%/%total%'
+      navigation:
+        scroll: false 
+        touch: true
+        click: false
+      ratio: '16:9'
+---
+
+```{r, include = FALSE}
+current_file <- knitr::current_input()
+library(flair)
+library(tidyverse)
+flair_on <- FALSE # don't use for this slide #
+# doesn't do escape character well
+```
+```{r titleslide, child="assets/titleslide.Rmd"}
+```
+
+---
+
+# Manipulating strings 
+
+* The `stringr` package is powered by the `stringi` package which in turn uses the [ICU](http://site.icu-project.org/) C library to provide fast peformance for string manipulation
+
+
+.footnote[
+Hadley Wickham (2019). stringr: Simple, Consistent Wrappers for
+  Common String Operations. R package version 1.4.0.
+  
+Gagolewski M. and others (2020). R package stringi: Character
+  string processing facilities.
+]
+
+--
+
+* Main functions in `stringr` **prefix with `str_`**  (`stringi` prefix with `stri_`) and the **first argument is string** (or a vector of strings)
+--
+
+* What do you think `str_trim` and `str_squish` do?
+```{r}
+str_trim(c("    Apple ", "  Goji    Berry     "))
+str_squish(c("    Apple ", "  Goji    Berry     "))
+```
+
+---
+
+# Base R and `stringr`
+
+```{r, echo = FALSE}
+baser <- tibble(`Base R` = c("gregexpr(pattern, x)", "grep(pattern, x, value = TRUE)", "grep(pattern, x)", 
+"grepl(pattern, x)", "gsub(pattern, replacement, x)", "nchar(x)", 
+"order(x)", "regexec(pattern, x) + regmatches()", "regexpr(pattern, x) + regmatches()", 
+"regexpr(pattern, x)", "sort(x)", "strrep(x, n)", "strsplit(x, pattern)", 
+"strwrap(x)", "sub(pattern, replacement, x)", "substr(x, start, end)", 
+"tolower(x)", "tools::toTitleCase(x)", "toupper(x)", "trimws(x)"
+),
+stringr = c("str_locate_all(x, pattern)", "str_subset(x, pattern)", "str_which(x, pattern)", 
+"str_detect(x, pattern)", "str_replace_all(x, pattern, replacement)", 
+"str_length(x)", "str_order(x)", "str_match(x, pattern)", "str_extract(x, pattern)", 
+"str_locate(x, pattern)", "str_sort(x)", "str_dup(x, n)", "str_split(x, pattern)", 
+"str_wrap(x)", "str_replace(x, pattern, replacement)", "str_sub(x, start, end)", 
+"str_to_lower(x)", "str_to_title(x)", "str_to_upper(x)", "str_trim(x)"
+)
+)
+DT::datatable(baser, options= list(lengthChange = FALSE,
+                                   dom = 'tp',
+                                   columnDefs = list(list(className = 'dt-left'))),
+              rownames = FALSE)
+```
+
+.footnote[
+See more at https://stringr.tidyverse.org/articles/from-base.html
+]
+
+---
+
+# Why use `stringr`?
+
+* There are a number of considerations to ensure there is consistency in syntax and user expectation (both for input and output)
+--
+
+* For example, let's consider <u>combining multiple strings into one</u>.
+--
+.grid[
+.item[
+**Base R**
+
+```{r}
+paste0("Area", "1", c("A", "B"))
+```
+
+]
+.item[
+**`stringr`**
+```{r}
+str_c("Area", "1", c("A", "B"))
+```
+]]
+
+---
+
+count: false
+
+# Why use `stringr`?
+
+* There are a number of considerations to ensure there is consistency in syntax and user expectation (both for input and output)
+
+* For example, let's consider <u>combining multiple strings into one</u>.
+.grid[
+.item[
+**Base R**
+
+```{r}
+paste0("Area", "1", c("A", "B"))
+```
+```{r, eval = FALSE}
+paste0("Area", "1", c("A", NA, "C"))
+```
+
+]
+.item[
+**`stringr`**
+```{r}
+str_c("Area", "1", c("A", "B"))
+```
+```{r, eval = FALSE}
+str_c("Area", "1", c("A", NA, "C"))
+```
+]]
+
+
+---
+
+count: false
+
+# Why use `stringr`?
+
+* There are a number of considerations to ensure there is consistency in syntax and user expectation (both for input and output)
+
+* For example, let's consider <u>combining multiple strings into one</u>.
+.grid[
+.item[
+**Base R**
+
+```{r}
+paste0("Area", "1", c("A", "B"))
+```
+```{r}
+paste0("Area", "1", c("A", NA, "C"))
+```
+
+]
+.item[
+**`stringr`**
+```{r}
+str_c("Area", "1", c("A", "B"))
+```
+```{r}
+str_c("Area", "1", c("A", NA, "C"))
+```
+]]
+
+* If the Base R result is preferable then NA can be replaced with character with .monash-blue[`str_replace_na`]`("A", NA, "C")` first
+
+
+---
+
+# .orange[Case study <i class="fas fa-search-plus"></i>] Aussie Local Government Area
+
+```{r}
+LGA <- ozmaps::abs_lga %>% pull(NAME)
+LGA[1:7]
+```
+
+<center>
+<table style="width:90%">
+  <tr>
+    <td>C = Cities</td>
+    <td>A = Areas</td>
+    <td>RC = Rural Cities</td>
+    
+  </tr>
+  <tr>
+    <td>B = Boroughs</td>
+    <td>S = Shires</td>
+    <td>DC = District Councils</td>
+  </tr>
+  <tr>
+    <td>M = Municipalities</td>
+    <td>T = Towns</td>
+    <td>AC = Aboriginal Councils </td>
+  </tr>
+  <tr>
+  <td>RegC = Regional Councils</td>
+  </tr>
+</table>
+</center>
+
+<br>
+.center[
+🎯 **Extract the LGA status from the LGA names**
+
+{{content}}
+]
+
+.footnote[
+Michael Sumner (2020). ozmaps: Australia Maps. R package version
+  0.3.6. 
+]
+
+--
+
+How?
+
+
+---
+
+name: lga
+
+# Extracting the string
+
+
+```{r}
+str_extract(LGA, "\\(.+\\)") 
+```
+
+--
+
+<div class="info-box" style="position:absolute;right:20px;margin-right:0px!important;bottom:50px;margin-left:0;width:900px;font-size: 20pt;">
+<ul>
+<li>What is <code>"\\(.+\\)"</code>???</li>
+{{content}}
+</ul>
+</div>
+
+--
+
+<li>This is a pattern expressed as <b>regular expression</b> or <b>regex</b> for short</li>
+
+{{content}}
+
+--
+
+<li>Note in R, you have to add an extra <code>\</code> when  <code>\</code> is included in the pattern <span class="font_small">(yes this means that you can have a lot of backslashes... just keep adding <code>\</code> until it works! Enjoy <a href="https://xkcd.com/1638/">this xkcd comic</a>.)</span></li>
+
+{{content}}
+
+--
+
+<li>From R v4.0.0 onwards, you can use raw string to elimiate all the extra <code>\</code>, e.g. <code>r"(<span class="monash-blue">\(.+\)</span><code>)"</code> is the same as <code class="monash-blue">"\\(.+\\)"</code></li>
+
+---
+
+# Regular expressions .font_small[.font_small[Part] 1]
+
+* **Regular expression**, or **regex**, is a string of characters that define a search pattern for text
+--
+
+* Regular expression is... 
+--
+hard
+--
+, but comes up often enough that it's worth learning
+--
+
+```{r}
+ozanimals <- c("koala", "kangaroo", "kookaburra", "numbat")
+```
+--
+**.circle.bg-orange.white[=] Basic match**
+.grid[
+.item[
+```{r}
+str_detect(ozanimals, "oo")
+str_extract(ozanimals, "oo")
+```
+
+]
+.item[
+```{r}
+str_match(ozanimals, "oo")
+```
+
+]
+
+]
+
+---
+
+# Regular expressions .font_small[.font_small[Part] 2]
+
+**.circle.bg-orange.white[=] Meta-characters**
+
+* `"."` a wildcard to match any character except a new line
+```{r}
+str_starts(c("color", "colouur", "colour", "red-column"), "col...")
+```
+--
+
+* `"(.|.)"` a marked subexpression with alternate possibilites marked with `|`
+```{r}
+str_replace(c("lovelove", "move", "stove", "drove"), "(l|dr|st)o", "ha")
+```
+--
+
+* `"[...]"` matches a single character contained in the bracket 
+```{r}
+str_replace_all(c("cake", "cookie", "lamington"), "[aeiou]", "_")
+```
+---
+
+# Regular expressions .font_small[.font_small[Part] 3]
+
+**.circle.bg-orange.white[=] Meta-character quantifiers**
+
+
+* `"?"` zero or one occurence of preceding element
+```{r}
+str_extract(c("color", "colouur", "colour", "red"), "colou?r")
+```
+--
+
+* `"*"` zero or more occurence of preceding element
+```{r}
+str_extract(c("color", "colouur", "colour", "red"), "colou*r")
+```
+--
+
+* `"+"` one or more occurence of preceding element
+```{r}
+str_extract(c("color", "colouur", "colour", "red"), "colou+r")
+```
+
+---
+
+# Regular expressions .font_small[.font_small[Part] 4]
+
+* `"{n}"` preceding element is matched exactly `n` times
+```{r}
+str_replace(c("banana", "bananana", "bana", "banananana"), "ba(na){2}", "-")
+```
+--
+
+* `"{min,}"` preceding element is matched `min` times or more
+```{r}
+str_replace(c("banana", "bananana", "bana", "banananana"), "ba(na){2,}", "-")
+```
+--
+
+* `"{min,max}"` preceding element is matched at least `min` times but no more than `max` times
+```{r}
+str_replace(c("banana", "bananana", "bana", "banananana"), "ba(na){1,2}", "-")
+```
+
+---
+
+# Regular expressions .font_small[.font_small[Part] 5]
+
+**.circle.bg-orange.white[=] Character classes**
+
+* `[:alpha:]` or `[A-Za-z]` to match alphabetic characters
+* `[:alnum:]` or `[A-Za-z0-9]` to match alphanumeric characters
+* `[:digit:]` or `[0-9]` or `\\d` to match a digit
+* `[^0-9]` to match non-digits  
+* `[a-c]` to match a, b or c
+* `[A-Z]` to match uppercase letters
+* `[a-z]` to match lowercase letters
+* `[:space:]` or `[ \t\r\n\v\f]` to match whitespace characters
+* and more...
+
+---
+
+# View matches with regular expressions
+
+.grid-row[
+.item[
+```{r}
+str_view(c("banana", "bananana", "bana", "banabanana"), "ba(na){1,2}")
+```
+
+]
+.item[
+```{r}
+str_view_all(c("banana", "bananana", "bana", "banabanana"), "ba(na){1,2}")
+```
+]
+]
+
+---
+
+count: false
+
+# View matches with regular expressions
+
+.grid-row[
+.item[
+```{r}
+str_view(c("banana", "bananana", "bana", "banabanana"), "ba(na){1,2}")
+```
+
+]
+.item[
+```{r}
+str_view_all(c("banana", "bananana", "bana", "banabanana"), "ba(na){1,2}")
+```
+]
+]
+
+<div class="info-box" style="position:absolute;right:20px;margin-right:0px!important;top:100px;margin-left:0;width:900px;font-size: 20pt;">
+<ul>
+<li>When a function in <code>stringr</code> ends with <code>_all</code>, all matches of the pattern are considered</li>
+<li>The one <i>without</i> <code>_all</code> only considers the first match</li>
+</ul>
+</div>
+
+---
+
+# .font_small[Back to] Extracting the string
+
+```{r}
+str_extract(LGA, "\\(.+\\)")
+```
+
+---
+
+count: false
+
+# .font_small[Back to] Extracting the string
+
+```{r}
+str_extract(LGA, "\\(.+\\)") %>% 
+  table()
+```
+
+--
+
+<blockquote>
+Where the same Local Government Area name appears in different States or Territories, the State or Territory abbreviation appears in parenthesis after the name. Local Government Area names are therefore unique.<br>
+<a href="https://www.abs.gov.au/ausstats/abs@.nsf/Lookup/by%20Subject/1270.0.55.003~June%202020~Main%20Features~Local%20Government%20Areas%20(LGAs)~3" style="float:right">-Australian Bureau of Statistics</a>
+</blockquote>
+
+---
+
+# .font_small[Retry] Extracting the string
+
+```{r}
+str_extract(LGA, "\\([^)]+\\)") %>% 
+  table()
+```
+
+---
+
+count: false
+
+
+# .font_small[Retry] Extracting the string
+
+
+```{r}
+str_extract(LGA, "\\([^)]+\\)") %>% 
+  # remove the brackets
+  str_replace_all("[\\(\\)]", "") %>% 
+  table()
+```
+
+* `"[]"` for single character match
+* We want to match `(` and `)` but these are meta-characters
+* So we need to escape it to have it as a literal: `\(` and `\)`
+* But we must escape the escape character... so it's actually `\\(` `\\)`
+
+
+
+---
+
+# .font_small[R v4.0.0] Extracting the string
+
+
+<pre>
+<code class="r hljs remark-code">
+<div class="remark-code-line">str_extract(LGA, <span style="background-color:yellow">r<span class="hljs-string">"(</span></span><span class="hljs-string">\([^)]+\)<span style="background-color:yellow">)"</span></span>) %&gt;% </div>
+<div class="remark-code-line">  <span class="hljs-comment"># remove the brackets</span></div>
+<div class="remark-code-line">  str_replace_all(<span style="background-color:yellow">r<span class="hljs-string">"(</span></span><span class="hljs-string">[\(\)]<span style="background-color:yellow">)"</span></span>, <span class="hljs-string">""</span>) %&gt;% </div>
+<div class="remark-code-line">  table()</div>
+</code>
+</pre>
+<pre>
+<code class="r hljs remark-code"><div class="remark-code-line"><span class="hljs-comment">## .</span></div>
+<div class="remark-code-line"><span class="hljs-comment">##    A   AC    B    C   DC    M    R   RC RegC    S    T </span></div>
+<div class="remark-code-line"><span class="hljs-comment">##  100    2    1  125   41   27   39    7    1  183   12</span></div>
+</code>
+</pre>
+
+
+* If using R v4.0.0 onwards, you can use the raw string version instead
+
+---
+
+class: transition
+
+Regex still difficult? {{content}}
+
+<img src="https://raw.githubusercontent.com/gadenbuie/regexplain/af4fe0988a10f34dc528b4d359b80bb06af7809a/docs/regexplain-selection.gif">
+--
+Try RStudio addin <code class="yellow">regexplain</code>
+
+---
+
+# `RVerbalExpressions`
+
+* If you still find it difficult, you may find an expressive piping approach to be easier for you:
+
+```{r}
+library(RVerbalExpressions)
+rx_start_of_line() %>% 
+  rx_find('http') %>% 
+  rx_maybe('s') %>% 
+  rx_find('://') %>% 
+  rx_maybe('www.') %>% 
+  rx_anything_but(' ') %>% 
+  rx_end_of_line()
+```
+
+.font_small[I don't use this but it sure is easier to understand!]
+
+.footnote[
+
+Tyler Littlefield (2019). RVerbalExpressions:
+  Create Regular Expressions Easily. R package
+  version 0.1.0
+]
+
+
+---
+
+# `stringr::str_glue` or `glue::glue` 
+
+```{r}
+animal <- c("koala", "kangaroo", "numbat")
+quality <- c("cuddly", "cool", "cute")
+paste0("I love ", animal, ", it's so ", quality, "!")
+```
+
+* It works, but we have to break out of the string constantly to refer to variables in the environment
+--
+, but `str_glue` saves you the trouble!
+```{r}
+str_glue("I love {animal}, it's so {quality}!")
+```
+
+
+
+.footnote[
+Jim Hester (2020). glue: Interpreted String Literals. R
+  package version 1.4.2.
+]
+
+--
+
+<div class="info-box pad20" style="position:absolute;bottom:20px;right:10px;margin-right:0px;width:300px;">
+<code>str_glue</code> is just a wrapper for <code>glue</code> from the <code>glue</code> package
+</div>
+
+---
+
+# `stringr::str_glue_data` or `glue::glue_data` 
+
+```{r}
+df <- data.frame(animal = animal,
+                 quality = quality)
+
+glue::glue_data(df, "I love {animal}, it's so {quality}!")
+
+stringr::str_glue_data(df, "I love {animal}, it's so {quality}!")
+
+```
+
+---
+
+```{r endslide, child="assets/endslide.Rmd"}
+```

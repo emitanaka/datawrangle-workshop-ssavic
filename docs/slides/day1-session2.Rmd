@@ -1,0 +1,638 @@
+---
+title: "Data Wrangling with R: Day 1"
+subtitle: "Data manipulation with `dplyr`"
+author: "Emi Tanaka"
+email: "emi.tanaka@monash.edu"
+date: "1st December 2020 @ Statistical Society of Australia | Zoom"
+length: "30 minutes"
+titleslide_bgimg: "images/bg2.jpg"
+exercise: "day1-exercise-02"
+output:
+  xaringan::moon_reader:
+    css:
+      - ninjutsu 
+      - "assets/animate.css"
+      - "assets/custom.css"
+      - "assets/fira-code.css"
+      - "assets/boxes.css"
+      - "assets/styles.css"
+      - "assets/monash-brand.css"
+    self_contained: false 
+    seal: false 
+    chakra: 'libs/remark-latest.min.js'
+    lib_dir: libs
+    mathjax: "assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+    nature:
+      highlightStyle: github
+      highlightLanguage: r 
+      highlightLines: true
+      highlightSpans: false 
+      countIncrementalSlides: false
+      slideNumberFormat: '%current%/%total%'
+      navigation:
+        scroll: false 
+        touch: true
+        click: false
+      ratio: '16:9'
+---
+
+```{r, include = FALSE}
+library(flair)
+current_file <- knitr::current_input()
+flair_on <- TRUE
+```
+```{r titleslide, child="assets/titleslide.Rmd"}
+```
+
+---
+
+# Grammar of data manipulation
+
+```{r, warning = FALSE, message = FALSE}
+library(dplyr) # or library(tidyverse)
+```
+* `dplyr` is a core package in `tidyverse` 
+* The earlier concept of `dplyr` (first on CRAN in 2014-01-29) was implemented in `plyr` (first on CRAN in 2008-10-08)
+* The functions in `dplyr` has been evolving frequently but `dplyr` v1.0.0 was released on CRAN in 2020-05-29
+* This new version contained new "verbs"
+* The major release suggests that functions in `dplyr` are maturing and thus the user interface is unlikely to change
+
+
+
+
+
+.footnote[
+Hadley Wickham, Romain François, Lionel Henry and Kirill Müller
+  (2020). dplyr: A Grammar of Data Manipulation. R package version
+  1.0.2. 
+  
+Hadley Wickham (2011). The Split-Apply-Combine Strategy for Data
+  Analysis. Journal of Statistical Software, 40(1), 1-29.
+]
+
+
+---
+
+# Lifecycle
+
+.grid[
+.item[
+<br>
+<img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/vignettes/figures/lifecycle.svg" width = "550px">
+]
+.item[
+
+<img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-archived.svg">
+<img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-defunct.svg">
+<img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-deprecated.svg">
+<img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-experimental.svg">
+<img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-maturing.svg">
+<img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-questioning.svg">
+<img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-retired.svg">
+<img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-soft-deprecated.svg">
+<img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-stable.svg">
+<img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-superseded.svg">
+
+* Functions (and sometimes arguments of functions) in `tidyverse` packages often are labelled with a badge like above
+* Find definitions of badges [here](https://lifecycle.r-lib.org/articles/lifecycle.html)
+* Check out documentations below
+```{r, eval = FALSE}
+help(mutate, package = "dplyr")
+help(mutate_each, package = "dplyr")
+```
+
+]
+
+]
+
+.footnote[
+Lionel Henry (2020). lifecycle: Manage the Life Cycle of your
+  Package Functions. R package version 0.2.0.
+]
+
+
+---
+
+# `dplyr` "verbs"
+
+
+* The main functions of `dplyr` include: 
+<center>
+<table style="width:60%">
+  <tr>
+    <td><code>arrange</code></td>
+    <td><code>select</code></td>
+    <td><code>mutate</code></td>
+  </tr>
+  <tr>
+    <td><code>rename</code></td>
+    <td><code>group_by</code></td>
+    <td><code>summarise</code></td>
+  </tr>
+</table>
+</center>
+--
+
+* Notice that these functions are _verbs_
+--
+
+* Functions in `dplyr` generally have the form:
+
+.center[
+`verb(data, args)`
+]
+
+--
+
+* I.e., the first argument `data` is a `data.frame` object
+--
+
+* What do you think the following will do?
+
+.center[
+`rename(mtcars, miles_per_gallon = mpg)`
+
+{{content}}
+]
+--
+
+`arrange(mtcars, wt)`
+
+---
+
+# Pipe operator %>%
+
+* Almost all tidyverse packages import the `magrittr` package to use `%>%`
+
+.footnote[
+Stefan Milton Bache and Hadley Wickham (2020). magrittr: A
+  Forward-Pipe Operator for R. R package version 2.0.1.
+]
+--
+
+* `x %>% f(y)` is the same as `f(x, y)`
+--
+
+* `x %>% f(y) %>% g(z)` is the same as `g(f(x, y), z)`
+--
+
+* When you see the pipe operator `%>%`, read it as "and then"
+--
+
+```{r}
+mtcars %>%                          # take mtcars data, and then
+ rename(miles_per_gallon = mpg) %>% # rename mpg as miles_per_gallon, and then
+ arrange(wt)                        # arrange row by wt
+```
+
+---
+
+# Lazy and non-standard evaluation
+
+* Remember in Base R:
+
+```{r}
+subset(mtcars, mpg > 31)
+```
+--
+
+* But the second argument cannot be evaluated:
+
+```{r, error = TRUE}
+mpg > 31
+```
+--
+
+* R employs what is called **lazy evaluation** for function inputs 
+--
+
+* **Non-standard evaluation** uses this feature to capture the input expression within the function and evaluate only when requested
+
+---
+
+# Tidy evaluation .font_small[.font_small[Part] 1]
+
+* Tidy evaluation builds on the lazy and non-standard evaluation and is implemented in `rlang`
+* All core tidyverse packages import `rlang`
+* So what does it do?
+* Let's consider `filter`, the Tidyverse version of `subset`
+
+```{r}
+filter(mtcars, mpg > 31)
+```
+
+* <i class="fas fa-exclamation-triangle animated flash red"></i> If you get an error using `filter`, replace it with `dplyr::filter`<br> .font_small[for those interested, `dplyr::filter` is a conflict with `stats::filter` and it may be using `stats::filter` instead... I've fallen into this trap so many times!]
+
+.footnote[
+Lionel Henry and Hadley Wickham (2020). rlang: Functions for Base
+  Types and Core R and 'Tidyverse' Features. R package version
+  0.4.8.
+]
+
+---
+
+# Tidy evaluation .font_small[.font_small[Part] 2]
+
+* Suppose we have a silly function that subsets `mtcars` for a given condition
+
+```{r}
+myCarSubset <- function(cond) subset(mtcars, cond)
+myCarFilter <- function(cond) filter(mtcars, cond)
+```
+
+* This causes an issue because `cond` is evaluated before it is parsed into `subset` or `filter`
+
+```{r, error = TRUE}
+myCarSubset(mpg > 31)
+myCarFilter(mpg > 31)
+```
+
+---
+
+# Tidy evaluation .font_small[.font_small[Part] 3]
+
+* Functions that use non-standard evaluation is problematic
+
+```{r curly, error = TRUE, eval = !flair_on, echo = !flair_on}
+myCarSubsetNew <- function(cond) subset(mtcars, {{ cond }})
+myCarFilterNew <- function(cond) filter(mtcars, {{ cond }})
+
+myCarSubsetNew(mpg > 31)
+myCarFilterNew(mpg > 31)
+```
+```{r, error = TRUE, echo = FALSE, eval = flair_on}
+decorate("curly") %>% 
+  flair("{{") %>% 
+  flair("}}")
+```
+
+
+* .monash-blue[`{{ }}`] only works if the underlying function implements `rlang`
+
+---
+
+# Data masking .font_small[.font_small[Part] 1]
+
+.grid[
+.item[
+```{r, error = TRUE}
+ind <- 1:nrow(cars) # nrow(cars) = 50
+subset(cars, ind > 49)
+filter(cars, ind > 49)
+```
+* For any variables that don't exist in the data, R searches the parental environment for evaluation.
+]
+.item[
+
+{{content}}
+]
+
+]
+
+
+--
+```{r subset, eval = FALSE}
+speed <- c(40, 51)
+subset(cars, speed > 24)
+```
+{{content}}
+--
+```{r subset, echo = FALSE}
+```
+{{content}}
+--
+```{r filter, eval = FALSE}
+filter(cars, speed > 24)
+```
+{{content}}
+--
+```{r filter, echo = FALSE}
+```
+{{content}}
+--
+
+* The variables in data take priority for reference over those in parental environment
+
+---
+
+# Data masking .font_small[.font_small[Part] 2]
+
+
+.grid[
+.item[
+```{r data-mask, eval = !flair_on, echo = !flair_on}
+speed <- 1:nrow(cars)
+filter(cars, .data$speed > 24)
+filter(cars, .env$speed > 24)
+```
+
+```{r, echo = FALSE, eval = flair_on}
+decorate("data-mask") %>% 
+  flair(".data") %>% 
+  flair(".env")
+```
+
+]
+.item[
+
+* In Tidyverse, you can be explicit whether the variable is in the data or in the parental environment
+* .monash-blue[`.data`] is a special pronoun referring to variables in the data parsed in the first argument
+* .monash-blue[`.env`] is a special pronoun referring to variables in the environment (i.e. _not_ in the data parsed in the first argument)
+
+]
+
+]
+
+---
+
+# Tidy select .font_small[.font_small[Part] 1]
+
+* Tidyverse packages generally use syntax from the `tidyselect` package for variable/column selection
+
+```{r}
+data(frogsignal, package = "dwexercise")
+str(frogsignal) 
+```
+
+---
+
+# Tidy select .font_small[.font_small[Part] 2]
+
+.grid[
+.item50[
+```{r select, eval = !flair_on, echo = !flair_on}
+frogsignal %>% 
+ select(Standard1, Standard2, Standard3)
+```
+```{r, echo = FALSE, eval = flair_on}
+decorate("select") %>% 
+  flair("select") 
+```
+
+]
+.item50[
+{{content}}
+]
+
+]
+--
+
+```{r select2, eval = !flair_on, echo = !flair_on}
+frogsignal %>% 
+  select(Standard1:Standard3)
+```
+```{r, echo = FALSE, eval = flair_on}
+decorate("select2") %>% 
+  flair(":") 
+```
+
+<div class="info-box pad20" style="position:absolute;right:10px;bottom:10px;">
+The <code>tidyselect</code> syntax <code class="monash-blue">:</code> can be used to select contiguous columns in the data
+</div>
+
+---
+
+# Tidy select .font_small[.font_small[Part] 3]
+
+.grid[
+.item50[
+```{r}
+frogsignal %>% 
+  select(starts_with("Standard"))
+```
+]
+.item[
+{{content}}
+]
+
+]
+
+--
+
+```{r}
+frogsignal %>% 
+  select(num_range("Standard", 1:3))
+```
+
+---
+
+# Selection language .font_small[.font_small[Part] 1]
+
+* `:` for selecting contiguous variables
+* `!` for taking complement set of variables
+* `&` or `|` for selecting intersection or union of two sets of variables, e.g. 
+```{r}
+frogsignal %>% 
+  select(starts_with("Alt") & ends_with("1")) %>% 
+  str()
+```
+
+* `c()` for combining selections
+* `everything()` to select all variables
+* `last_col()` to select last variable, with option of an offset
+
+---
+
+# Selection language .font_small[.font_small[Part] 2]
+
+
+* `starts_with()` selects columns with the given prefix
+* `ends_with()` selects columns with the given suffix
+* `contains()` selects columns with a literal string
+* `matches()` selects columns that match the regular expression .font_small[we'll learn this next!]
+* `num_range()` selects columns with a numerical range
+* `all_of()` for selecting columns based on a character vector
+* `any_of()` is the same as `all_of()` but no error when variables do not exist
+* `where()` selects based on where given function return TRUE
+
+```{r, eval = FALSE}
+help(language, package = "tidyselect")
+```
+
+
+---
+
+# Subsetting by column .font_small[Tidyverse]
+
+.grid[
+.item[
+```{r, eval = FALSE}
+select(mtcars, c(mpg, cyl))
+select(mtcars, c("mpg", "cyl"))
+select(mtcars, mpg, cyl)
+select(mtcars, "mpg", "cyl")
+```
+All the same result as below
+```{r}
+mtcars %>% 
+  select(mpg, cyl)
+```
+
+]
+.item[
+{{content}}
+]
+
+]
+
+--
+
+```{r}
+mtcars %>% select(mpg)
+```
+
+--
+
+<div class="info-box" style="position:absolute;right:20px;margin-right:0px!important;bottom:0px;margin-left:0;width:650px;">
+<ul>
+<li>Selecting one column doesn't "drop" it to a vector.</li> <li>If you really want the vector then use <code class="monash-blue">pull(mpg)</code>.</li>
+</ul>
+</div>
+
+
+---
+
+# Subsetting by row .font_small[Tidyverse]
+
+```{r}
+mtcars %>% 
+  slice(3:1)
+```
+--
+```{r}
+mtcars %>% 
+  filter(rownames(.) %in% c("Datsun 710", "Mazda RX4"))
+```
+* Use .monash-blue[`slice`] to subset by *index* and .monash-blue[`filter`] by *logical vector*
+
+--
+
+<div class="info-box" style="position:absolute;right:20px;margin-right:0px!important;top:50px;margin-left:0;width:900px;font-size: 20pt;">
+<ul>
+<li>Placeholder binding</li>
+<ul>
+<li><code>x %>% f(y, g(.))</code> is the same as <code>f(x, y, g(x))</code></li>
+<li><code>x %>% f(y, .)</code> is the same as <code>f(y, x)</code></li>
+</ul>
+{{content}}
+</ul>
+</div>
+
+--
+<i class="fas fa-exclamation-triangle red"></i> Note: row names do not follow tidy data principles<br>
+{{content}}
+--
+<li>Use <code class="monash-blue">tibble::rownames_to_column()</code> to convert rownames to a column to make into a tidy data</li>
+
+
+
+---
+
+# Adding or modifying a column .font_small[Tidyverse]
+
+```{r mutate, eval = !flair_on, echo = !flair_on}
+mtcars %>% 
+  mutate(gpm = 1 / mpg,
+          wt = gpm^2,
+          wt = if_else(cyl==6, 10, wt),
+          hp = case_when(cyl==6 ~ 11,
+                         cyl==4 ~ 10,
+                           TRUE ~ 3))
+```
+```{r, echo = FALSE, eval = flair_on}
+decorate("mutate") %>% 
+  flair("mutate")
+```
+--
+
+<div class="info-box" style="position:absolute;right:20px;margin-right:0px!important;top:50px;margin-left:0;width:550px;font-size: 20pt;">
+<ul>
+<li>Evaluation in <code>mutate</code> is done sequentially based on input order</li>
+{{content}}
+</ul>
+</div>
+
+--
+
+<li>So you refer to the newly created variable in later input</li>
+{{content}}
+--
+<li>You can call multiple <code>mutate</code> but computational performance is usually better if done within the same <code>mutate</code> call</li>
+<pre>
+<code>mtcars %>%
+  mutate(gpm = 1 / mpg) %>% 
+  mutate(wt = gpm^2)
+</code></pre>
+
+---
+
+# Sorting columns .font_small[Tidyverse]
+
+.grid[
+.item50[
+.s300[
+```{r}
+mtcars %>% 
+  select(sort(names(.)))
+```
+]
+.s300[
+```{r}
+mtcars %>% 
+  relocate(am, carb, .before = cyl)
+```
+]
+]
+.item50[
+.s300[
+```{r}
+mtcars %>% 
+  select(wt, gear, everything())
+```
+]
+.s300[
+```{r}
+mtcars %>% 
+  relocate(wt, gear, .after = mpg)
+```
+]
+]
+
+]
+
+---
+
+# Calculating statistical summaries by group .font_small[Tidyverse]
+
+--
+
+.grid[.item50[
+
+🎯 Calculate the _average_ weight (`wt`) of a car for each gear type in (`gear`)  `mtcars`
+```{r}
+mtcars %>% 
+  group_by(gear) %>% 
+  summarise(avg_wt = mean(wt))
+```
+
+]
+.item[
+{{content}}
+]
+]
+--
+
+🎯 Calculate the _median_ weight (`wt`) of a car for each gear (`gear`) and engine (`vs`) type in  `mtcars`
+
+```{r}
+mtcars %>% 
+  group_by(gear, vs) %>% 
+  summarise(avg_wt = mean(wt),
+            med_wt = median(wt))
+```
+
+
+---
+
+```{r endslide, child="assets/endslide.Rmd"}
+```

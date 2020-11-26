@@ -1,0 +1,40 @@
+---
+title: "Data Wrangling with R: Day 1"
+author: "Emi Tanaka"
+date: "1st December 2020"
+---
+
+## Slides
+
+We recommend that you open the html slides <i class="fas fa-link"></i> with [Google Chrome web browser](https://www.google.com/intl/en_au/chrome/). 
+
+0. Getting started [<i class="fas fa-link"></i>](slides/day1-session0.html) [<i class="fas fa-file-pdf"></i>](slides/day1-session0.pdf)
+1. Base R and `tidyverse` [<i class="fas fa-link"></i>](slides/day1-session1.html) [<i class="fas fa-file-pdf"></i>](slides/day1-session1.pdf)
+2. Data manipulation with `dplyr` [<i class="fas fa-link"></i>](slides/day1-session2.html) [<i class="fas fa-file-pdf"></i>](slides/day1-session2.pdf)
+3. Manipulating strings with `stringr` [<i class="fas fa-link"></i>](slides/day1-session3.html) [<i class="fas fa-file-pdf"></i>](slides/day1-session3.pdf)
+4. Tidying data with `tidyr` [<i class="fas fa-link"></i>](slides/day1-session4.html) [<i class="fas fa-file-pdf"></i>](slides/day1-session4.pdf)
+
+## Schedule
+
+```{r day1, echo = FALSE, results="asis"}
+cat(readLines("schedule/schedule-day1.md"), sep = "\n")
+```
+
+## Exercises
+
+Please make sure you install the following packages with latest versions.
+
+```` r
+```{r pkgs, echo = FALSE, results="asis", warning = FALSE}
+pkgs <- readLines("install-pkgs.txt")
+rmts <- readLines("install-remotes.txt")
+cat(glue::glue("install.packages(\"{pkgs}\")"), sep = "\n")
+cat("\n# you will need to have installed the remotes package for below\n")
+cat(glue::glue("remotes::install_github(\"{rmts}\")"), sep = "\n")
+
+```
+````
+
+The exercises will be available as an R-package but links to the `learnr` exercises will be provided if you have installation issues with the packages. 
+
+The links and instructions to exercise will appear here soon.
