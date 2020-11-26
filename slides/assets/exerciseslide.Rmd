@@ -1,0 +1,16 @@
+class: exercise middle hide-slide-number
+
+# <i class="fas fa-code"></i> If you installed the `dwexercise` package, <br> run below in your R console
+
+```r
+learnr::run_tutorial("`r rmarkdown::metadata$exercise`", package = "dwexercise")
+```
+
+<br>
+
+# <i class="fas fa-link"></i> If the above doesn't work for you, go [here](https://ebsmonash.shinyapps.io/dw-`r rmarkdown::metadata$exercise`).
+
+# <i class="fas fa-question"></i> Questions or issues, let us know!
+<center>
+`r countdown::countdown(15, class = "clock")`
+</center>

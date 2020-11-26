@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Data Wrangling with R: Day 1</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Emi Tanaka" />
+    <script src="libs/header-attrs-2.5/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <link href="libs/font-awesome-animation-1.0/font-awesome-animation-emi.css" rel="stylesheet" />
+    <script src="libs/fontawesome-5.0.13/js/fontawesome-all.min.js"></script>
+    <link rel="stylesheet" href="assets/animate.css" type="text/css" />
+    <link rel="stylesheet" href="assets/custom.css" type="text/css" />
+    <link rel="stylesheet" href="assets/fira-code.css" type="text/css" />
+    <link rel="stylesheet" href="assets/boxes.css" type="text/css" />
+    <link rel="stylesheet" href="assets/styles.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-brand.css" type="text/css" />
+    <link rel="stylesheet" href="assets/table.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class: monash-bg-blue center middle hide-slide-number 
+
+
+
+&lt;div class="bg-black white"  style="width:45%;right:0;bottom:0;padding-left:5px;border: solid 4px white;margin: auto;"&gt;
+&lt;i class="fas fa-exclamation-circle"&gt;&lt;/i&gt; These slides are viewed best by Chrome and occasionally need to be refreshed if elements did not load properly. See here for &lt;a href=day1-session1.pdf&gt;PDF &lt;i class="fas fa-file-pdf"&gt;&lt;/i&gt;&lt;/a&gt;. 
+&lt;/div&gt;
+
+&lt;br&gt;
+
+.white[Press the **right arrow** to progress to the next slide!]
+
+
+---
+
+count: false
+background-image: url(images/bg1.jpg)
+background-size: cover
+class: hide-slide-number title-slide
+
+
+&lt;div class="grid-row" style="grid: 1fr / 2fr;"&gt;
+
+.item.center[
+
+# &lt;span style="text-shadow: 2px 2px 30px white;"&gt;Data Wrangling with R: Day 1&lt;/span&gt;
+
+&lt;!-- ## &lt;span style="color:;text-shadow: 2px 2px 30px black;"&gt;Base R and `tidyverse`&lt;/span&gt; --&gt;
+
+]
+
+.center.shade_black.animated.bounceInUp.slower[
+&lt;br&gt;&lt;br&gt;
+## &lt;span style="color: #ccf2ff; text-shadow: 10px 10px 100px white;"&gt;Base R and `tidyverse`&lt;/span&gt;
+
+&lt;br&gt;
+
+Presented by Emi Tanaka
+
+Department of Econometrics and Business Statistics
+
+&lt;img src="images/monash-one-line-reversed.png" style="width:500px"&gt;&lt;br&gt;
+<span>&lt;i class="fas  fa-envelope faa-float animated "&gt;&lt;/i&gt;</span>  emi.tanaka@monash.edu
+<span>&lt;i class="fab  fa-twitter faa-float animated faa-fast "&gt;&lt;/i&gt;</span>  @statsgen
+
+.bottom_abs.width100.bg-black[
+1st December 2020 @ Statistical Society of Australia | Zoom
+]
+
+
+]
+
+&lt;/div&gt;
+
+
+
+
+
+
+---
+
+# Base R
+
+.margin-lr[
+* **Base R** refers to the state of R when just launched in a clean interactive development environment (IDE, e.g. RStudio).
+
+{{content}}
+
+]
+
+--
+
+* In this state, R attached the following packages: 
+   - `base`,
+   - `methods`, &lt;span class="font_small"&gt;for complex reasons, you may need to explicitly call this when using Rscript and package development!&lt;/span&gt;
+   - `stats`, 
+   - `graphics`, 
+   - `grDevices`, 
+   - `utils`,  and
+   - `datasets`.
+
+---
+
+# Tidyverse
+
+* What packages does `library(tidyverse)` load?
+--
+
+* **Tidyverse** refers to a collection of R-packages: `ggplot2`, `dplyr`, `tidyr`, `readr`, `purrr`, `tibble`, `stringr`, `forcats`, `DBI`, `haven`, `httr`, `readxl`, `rvest`, `jsonlite`, `xml2`, `lubridate`, `hms`, `blob`, `magrittr`, `glue` and more recently, `tidymodels`. 
+
+---
+
+count: false
+
+# Tidyverse
+
+* What packages does `library(tidyverse)` load?
+* **Tidyverse** refers to a collection of R-packages: .monash-blue[`ggplot2`], .monash-blue[`dplyr`], .monash-blue[`tidyr`], .monash-blue[`readr`], .monash-blue[`purrr`], .monash-blue[`tibble`], .monash-blue[`stringr`], .monash-blue[`forcats`], `DBI`, `haven`, `httr`, `readxl`, `rvest`, `jsonlite`, `xml2`, `lubridate`, `hms`, `blob`, `magrittr`, `glue` and more recently, `tidymodels`. 
+* Eight of these packages form the **core tidyverse**.
+
+&lt;center&gt;
+&lt;img height="130px" src="images/tidyverse.png"&gt; &lt;img height="100px" src="images/ggplot2.png"&gt;&lt;img height="100px" src="images/dplyr.png"&gt;&lt;img height="100px" src="images/tidyr.png"&gt;&lt;img height="100px" src="images/readr.png"&gt;&lt;img height="100px" src="images/purrr.png"&gt;&lt;img height="100px" src="images/tibble.png"&gt;&lt;img height="100px" src="images/stringr.png"&gt;&lt;img height="100px" src="images/forcats.png"&gt;
+&lt;/center&gt;
+* .monash-blue[`library(tidyverse)`] is a short hand for `library(ggplot2)`,  `library(dplyr)`, ..., `library(forcats)`
+
+.footnote[
+Wickham, H. et al. 2019. “Welcome to the Tidyverse.” Journal of Open. https://joss.theoj.org/papers/10.21105/joss.01686.
+]
+
+---
+
+# Base R and Tidyverse
+
+.margin-lr[
+* Tidyverse is not a substitute for Base R 📘
+{{content}}
+]
+
+--
+* Knowing Base R is essential to use Tidyverse effectively 📗
+{{content}} 
+--
+* Data wrangling in Tidyverse just gives you a different flavour of how you can do things in Base R 🍭
+{{content}}
+--
+* All data wrangling can be achieved using Base R, so why load extra package(s) to deal with the data wrangling? 🤔
+{{content}}
+--
+* Tidyverse packages share a common design philosophy, grammar and data structure
+{{content}}
+--
+* This trains your mental model to do data science tasks in a certain manner which may make it easier, faster, and/or fun for you to do these tasks
+{{content}}
+--
+* It's an opinionated approach so you should make a decision for yourself of what works for you _and_ others that you share your work with
+
+---
+
+# `data.frame` .font_small[Base R]
+
+* In R, `data.frame` is a special class of `list` 
+* Every column in the `data.frame` is a vector of the same length
+* Each entry in a vector have the same type, e.g. logical, integer, double (or numeric), character or factor.
+* It has an attribute `row.names` which could be a sequence of integers indexing the row number or some unique identifier
+
+.grid[.item[
+
+```r
+cars
+```
+
+```
+##    speed dist
+## 1      4    2
+## 2      4   10
+## 3      7    4
+## 4      7   22
+## 5      8   16
+## 6      9   10
+## 7     10   18
+## 8     10   26
+## 9     10   34
+## 10    11   17
+## 11    11   28
+## 12    12   14
+## 13    12   20
+## 14    12   24
+## 15    12   28
+## 16    13   26
+## 17    13   34
+## 18    13   34
+## 19    13   46
+## 20    14   26
+## 21    14   36
+## 22    14   60
+## 23    14   80
+## 24    15   20
+## 25    15   26
+## 26    15   54
+## 27    16   32
+## 28    16   40
+## 29    17   32
+## 30    17   40
+## 31    17   50
+## 32    18   42
+## 33    18   56
+## 34    18   76
+## 35    18   84
+## 36    19   36
+## 37    19   46
+## 38    19   68
+## 39    20   32
+## 40    20   48
+## 41    20   52
+## 42    20   56
+## 43    20   64
+## 44    22   66
+## 45    23   54
+## 46    24   70
+## 47    24   92
+## 48    24   93
+## 49    24  120
+## 50    25   85
+```
+]
+.item[
+
+```r
+mtcars
+```
+
+```
+##                      mpg cyl  disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4           21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag       21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4
+## Datsun 710          22.8   4 108.0  93 3.85 2.320 18.61  1  1    4    1
+## Hornet 4 Drive      21.4   6 258.0 110 3.08 3.215 19.44  1  0    3    1
+## Hornet Sportabout   18.7   8 360.0 175 3.15 3.440 17.02  0  0    3    2
+## Valiant             18.1   6 225.0 105 2.76 3.460 20.22  1  0    3    1
+## Duster 360          14.3   8 360.0 245 3.21 3.570 15.84  0  0    3    4
+## Merc 240D           24.4   4 146.7  62 3.69 3.190 20.00  1  0    4    2
+## Merc 230            22.8   4 140.8  95 3.92 3.150 22.90  1  0    4    2
+## Merc 280            19.2   6 167.6 123 3.92 3.440 18.30  1  0    4    4
+## Merc 280C           17.8   6 167.6 123 3.92 3.440 18.90  1  0    4    4
+## Merc 450SE          16.4   8 275.8 180 3.07 4.070 17.40  0  0    3    3
+## Merc 450SL          17.3   8 275.8 180 3.07 3.730 17.60  0  0    3    3
+## Merc 450SLC         15.2   8 275.8 180 3.07 3.780 18.00  0  0    3    3
+## Cadillac Fleetwood  10.4   8 472.0 205 2.93 5.250 17.98  0  0    3    4
+## Lincoln Continental 10.4   8 460.0 215 3.00 5.424 17.82  0  0    3    4
+## Chrysler Imperial   14.7   8 440.0 230 3.23 5.345 17.42  0  0    3    4
+## Fiat 128            32.4   4  78.7  66 4.08 2.200 19.47  1  1    4    1
+## Honda Civic         30.4   4  75.7  52 4.93 1.615 18.52  1  1    4    2
+## Toyota Corolla      33.9   4  71.1  65 4.22 1.835 19.90  1  1    4    1
+## Toyota Corona       21.5   4 120.1  97 3.70 2.465 20.01  1  0    3    1
+## Dodge Challenger    15.5   8 318.0 150 2.76 3.520 16.87  0  0    3    2
+## AMC Javelin         15.2   8 304.0 150 3.15 3.435 17.30  0  0    3    2
+## Camaro Z28          13.3   8 350.0 245 3.73 3.840 15.41  0  0    3    4
+## Pontiac Firebird    19.2   8 400.0 175 3.08 3.845 17.05  0  0    3    2
+## Fiat X1-9           27.3   4  79.0  66 4.08 1.935 18.90  1  1    4    1
+## Porsche 914-2       26.0   4 120.3  91 4.43 2.140 16.70  0  1    5    2
+## Lotus Europa        30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2
+## Ford Pantera L      15.8   8 351.0 264 4.22 3.170 14.50  0  1    5    4
+## Ferrari Dino        19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6
+## Maserati Bora       15.0   8 301.0 335 3.54 3.570 14.60  0  1    5    8
+## Volvo 142E          21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2
+```
+
+]
+
+]
+
+---
+
+# Tidy data 
+
+.center[
+🎯 The typical aim of data wrangling is to make data into a **tidy data**
+]
+
+.info-box[
+**Definition of a tidy data**
+* Each variable must have its own column
+* Each observation must have its own row
+* Each value must have its own cell
+]
+
+&lt;center&gt;
+&lt;img src="images/tidy-data.png" width="90%"&gt;
+&lt;/center&gt;
+
+.footnote[
+Wickham, Hadley. 2014. “Tidy Data.” Journal of Statistical Software, Articles 59 (10): 1–23.
+]
+
+---
+
+class: transition middle
+
+# Data wrangling with &lt;br&gt; Base R
+
+---
+
+# Subsetting by column .font_small[Base R .font_small[Part ]1] 
+
+.grid[
+.item[
+By column names
+
+```r
+mtcars[, c("mpg", "cyl")] 
+```
+
+```
+##                      mpg cyl
+## Mazda RX4           21.0   6
+## Mazda RX4 Wag       21.0   6
+## Datsun 710          22.8   4
+## Hornet 4 Drive      21.4   6
+## Hornet Sportabout   18.7   8
+## Valiant             18.1   6
+## Duster 360          14.3   8
+## Merc 240D           24.4   4
+## Merc 230            22.8   4
+## Merc 280            19.2   6
+## Merc 280C           17.8   6
+## Merc 450SE          16.4   8
+## Merc 450SL          17.3   8
+## Merc 450SLC         15.2   8
+## Cadillac Fleetwood  10.4   8
+## Lincoln Continental 10.4   8
+## Chrysler Imperial   14.7   8
+## Fiat 128            32.4   4
+## Honda Civic         30.4   4
+## Toyota Corolla      33.9   4
+## Toyota Corona       21.5   4
+## Dodge Challenger    15.5   8
+## AMC Javelin         15.2   8
+## Camaro Z28          13.3   8
+## Pontiac Firebird    19.2   8
+## Fiat X1-9           27.3   4
+## Porsche 914-2       26.0   4
+## Lotus Europa        30.4   4
+## Ford Pantera L      15.8   8
+## Ferrari Dino        19.7   6
+## Maserati Bora       15.0   8
+## Volvo 142E          21.4   4
+```
+
+]
+.item[
+By index
+
+```r
+mtcars[, 1:2] 
+```
+
+```
+##                      mpg cyl
+## Mazda RX4           21.0   6
+## Mazda RX4 Wag       21.0   6
+## Datsun 710          22.8   4
+## Hornet 4 Drive      21.4   6
+## Hornet Sportabout   18.7   8
+## Valiant             18.1   6
+## Duster 360          14.3   8
+## Merc 240D           24.4   4
+## Merc 230            22.8   4
+## Merc 280            19.2   6
+## Merc 280C           17.8   6
+## Merc 450SE          16.4   8
+## Merc 450SL          17.3   8
+## Merc 450SLC         15.2   8
+## Cadillac Fleetwood  10.4   8
+## Lincoln Continental 10.4   8
+## Chrysler Imperial   14.7   8
+## Fiat 128            32.4   4
+## Honda Civic         30.4   4
+## Toyota Corolla      33.9   4
+## Toyota Corona       21.5   4
+## Dodge Challenger    15.5   8
+## AMC Javelin         15.2   8
+## Camaro Z28          13.3   8
+## Pontiac Firebird    19.2   8
+## Fiat X1-9           27.3   4
+## Porsche 914-2       26.0   4
+## Lotus Europa        30.4   4
+## Ford Pantera L      15.8   8
+## Ferrari Dino        19.7   6
+## Maserati Bora       15.0   8
+## Volvo 142E          21.4   4
+```
+]
+
+]
+
+---
+
+# Subsetting by column .font_small[Base R .font_small[Part ]2] 
+
+.grid[
+.item[
+By column names
+
+```r
+mtcars[c("mpg", "cyl")] 
+```
+
+```
+##                      mpg cyl
+## Mazda RX4           21.0   6
+## Mazda RX4 Wag       21.0   6
+## Datsun 710          22.8   4
+## Hornet 4 Drive      21.4   6
+## Hornet Sportabout   18.7   8
+## Valiant             18.1   6
+## Duster 360          14.3   8
+## Merc 240D           24.4   4
+## Merc 230            22.8   4
+## Merc 280            19.2   6
+## Merc 280C           17.8   6
+## Merc 450SE          16.4   8
+## Merc 450SL          17.3   8
+## Merc 450SLC         15.2   8
+## Cadillac Fleetwood  10.4   8
+## Lincoln Continental 10.4   8
+## Chrysler Imperial   14.7   8
+## Fiat 128            32.4   4
+## Honda Civic         30.4   4
+## Toyota Corolla      33.9   4
+## Toyota Corona       21.5   4
+## Dodge Challenger    15.5   8
+## AMC Javelin         15.2   8
+## Camaro Z28          13.3   8
+## Pontiac Firebird    19.2   8
+## Fiat X1-9           27.3   4
+## Porsche 914-2       26.0   4
+## Lotus Europa        30.4   4
+## Ford Pantera L      15.8   8
+## Ferrari Dino        19.7   6
+## Maserati Bora       15.0   8
+## Volvo 142E          21.4   4
+```
+
+]
+.item[
+By index
+
+```r
+mtcars[1:2] 
+```
+
+```
+##                      mpg cyl
+## Mazda RX4           21.0   6
+## Mazda RX4 Wag       21.0   6
+## Datsun 710          22.8   4
+## Hornet 4 Drive      21.4   6
+## Hornet Sportabout   18.7   8
+## Valiant             18.1   6
+## Duster 360          14.3   8
+## Merc 240D           24.4   4
+## Merc 230            22.8   4
+## Merc 280            19.2   6
+## Merc 280C           17.8   6
+## Merc 450SE          16.4   8
+## Merc 450SL          17.3   8
+## Merc 450SLC         15.2   8
+## Cadillac Fleetwood  10.4   8
+## Lincoln Continental 10.4   8
+## Chrysler Imperial   14.7   8
+## Fiat 128            32.4   4
+## Honda Civic         30.4   4
+## Toyota Corolla      33.9   4
+## Toyota Corona       21.5   4
+## Dodge Challenger    15.5   8
+## AMC Javelin         15.2   8
+## Camaro Z28          13.3   8
+## Pontiac Firebird    19.2   8
+## Fiat X1-9           27.3   4
+## Porsche 914-2       26.0   4
+## Lotus Europa        30.4   4
+## Ford Pantera L      15.8   8
+## Ferrari Dino        19.7   6
+## Maserati Bora       15.0   8
+## Volvo 142E          21.4   4
+```
+]
+
+]
+
+---
+
+# Lists .font_small[Base R]
+
+* Remember, `data.frame` is just a special type of `list` and inherit methods applied for `list`.
+
+.grid[
+.item[
+
+```r
+x &lt;- list( int = 1:3, 
+          shop = c("apple", "pear"), 
+                 c(2020, 12, 1, 1.3))
+x
+```
+
+```
+## $int
+## [1] 1 2 3
+## 
+## $shop
+## [1] "apple" "pear" 
+## 
+## [[3]]
+## [1] 2020.0   12.0    1.0    1.3
+```
+
+]
+.item[
+{{content}}
+]
+]
+
+--
+
+
+```r
+x[c("int", "shop")]
+```
+
+```
+## $int
+## [1] 1 2 3
+## 
+## $shop
+## [1] "apple" "pear"
+```
+{{content}}
+--
+
+Double square bracket to access inside the list
+
+
+```r
+x[["int"]] # or x$int
+```
+
+```
+## [1] 1 2 3
+```
+
+---
+
+# `list` and `data.frame` .font_small[Base R] 
+
+
+```r
+x[, "int"] # this is a special operation for data frames
+```
+
+```
+## Error in x[, "int"]: incorrect number of dimensions
+```
+--
+
+```r
+mtcars[["cyl"]]
+```
+
+```
+##  [1] 6 6 4 6 8 6 8 4 4 6 6 8 8 8 8 8 8 4 4 4 4 8 8 8 8 4 4 4 8 6 8 4
+```
+
+```r
+mtcars$cyl
+```
+
+```
+##  [1] 6 6 4 6 8 6 8 4 4 6 6 8 8 8 8 8 8 4 4 4 4 8 8 8 8 4 4 4 8 6 8 4
+```
+--
+
+```r
+mtcars["cyl"]
+```
+
+```
+##                     cyl
+## Mazda RX4             6
+## Mazda RX4 Wag         6
+## Datsun 710            4
+## Hornet 4 Drive        6
+## Hornet Sportabout     8
+## Valiant               6
+## Duster 360            8
+## Merc 240D             4
+## Merc 230              4
+## Merc 280              6
+## Merc 280C             6
+## Merc 450SE            8
+## Merc 450SL            8
+## Merc 450SLC           8
+## Cadillac Fleetwood    8
+## Lincoln Continental   8
+## Chrysler Imperial     8
+## Fiat 128              4
+## Honda Civic           4
+## Toyota Corolla        4
+## Toyota Corona         4
+## Dodge Challenger      8
+## AMC Javelin           8
+## Camaro Z28            8
+## Pontiac Firebird      8
+## Fiat X1-9             4
+## Porsche 914-2         4
+## Lotus Europa          4
+## Ford Pantera L        8
+## Ferrari Dino          6
+## Maserati Bora         8
+## Volvo 142E            4
+```
+
+--
+
+&lt;div class="info-box pad20" style="position:absolute!important;bottom:10px;width:500px;margin-left:40%;"&gt;
+&lt;code&gt;data.frame&lt;/code&gt; inherits methods for &lt;code&gt;list&lt;/code&gt;, but &lt;code&gt;list&lt;/code&gt; does not inherit methods for &lt;code&gt;data.frame&lt;/code&gt;
+&lt;/div&gt;
+
+---
+
+# Subsetting by column .font_small[Base R]  &lt;i class="fas fa-exclamation-triangle animated flash yellow"&gt;&lt;/i&gt;
+
+* If you subset _a single column_ using `[, ]`, then by default the output is a vector and not a `data.frame`.
+
+
+```r
+mtcars[, "mpg"]
+```
+
+```
+##  [1] 21.0 21.0 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 17.8 16.4 17.3 15.2 10.4
+## [16] 10.4 14.7 32.4 30.4 33.9 21.5 15.5 15.2 13.3 19.2 27.3 26.0 30.4 15.8 19.7
+## [31] 15.0 21.4
+```
+--
+* If you want to preserve the output as a `data.frame` then:
+
+
+```r
+mtcars[, "mpg", drop = FALSE]
+```
+
+```
+##                      mpg
+## Mazda RX4           21.0
+## Mazda RX4 Wag       21.0
+## Datsun 710          22.8
+## Hornet 4 Drive      21.4
+## Hornet Sportabout   18.7
+## Valiant             18.1
+## Duster 360          14.3
+## Merc 240D           24.4
+## Merc 230            22.8
+## Merc 280            19.2
+## Merc 280C           17.8
+## Merc 450SE          16.4
+## Merc 450SL          17.3
+## Merc 450SLC         15.2
+## Cadillac Fleetwood  10.4
+## Lincoln Continental 10.4
+## Chrysler Imperial   14.7
+## Fiat 128            32.4
+## Honda Civic         30.4
+## Toyota Corolla      33.9
+## Toyota Corona       21.5
+## Dodge Challenger    15.5
+## AMC Javelin         15.2
+## Camaro Z28          13.3
+## Pontiac Firebird    19.2
+## Fiat X1-9           27.3
+## Porsche 914-2       26.0
+## Lotus Europa        30.4
+## Ford Pantera L      15.8
+## Ferrari Dino        19.7
+## Maserati Bora       15.0
+## Volvo 142E          21.4
+```
+
+---
+
+# Subsetting by row .font_small[Base R .font_small[Part ]1]
+
+By index:
+
+
+```r
+mtcars[3:1, ]
+```
+
+```
+##                mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Datsun 710    22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## Mazda RX4 Wag 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## Mazda RX4     21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+```
+
+--
+
+If it has row names:
+
+
+```r
+mtcars[c("Datsun 710", "Mazda RX4"), ]
+```
+
+```
+##             mpg cyl disp  hp drat   wt  qsec vs am gear carb
+## Datsun 710 22.8   4  108  93 3.85 2.32 18.61  1  1    4    1
+## Mazda RX4  21.0   6  160 110 3.90 2.62 16.46  0  1    4    4
+```
+
+---
+
+# Subsetting by row .font_small[Base R .font_small[Part ]2]
+
+Using a logical vector,
+
+
+```r
+mtcars[mtcars$mpg &gt; 31, ]
+```
+
+```
+##                 mpg cyl disp hp drat    wt  qsec vs am gear carb
+## Fiat 128       32.4   4 78.7 66 4.08 2.200 19.47  1  1    4    1
+## Toyota Corolla 33.9   4 71.1 65 4.22 1.835 19.90  1  1    4    1
+```
+--
+
+Or using **non-standard evaluation**:
+
+
+```r
+subset(mtcars, mpg &gt; 31)
+```
+
+```
+##                 mpg cyl disp hp drat    wt  qsec vs am gear carb
+## Fiat 128       32.4   4 78.7 66 4.08 2.200 19.47  1  1    4    1
+## Toyota Corolla 33.9   4 71.1 65 4.22 1.835 19.90  1  1    4    1
+```
+
+--
+
+Non-standard evaluation? We'll come back to this later.
+
+---
+
+# Adding or modifying a column .font_small[Base R]
+
+Append the new column:
+
+
+```r
+df1 &lt;- cbind(mtcars, gpm = 1 / mtcars$mpg)
+```
+--
+
+Create a new column as you would a create a new object in a list:
+
+```r
+df1$gpm &lt;- 1 / df1$mpg
+df1[["gpm"]] &lt;- 1 / df1$mpg
+```
+
+--
+
+Overwrite column if modifying an existing column:
+
+```r
+df1$wt &lt;- df1$gpm^2
+df1[["wt"]] &lt;- df1$gpm^2
+```
+--
+Modify only a part of it:
+
+
+```r
+df1$wt[df1$cyl==6] &lt;- 10
+```
+
+
+
+---
+
+# Adding a row .font_small[Base R]
+
+What do you notice with the order of the new entry?
+
+```r
+df2 &lt;- rbind(cars, data.frame(dist = 10, speed = 3))
+tail(df2, 3)
+```
+
+```
+##    speed dist
+## 49    24  120
+## 50    25   85
+## 51     3   10
+```
+
+
+```r
+df2 &lt;- rbind(cars, c(10, 3))
+tail(df2, 3)
+```
+
+```
+##    speed dist
+## 49    24  120
+## 50    25   85
+## 51    10    3
+```
+
+
+---
+
+# Sorting columns .font_small[Base R]
+
+
+```r
+mtcars[, sort(names(mtcars))]
+```
+
+```
+##                     am carb cyl  disp drat gear  hp  mpg  qsec vs    wt
+## Mazda RX4            1    4   6 160.0 3.90    4 110 21.0 16.46  0 2.620
+## Mazda RX4 Wag        1    4   6 160.0 3.90    4 110 21.0 17.02  0 2.875
+## Datsun 710           1    1   4 108.0 3.85    4  93 22.8 18.61  1 2.320
+## Hornet 4 Drive       0    1   6 258.0 3.08    3 110 21.4 19.44  1 3.215
+## Hornet Sportabout    0    2   8 360.0 3.15    3 175 18.7 17.02  0 3.440
+## Valiant              0    1   6 225.0 2.76    3 105 18.1 20.22  1 3.460
+## Duster 360           0    4   8 360.0 3.21    3 245 14.3 15.84  0 3.570
+## Merc 240D            0    2   4 146.7 3.69    4  62 24.4 20.00  1 3.190
+## Merc 230             0    2   4 140.8 3.92    4  95 22.8 22.90  1 3.150
+## Merc 280             0    4   6 167.6 3.92    4 123 19.2 18.30  1 3.440
+## Merc 280C            0    4   6 167.6 3.92    4 123 17.8 18.90  1 3.440
+## Merc 450SE           0    3   8 275.8 3.07    3 180 16.4 17.40  0 4.070
+## Merc 450SL           0    3   8 275.8 3.07    3 180 17.3 17.60  0 3.730
+## Merc 450SLC          0    3   8 275.8 3.07    3 180 15.2 18.00  0 3.780
+## Cadillac Fleetwood   0    4   8 472.0 2.93    3 205 10.4 17.98  0 5.250
+## Lincoln Continental  0    4   8 460.0 3.00    3 215 10.4 17.82  0 5.424
+## Chrysler Imperial    0    4   8 440.0 3.23    3 230 14.7 17.42  0 5.345
+## Fiat 128             1    1   4  78.7 4.08    4  66 32.4 19.47  1 2.200
+## Honda Civic          1    2   4  75.7 4.93    4  52 30.4 18.52  1 1.615
+## Toyota Corolla       1    1   4  71.1 4.22    4  65 33.9 19.90  1 1.835
+## Toyota Corona        0    1   4 120.1 3.70    3  97 21.5 20.01  1 2.465
+## Dodge Challenger     0    2   8 318.0 2.76    3 150 15.5 16.87  0 3.520
+## AMC Javelin          0    2   8 304.0 3.15    3 150 15.2 17.30  0 3.435
+## Camaro Z28           0    4   8 350.0 3.73    3 245 13.3 15.41  0 3.840
+## Pontiac Firebird     0    2   8 400.0 3.08    3 175 19.2 17.05  0 3.845
+## Fiat X1-9            1    1   4  79.0 4.08    4  66 27.3 18.90  1 1.935
+## Porsche 914-2        1    2   4 120.3 4.43    5  91 26.0 16.70  0 2.140
+## Lotus Europa         1    2   4  95.1 3.77    5 113 30.4 16.90  1 1.513
+## Ford Pantera L       1    4   8 351.0 4.22    5 264 15.8 14.50  0 3.170
+## Ferrari Dino         1    6   6 145.0 3.62    5 175 19.7 15.50  0 2.770
+## Maserati Bora        1    8   8 301.0 3.54    5 335 15.0 14.60  0 3.570
+## Volvo 142E           1    2   4 121.0 4.11    4 109 21.4 18.60  1 2.780
+```
+
+
+---
+
+# Sorting rows .font_small[Base R]
+
+
+```r
+order(mtcars$mpg)
+```
+
+```
+##  [1] 15 16 24  7 17 31 14 23 22 29 12 13 11  6  5 10 25 30  1  2  4 32 21  3  9
+## [26]  8 27 26 19 28 18 20
+```
+
+```r
+mtcars[order(mtcars$mpg),]
+```
+
+```
+##                      mpg cyl  disp  hp drat    wt  qsec vs am gear carb
+## Cadillac Fleetwood  10.4   8 472.0 205 2.93 5.250 17.98  0  0    3    4
+## Lincoln Continental 10.4   8 460.0 215 3.00 5.424 17.82  0  0    3    4
+## Camaro Z28          13.3   8 350.0 245 3.73 3.840 15.41  0  0    3    4
+## Duster 360          14.3   8 360.0 245 3.21 3.570 15.84  0  0    3    4
+## Chrysler Imperial   14.7   8 440.0 230 3.23 5.345 17.42  0  0    3    4
+## Maserati Bora       15.0   8 301.0 335 3.54 3.570 14.60  0  1    5    8
+## Merc 450SLC         15.2   8 275.8 180 3.07 3.780 18.00  0  0    3    3
+## AMC Javelin         15.2   8 304.0 150 3.15 3.435 17.30  0  0    3    2
+## Dodge Challenger    15.5   8 318.0 150 2.76 3.520 16.87  0  0    3    2
+## Ford Pantera L      15.8   8 351.0 264 4.22 3.170 14.50  0  1    5    4
+## Merc 450SE          16.4   8 275.8 180 3.07 4.070 17.40  0  0    3    3
+## Merc 450SL          17.3   8 275.8 180 3.07 3.730 17.60  0  0    3    3
+## Merc 280C           17.8   6 167.6 123 3.92 3.440 18.90  1  0    4    4
+## Valiant             18.1   6 225.0 105 2.76 3.460 20.22  1  0    3    1
+## Hornet Sportabout   18.7   8 360.0 175 3.15 3.440 17.02  0  0    3    2
+## Merc 280            19.2   6 167.6 123 3.92 3.440 18.30  1  0    4    4
+## Pontiac Firebird    19.2   8 400.0 175 3.08 3.845 17.05  0  0    3    2
+## Ferrari Dino        19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6
+## Mazda RX4           21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag       21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4
+## Hornet 4 Drive      21.4   6 258.0 110 3.08 3.215 19.44  1  0    3    1
+## Volvo 142E          21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2
+## Toyota Corona       21.5   4 120.1  97 3.70 2.465 20.01  1  0    3    1
+## Datsun 710          22.8   4 108.0  93 3.85 2.320 18.61  1  1    4    1
+## Merc 230            22.8   4 140.8  95 3.92 3.150 22.90  1  0    4    2
+## Merc 240D           24.4   4 146.7  62 3.69 3.190 20.00  1  0    4    2
+## Porsche 914-2       26.0   4 120.3  91 4.43 2.140 16.70  0  1    5    2
+## Fiat X1-9           27.3   4  79.0  66 4.08 1.935 18.90  1  1    4    1
+## Honda Civic         30.4   4  75.7  52 4.93 1.615 18.52  1  1    4    2
+## Lotus Europa        30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2
+## Fiat 128            32.4   4  78.7  66 4.08 2.200 19.47  1  1    4    1
+## Toyota Corolla      33.9   4  71.1  65 4.22 1.835 19.90  1  1    4    1
+```
+
+---
+
+# Calculating statistical summaries by group .font_small[Base R]
+
+🎯 Calculate the _average_ weight (`wt`) of a car for each gear type in (`gear`)  `mtcars`
+
+--
+
+
+```r
+tapply(mtcars$wt, mtcars$gear, mean)
+```
+
+```
+##        3        4        5 
+## 3.892600 2.616667 2.632600
+```
+--
+
+🎯 Calculate the _median_ weight (`wt`) of a car for each gear (`gear`) and engine (`vs`) type in  `mtcars`
+--
+
+
+```r
+tapply(mtcars$wt, list(mtcars$gear, mtcars$vs), median)
+```
+
+```
+##        0     1
+## 3 3.8100 3.215
+## 4 2.7475 2.550
+## 5 2.9700 1.513
+```
+
+
+---
+
+
+
+class: font_smaller
+background-color: #e5e5e5
+
+# Session Information
+
+.scroll-350[
+
+
+
+```r
+devtools::session_info()
+```
+
+```
+## ─ Session info ───────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       macOS Catalina 10.15.7      
+##  system   x86_64, darwin17.0          
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_AU.UTF-8                 
+##  ctype    en_AU.UTF-8                 
+##  tz       Australia/Melbourne         
+##  date     2020-11-26                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────
+##  package     * version date       lib source                           
+##  anicon        0.1.0   2020-06-21 [1] Github (emitanaka/anicon@0b756df)
+##  assertthat    0.2.1   2019-03-21 [2] CRAN (R 4.0.0)                   
+##  callr         3.5.1   2020-10-13 [1] CRAN (R 4.0.2)                   
+##  cli           2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  crayon        1.3.4   2017-09-16 [2] CRAN (R 4.0.0)                   
+##  desc          1.2.0   2018-05-01 [2] CRAN (R 4.0.0)                   
+##  devtools      2.3.2   2020-09-18 [1] CRAN (R 4.0.2)                   
+##  digest        0.6.27  2020-10-24 [1] CRAN (R 4.0.2)                   
+##  ellipsis      0.3.1   2020-05-15 [2] CRAN (R 4.0.0)                   
+##  evaluate      0.14    2019-05-28 [2] CRAN (R 4.0.0)                   
+##  fansi         0.4.1   2020-01-08 [2] CRAN (R 4.0.0)                   
+##  fs            1.5.0   2020-07-31 [1] CRAN (R 4.0.2)                   
+##  glue          1.4.2   2020-08-27 [1] CRAN (R 4.0.2)                   
+##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 4.0.2)                   
+##  icon          0.1.0   2020-06-21 [1] Github (emitanaka/icon@8458546)  
+##  knitr         1.30    2020-09-22 [1] CRAN (R 4.0.2)                   
+##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.0.2)                   
+##  memoise       1.1.0   2017-04-21 [2] CRAN (R 4.0.0)                   
+##  pkgbuild      1.1.0   2020-07-13 [2] CRAN (R 4.0.1)                   
+##  pkgload       1.1.0   2020-05-29 [2] CRAN (R 4.0.0)                   
+##  prettyunits   1.1.1   2020-01-24 [2] CRAN (R 4.0.0)                   
+##  processx      3.4.4   2020-09-03 [1] CRAN (R 4.0.2)                   
+##  ps            1.4.0   2020-10-07 [1] CRAN (R 4.0.2)                   
+##  R6            2.5.0   2020-10-28 [1] CRAN (R 4.0.2)                   
+##  remotes       2.2.0   2020-07-21 [1] CRAN (R 4.0.2)                   
+##  rlang         0.4.8   2020-10-08 [1] CRAN (R 4.0.2)                   
+##  rmarkdown     2.5     2020-10-21 [1] CRAN (R 4.0.1)                   
+##  rprojroot     2.0.2   2020-11-15 [1] CRAN (R 4.0.2)                   
+##  sessioninfo   1.1.1   2018-11-05 [2] CRAN (R 4.0.0)                   
+##  stringi       1.5.3   2020-09-09 [2] CRAN (R 4.0.2)                   
+##  stringr       1.4.0   2019-02-10 [2] CRAN (R 4.0.0)                   
+##  testthat      3.0.0   2020-10-31 [1] CRAN (R 4.0.2)                   
+##  usethis       1.6.3   2020-09-17 [1] CRAN (R 4.0.2)                   
+##  withr         2.3.0   2020-09-22 [1] CRAN (R 4.0.2)                   
+##  xaringan      0.18    2020-10-21 [1] CRAN (R 4.0.2)                   
+##  xfun          0.19    2020-10-30 [1] CRAN (R 4.0.2)                   
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.0.2)                   
+## 
+## [1] /Users/etan0038/Library/R/4.0/library
+## [2] /Library/Frameworks/R.framework/Versions/4.0/Resources/library
+```
+]
+
+
+These slides are licensed under &lt;br&gt;&lt;center&gt;&lt;a href="https://creativecommons.org/licenses/by-sa/3.0/au/"&gt;&lt;img src="images/cc.svg" style="height:2em;"/&gt;&lt;img src="images/by.svg" style="height:2em;"/&gt;&lt;img src="images/sa.svg" style="height:2em;"/&gt;&lt;/a&gt;&lt;/center&gt;
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLanguage": "r",
+"highlightLines": true,
+"highlightSpans": false,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%",
+"navigation": {
+"scroll": false,
+"touch": true,
+"click": false
+},
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

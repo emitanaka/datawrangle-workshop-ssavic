@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="269 535 1132 246" width="1132" height="246">
+  <defs>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -2 5 4" markerWidth="5" markerHeight="4" color="black">
+      <g>
+        <path d="M 2.5142857 0 L 0 -.9428571 L 0 .9428571 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker_2" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-4 -2 5 4" markerWidth="5" markerHeight="4" color="black">
+      <g>
+        <path d="M -2.5142857 0 L 0 .9428571 L 0 -.9428571 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="Nunito" font-size="28" panose-1="0 0 5 0 0 0 0 0 0 0" units-per-em="1000" underline-position="-75" underline-thickness="50" slope="0" x-height="487" cap-height="705" ascent="1011.0016" descent="-352.99683" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Nunito-Regular"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.18\n2020-11-23 23:57:30 +0000</metadata>
+  <g id="Canvas_2" stroke-dasharray="none" fill="none" stroke-opacity="1" fill-opacity="1" stroke="none">
+    <title>Canvas 2</title>
+    <g id="Canvas_2_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_62">
+        <circle cx="1353.0122" cy="607.589" r="7.50001198426425" fill="white"/>
+        <circle cx="1353.0122" cy="607.589" r="7.50001198426425" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+      </g>
+      <g id="Graphic_61">
+        <circle cx="1353.0122" cy="577.8481" r="7.50001198426425" fill="white"/>
+        <circle cx="1353.0122" cy="577.8481" r="7.50001198426425" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+      </g>
+      <g id="Graphic_60">
+        <circle cx="1353.0122" cy="637.33" r="7.50001198426427" fill="white"/>
+        <circle cx="1353.0122" cy="637.33" r="7.50001198426427" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+      </g>
+      <g id="Graphic_59">
+        <circle cx="1353.0122" cy="668.33" r="7.50001198426426" fill="white"/>
+        <circle cx="1353.0122" cy="668.33" r="7.50001198426426" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+      </g>
+      <g id="Graphic_58">
+        <circle cx="1353.0122" cy="696.8119" r="7.50001198426427" fill="white"/>
+        <circle cx="1353.0122" cy="696.8119" r="7.50001198426427" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+      </g>
+      <g id="Group_66">
+        <g id="Graphic_29">
+          <rect x="269" y="535" width="364" height="181" id="path"/>
+          <clipPath id="clip_path">
+            <use xl:href="#path"/>
+          </clipPath>
+          <g clip-path="url(#clip_path)">
+            <image xl:href="image3.pdf" width="364" height="181" transform="translate(269 535)"/>
+          </g>
+        </g>
+        <g id="Graphic_30">
+          <rect x="653" y="535" width="364" height="181" id="path_2"/>
+          <clipPath id="clip_path_2">
+            <use xl:href="#path_2"/>
+          </clipPath>
+          <g clip-path="url(#clip_path_2)">
+            <image xl:href="image3.pdf" width="364" height="181" transform="translate(653 535)"/>
+          </g>
+        </g>
+        <g id="Graphic_31">
+          <rect x="1037" y="535" width="364" height="181" id="path_3"/>
+          <clipPath id="clip_path_3">
+            <use xl:href="#path_3"/>
+          </clipPath>
+          <g clip-path="url(#clip_path_3)">
+            <image xl:href="image3.pdf" width="364" height="181" transform="translate(1037 535)"/>
+          </g>
+        </g>
+        <g id="Line_33">
+          <line x1="496.6886" y1="590.89356" x2="494.59944" y2="688.1064" marker-end="url(#FilledArrow_Marker)" marker-start="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+        </g>
+        <g id="Line_34">
+          <line x1="315.6886" y1="590.89356" x2="313.59944" y2="688.1064" marker-end="url(#FilledArrow_Marker)" marker-start="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+        </g>
+        <g id="Line_35">
+          <line x1="403.6886" y1="590.89356" x2="401.59944" y2="688.1064" marker-end="url(#FilledArrow_Marker)" marker-start="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+        </g>
+        <g id="Line_36">
+          <line x1="583.6886" y1="590.89356" x2="581.59944" y2="688.1064" marker-end="url(#FilledArrow_Marker)" marker-start="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+        </g>
+        <g id="Line_37">
+          <line x1="978.7265" y1="579.5181" x2="688.7434" y2="579.5181" marker-end="url(#FilledArrow_Marker)" marker-start="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+        </g>
+        <g id="Line_39">
+          <line x1="978.7265" y1="611" x2="688.7434" y2="611" marker-end="url(#FilledArrow_Marker)" marker-start="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+        </g>
+        <g id="Line_40">
+          <line x1="978.7265" y1="642.4819" x2="688.7434" y2="642.4819" marker-end="url(#FilledArrow_Marker)" marker-start="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+        </g>
+        <g id="Line_41">
+          <line x1="978.7265" y1="670" x2="688.7434" y2="670" marker-end="url(#FilledArrow_Marker)" marker-start="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+        </g>
+        <g id="Line_42">
+          <line x1="977.7265" y1="696.6781" x2="687.7434" y2="696.6781" marker-end="url(#FilledArrow_Marker)" marker-start="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+        </g>
+        <g id="Graphic_43">
+          <circle cx="1083" cy="609.759" r="7.50001198426426" fill="white"/>
+          <circle cx="1083" cy="609.759" r="7.50001198426426" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_44">
+          <circle cx="1083" cy="580.0181" r="7.50001198426427" fill="white"/>
+          <circle cx="1083" cy="580.0181" r="7.50001198426427" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_45">
+          <circle cx="1083" cy="639.5" r="7.50001198426427" fill="white"/>
+          <circle cx="1083" cy="639.5" r="7.50001198426427" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_46">
+          <circle cx="1083" cy="670.5" r="7.50001198426424" fill="white"/>
+          <circle cx="1083" cy="670.5" r="7.50001198426424" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_47">
+          <circle cx="1083" cy="698.9819" r="7.50001198426427" fill="white"/>
+          <circle cx="1083" cy="698.9819" r="7.50001198426427" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_52">
+          <circle cx="1175.6819" cy="609.759" r="7.50001198426429" fill="white"/>
+          <circle cx="1175.6819" cy="609.759" r="7.50001198426429" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_51">
+          <circle cx="1175.6819" cy="580.0181" r="7.5000119842643" fill="white"/>
+          <circle cx="1175.6819" cy="580.0181" r="7.5000119842643" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_50">
+          <circle cx="1175.6819" cy="639.5" r="7.5000119842643" fill="white"/>
+          <circle cx="1175.6819" cy="639.5" r="7.5000119842643" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_49">
+          <circle cx="1175.6819" cy="670.5" r="7.50001198426427" fill="white"/>
+          <circle cx="1175.6819" cy="670.5" r="7.50001198426427" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_48">
+          <circle cx="1175.6819" cy="698.9819" r="7.5000119842643" fill="white"/>
+          <circle cx="1175.6819" cy="698.9819" r="7.5000119842643" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_57">
+          <circle cx="1267.4378" cy="608.759" r="7.50001198426429" fill="white"/>
+          <circle cx="1267.4378" cy="608.759" r="7.50001198426429" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_56">
+          <circle cx="1267.4378" cy="579.0181" r="7.50001198426427" fill="white"/>
+          <circle cx="1267.4378" cy="579.0181" r="7.50001198426427" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_55">
+          <circle cx="1267.4378" cy="638.5" r="7.50001198426427" fill="white"/>
+          <circle cx="1267.4378" cy="638.5" r="7.50001198426427" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_54">
+          <circle cx="1267.4378" cy="669.5" r="7.50001198426428" fill="white"/>
+          <circle cx="1267.4378" cy="669.5" r="7.50001198426428" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_53">
+          <circle cx="1267.4378" cy="697.9819" r="7.50001198426429" fill="white"/>
+          <circle cx="1267.4378" cy="697.9819" r="7.50001198426429" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+        </g>
+        <g id="Graphic_63">
+          <text transform="translate(395.406 738)" fill="black">
+            <tspan font-family="Nunito" font-size="28" font-weight="400" fill="black" x="0" y="28">variables</tspan>
+          </text>
+        </g>
+        <g id="Graphic_64">
+          <text transform="translate(752.4169 738)" fill="black">
+            <tspan font-family="Nunito" font-size="28" font-weight="400" fill="black" x="0" y="28">observations</tspan>
+          </text>
+        </g>
+        <g id="Graphic_65">
+          <text transform="translate(1185 738)" fill="black">
+            <tspan font-family="Nunito" font-size="28" font-weight="400" fill="black" x="50448534e-20" y="28">values</tspan>
+          </text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
