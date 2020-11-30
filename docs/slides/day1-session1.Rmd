@@ -414,6 +414,10 @@ tapply(mtcars$wt, mtcars$gear, mean)
 tapply(mtcars$wt, list(mtcars$gear, mtcars$vs), median)
 ```
 
+---
+
+```{r exerciseslide, child="assets/exerciseslide.Rmd"}
+```
 
 ---
 

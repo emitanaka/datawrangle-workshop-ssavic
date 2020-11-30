@@ -8,6 +8,8 @@
     <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
     <link href="libs/font-awesome-animation-1.0/font-awesome-animation-emi.css" rel="stylesheet" />
     <script src="libs/fontawesome-5.0.13/js/fontawesome-all.min.js"></script>
+    <link href="libs/countdown-0.3.5/countdown.css" rel="stylesheet" />
+    <script src="libs/countdown-0.3.5/countdown.js"></script>
     <link rel="stylesheet" href="assets/animate.css" type="text/css" />
     <link rel="stylesheet" href="assets/custom.css" type="text/css" />
     <link rel="stylesheet" href="assets/fira-code.css" type="text/css" />
@@ -961,6 +963,27 @@ tapply(mtcars$wt, list(mtcars$gear, mtcars$vs), median)
 ## 5 2.9700 1.513
 ```
 
+---
+
+
+class: exercise middle hide-slide-number
+
+# &lt;i class="fas fa-code"&gt;&lt;/i&gt; If you installed the `dwexercise` package, &lt;br&gt; run below in your R console
+
+```r
+learnr::run_tutorial("day1-exercise-01", package = "dwexercise")
+```
+
+&lt;br&gt;
+
+# &lt;i class="fas fa-link"&gt;&lt;/i&gt; If the above doesn't work for you, go [here](https://ebsmonash.shinyapps.io/dw-day1-exercise-01).
+
+# &lt;i class="fas fa-question"&gt;&lt;/i&gt; Questions or issues, let us know!
+&lt;center&gt;
+<div class="countdown clock" id="timer_5fc4c936" style="right:0;bottom:0;" data-warnwhen="0">
+<code class="countdown-time"><span class="countdown-digits minutes">15</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+&lt;/center&gt;
 
 ---
 
@@ -990,47 +1013,49 @@ devtools::session_info()
 ##  collate  en_AU.UTF-8                 
 ##  ctype    en_AU.UTF-8                 
 ##  tz       Australia/Melbourne         
-##  date     2020-11-26                  
+##  date     2020-11-30                  
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────
-##  package     * version date       lib source                           
-##  anicon        0.1.0   2020-06-21 [1] Github (emitanaka/anicon@0b756df)
-##  assertthat    0.2.1   2019-03-21 [2] CRAN (R 4.0.0)                   
-##  callr         3.5.1   2020-10-13 [1] CRAN (R 4.0.2)                   
-##  cli           2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
-##  crayon        1.3.4   2017-09-16 [2] CRAN (R 4.0.0)                   
-##  desc          1.2.0   2018-05-01 [2] CRAN (R 4.0.0)                   
-##  devtools      2.3.2   2020-09-18 [1] CRAN (R 4.0.2)                   
-##  digest        0.6.27  2020-10-24 [1] CRAN (R 4.0.2)                   
-##  ellipsis      0.3.1   2020-05-15 [2] CRAN (R 4.0.0)                   
-##  evaluate      0.14    2019-05-28 [2] CRAN (R 4.0.0)                   
-##  fansi         0.4.1   2020-01-08 [2] CRAN (R 4.0.0)                   
-##  fs            1.5.0   2020-07-31 [1] CRAN (R 4.0.2)                   
-##  glue          1.4.2   2020-08-27 [1] CRAN (R 4.0.2)                   
-##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 4.0.2)                   
-##  icon          0.1.0   2020-06-21 [1] Github (emitanaka/icon@8458546)  
-##  knitr         1.30    2020-09-22 [1] CRAN (R 4.0.2)                   
-##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.0.2)                   
-##  memoise       1.1.0   2017-04-21 [2] CRAN (R 4.0.0)                   
-##  pkgbuild      1.1.0   2020-07-13 [2] CRAN (R 4.0.1)                   
-##  pkgload       1.1.0   2020-05-29 [2] CRAN (R 4.0.0)                   
-##  prettyunits   1.1.1   2020-01-24 [2] CRAN (R 4.0.0)                   
-##  processx      3.4.4   2020-09-03 [1] CRAN (R 4.0.2)                   
-##  ps            1.4.0   2020-10-07 [1] CRAN (R 4.0.2)                   
-##  R6            2.5.0   2020-10-28 [1] CRAN (R 4.0.2)                   
-##  remotes       2.2.0   2020-07-21 [1] CRAN (R 4.0.2)                   
-##  rlang         0.4.8   2020-10-08 [1] CRAN (R 4.0.2)                   
-##  rmarkdown     2.5     2020-10-21 [1] CRAN (R 4.0.1)                   
-##  rprojroot     2.0.2   2020-11-15 [1] CRAN (R 4.0.2)                   
-##  sessioninfo   1.1.1   2018-11-05 [2] CRAN (R 4.0.0)                   
-##  stringi       1.5.3   2020-09-09 [2] CRAN (R 4.0.2)                   
-##  stringr       1.4.0   2019-02-10 [2] CRAN (R 4.0.0)                   
-##  testthat      3.0.0   2020-10-31 [1] CRAN (R 4.0.2)                   
-##  usethis       1.6.3   2020-09-17 [1] CRAN (R 4.0.2)                   
-##  withr         2.3.0   2020-09-22 [1] CRAN (R 4.0.2)                   
-##  xaringan      0.18    2020-10-21 [1] CRAN (R 4.0.2)                   
-##  xfun          0.19    2020-10-30 [1] CRAN (R 4.0.2)                   
-##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.0.2)                   
+##  package     * version date       lib source                              
+##  anicon        0.1.0   2020-06-21 [1] Github (emitanaka/anicon@0b756df)   
+##  assertthat    0.2.1   2019-03-21 [2] CRAN (R 4.0.0)                      
+##  callr         3.5.1   2020-10-13 [1] CRAN (R 4.0.2)                      
+##  cli           2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                      
+##  countdown     0.3.5   2020-07-20 [1] Github (gadenbuie/countdown@a544fa4)
+##  crayon        1.3.4   2017-09-16 [2] CRAN (R 4.0.0)                      
+##  desc          1.2.0   2018-05-01 [2] CRAN (R 4.0.0)                      
+##  devtools      2.3.2   2020-09-18 [1] CRAN (R 4.0.2)                      
+##  digest        0.6.27  2020-10-24 [1] CRAN (R 4.0.2)                      
+##  ellipsis      0.3.1   2020-05-15 [2] CRAN (R 4.0.0)                      
+##  evaluate      0.14    2019-05-28 [2] CRAN (R 4.0.0)                      
+##  fansi         0.4.1   2020-01-08 [2] CRAN (R 4.0.0)                      
+##  fs            1.5.0   2020-07-31 [1] CRAN (R 4.0.2)                      
+##  glue          1.4.2   2020-08-27 [1] CRAN (R 4.0.2)                      
+##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 4.0.2)                      
+##  icon          0.1.0   2020-06-21 [1] Github (emitanaka/icon@8458546)     
+##  knitr         1.30    2020-09-22 [1] CRAN (R 4.0.2)                      
+##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.0.2)                      
+##  memoise       1.1.0   2017-04-21 [2] CRAN (R 4.0.0)                      
+##  pkgbuild      1.1.0   2020-07-13 [2] CRAN (R 4.0.1)                      
+##  pkgload       1.1.0   2020-05-29 [2] CRAN (R 4.0.0)                      
+##  prettyunits   1.1.1   2020-01-24 [2] CRAN (R 4.0.0)                      
+##  processx      3.4.4   2020-09-03 [1] CRAN (R 4.0.2)                      
+##  ps            1.4.0   2020-10-07 [1] CRAN (R 4.0.2)                      
+##  R6            2.5.0   2020-10-28 [1] CRAN (R 4.0.2)                      
+##  remotes       2.2.0   2020-07-21 [1] CRAN (R 4.0.2)                      
+##  rlang         0.4.8   2020-10-08 [1] CRAN (R 4.0.2)                      
+##  rmarkdown     2.5     2020-10-21 [1] CRAN (R 4.0.1)                      
+##  rprojroot     2.0.2   2020-11-15 [1] CRAN (R 4.0.2)                      
+##  sessioninfo   1.1.1   2018-11-05 [2] CRAN (R 4.0.0)                      
+##  stringi       1.5.3   2020-09-09 [2] CRAN (R 4.0.2)                      
+##  stringr       1.4.0   2019-02-10 [2] CRAN (R 4.0.0)                      
+##  testthat      3.0.0   2020-10-31 [1] CRAN (R 4.0.2)                      
+##  usethis       1.6.3   2020-09-17 [1] CRAN (R 4.0.2)                      
+##  whisker       0.4     2019-08-28 [2] CRAN (R 4.0.0)                      
+##  withr         2.3.0   2020-09-22 [1] CRAN (R 4.0.2)                      
+##  xaringan      0.18    2020-10-21 [1] CRAN (R 4.0.2)                      
+##  xfun          0.19    2020-10-30 [1] CRAN (R 4.0.2)                      
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.0.2)                      
 ## 
 ## [1] /Users/etan0038/Library/R/4.0/library
 ## [2] /Library/Frameworks/R.framework/Versions/4.0/Resources/library

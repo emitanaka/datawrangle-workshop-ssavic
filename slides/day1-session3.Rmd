@@ -603,6 +603,10 @@ glue::glue_data(df, "I love {animal}, it's so {quality}!")
 stringr::str_glue_data(df, "I love {animal}, it's so {quality}!")
 
 ```
+---
+
+```{r exerciseslide, child="assets/exerciseslide.Rmd"}
+```
 
 ---
 
