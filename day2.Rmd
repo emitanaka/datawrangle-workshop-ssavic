@@ -20,3 +20,38 @@ cat(readLines("schedule/schedule-day2.md"), sep = "\n")
 ```
 
 ## Exercises
+
+Please make sure you install the following packages with latest versions.
+
+```` r
+```{r pkgs, echo = FALSE, results="asis", warning = FALSE}
+pkgs <- readLines("install-pkgs.txt")
+rmts <- readLines("install-remotes.txt")
+cat(glue::glue("install.packages(\"{pkgs}\")"), sep = "\n")
+cat("\n# you will need to have installed the remotes package for below\n")
+cat(glue::glue("remotes::install_github(\"{rmts}\")"), sep = "\n")
+
+```
+````
+
+To do the exercises, please install the following package:
+
+```r
+remotes::install_github("emitanaka/dwexercise")
+```
+
+In order to launch the exercises, use one of the commands below:
+
+```r
+learnr::run_tutorial("day2-exercises-01", package = "dwexercise")
+learnr::run_tutorial("day2-exercises-02", package = "dwexercise")
+learnr::run_tutorial("day2-exercises-03", package = "dwexercise")
+learnr::run_tutorial("day2-exercises-04", package = "dwexercise")
+```
+
+If the above are not working for you, you can try the shiny app version instead:
+
+* https://ebsmonash.shinyapps.io/dw-day2-exercise-01
+* https://ebsmonash.shinyapps.io/dw-day2-exercise-02
+* https://ebsmonash.shinyapps.io/dw-day2-exercise-03
+* https://ebsmonash.shinyapps.io/dw-day2-exercise-04
