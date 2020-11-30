@@ -218,14 +218,14 @@ Wed 2nd Dec 2020
 Time | Activity 
 :----|:---
 1.00-1.30 | Installation Help
-1.30-2.00 | **Lesson 1:** Revisiting data wrangling starring `janitor` and `broom`
+1.30-2.00 | **Lesson 1:** Relational data wrangling, starring `janitor` and `broom`
 2.00-2.15 |  *Break out session*
 2.15-2.45 | **Lesson 2:** Formatting factors with `forcats`
 2.45-3.00 | *Break out session*
 3.00-3.30 | *Coffee Break* 
 3.30-4.00 | **Lesson 3:** Dealing with dates with `lubridate`
 4.00-4.15 | *Break out session*
-4.15-4.45 | **Lesson 4:** Advanced data wrangling starring `purrr`
+4.15-4.45 | **Lesson 4:** Advanced data wrangling, starring `purrr`
 4.45-5.00 | *Break out session* 
 
 
@@ -235,17 +235,22 @@ Time | Activity
 # Getting Started
 
 
+```r
+remotes::install_github("emitanaka/dwexercise")
+```
+
 
 .info-box.pad20[
-
-
-
 * Find the latest updated material at .blue[&lt;i class="fas fa-globe"&gt;&lt;/i&gt; http://emitanaka.org/datawrangle-workshop-ssavic/]
 * All materials are hosted in GitHub repo [here](https://github.com/emitanaka/datawrangle-workshop-ssavic)
+* All exercises are hosted as an R-package on GitHub repo [here](https://github.com/emitanaka/dwexercise)
 * You can download the current material [here](https://github.com/emitanaka/datawrangle-workshop-ssavic/archive/main.zip)
 ]
 
-
+.font_small[
+* Some materials may be updated before the workshop is completed so it will be better to re-download the latest material at the conclusion of the workshop. 
+* I will send you a follow up email with link to download all material
+]
 
 ---
 
@@ -301,7 +306,7 @@ devtools::session_info()
 ##  collate  en_AU.UTF-8                 
 ##  ctype    en_AU.UTF-8                 
 ##  tz       Australia/Melbourne         
-##  date     2020-11-26                  
+##  date     2020-11-30                  
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────
 ##  package     * version date       lib source                           

@@ -19,6 +19,8 @@
     <script src="libs/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
     <link href="libs/str_view-0.1.0/str_view.css" rel="stylesheet" />
     <script src="libs/str_view-binding-1.4.0/str_view.js"></script>
+    <link href="libs/countdown-0.3.5/countdown.css" rel="stylesheet" />
+    <script src="libs/countdown-0.3.5/countdown.js"></script>
     <link rel="stylesheet" href="assets/animate.css" type="text/css" />
     <link rel="stylesheet" href="assets/custom.css" type="text/css" />
     <link rel="stylesheet" href="assets/fira-code.css" type="text/css" />
@@ -133,8 +135,8 @@ str_squish(c("    Apple ", "  Goji    Berry     "))
 
 # Base R and `stringr`
 
-<div id="htmlwidget-b166bc7abaa9a159a222" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b166bc7abaa9a159a222">{"x":{"filter":"none","data":[["gregexpr(pattern, x)","grep(pattern, x, value = TRUE)","grep(pattern, x)","grepl(pattern, x)","gsub(pattern, replacement, x)","nchar(x)","order(x)","regexec(pattern, x) + regmatches()","regexpr(pattern, x) + regmatches()","regexpr(pattern, x)","sort(x)","strrep(x, n)","strsplit(x, pattern)","strwrap(x)","sub(pattern, replacement, x)","substr(x, start, end)","tolower(x)","tools::toTitleCase(x)","toupper(x)","trimws(x)"],["str_locate_all(x, pattern)","str_subset(x, pattern)","str_which(x, pattern)","str_detect(x, pattern)","str_replace_all(x, pattern, replacement)","str_length(x)","str_order(x)","str_match(x, pattern)","str_extract(x, pattern)","str_locate(x, pattern)","str_sort(x)","str_dup(x, n)","str_split(x, pattern)","str_wrap(x)","str_replace(x, pattern, replacement)","str_sub(x, start, end)","str_to_lower(x)","str_to_title(x)","str_to_upper(x)","str_trim(x)"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Base R<\/th>\n      <th>stringr<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"lengthChange":false,"dom":"tp","columnDefs":[{"className":"dt-left"}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-a60de4da7928d1a6d8b2" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a60de4da7928d1a6d8b2">{"x":{"filter":"none","data":[["gregexpr(pattern, x)","grep(pattern, x, value = TRUE)","grep(pattern, x)","grepl(pattern, x)","gsub(pattern, replacement, x)","nchar(x)","order(x)","regexec(pattern, x) + regmatches()","regexpr(pattern, x) + regmatches()","regexpr(pattern, x)","sort(x)","strrep(x, n)","strsplit(x, pattern)","strwrap(x)","sub(pattern, replacement, x)","substr(x, start, end)","tolower(x)","tools::toTitleCase(x)","toupper(x)","trimws(x)"],["str_locate_all(x, pattern)","str_subset(x, pattern)","str_which(x, pattern)","str_detect(x, pattern)","str_replace_all(x, pattern, replacement)","str_length(x)","str_order(x)","str_match(x, pattern)","str_extract(x, pattern)","str_locate(x, pattern)","str_sort(x)","str_dup(x, n)","str_split(x, pattern)","str_wrap(x)","str_replace(x, pattern, replacement)","str_sub(x, start, end)","str_to_lower(x)","str_to_title(x)","str_to_upper(x)","str_trim(x)"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Base R<\/th>\n      <th>stringr<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"lengthChange":false,"dom":"tp","columnDefs":[{"className":"dt-left"}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 .footnote[
 See more at https://stringr.tidyverse.org/articles/from-base.html
@@ -675,8 +677,8 @@ str_replace(c("banana", "bananana", "bana", "banananana"), "ba(na){1,2}", "-")
 str_view(c("banana", "bananana", "bana", "banabanana"), "ba(na){1,2}")
 ```
 
-<div id="htmlwidget-fbb2d086f278390fd98b" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-fbb2d086f278390fd98b">{"x":{"html":"<ul>\n  <li><span class='match'>banana<\/span><\/li>\n  <li><span class='match'>banana<\/span>na<\/li>\n  <li><span class='match'>bana<\/span><\/li>\n  <li><span class='match'>bana<\/span>banana<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-d7bf9d5f00de1038a409" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d7bf9d5f00de1038a409">{"x":{"html":"<ul>\n  <li><span class='match'>banana<\/span><\/li>\n  <li><span class='match'>banana<\/span>na<\/li>\n  <li><span class='match'>bana<\/span><\/li>\n  <li><span class='match'>bana<\/span>banana<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 
 ]
 .item[
@@ -685,8 +687,8 @@ str_view(c("banana", "bananana", "bana", "banabanana"), "ba(na){1,2}")
 str_view_all(c("banana", "bananana", "bana", "banabanana"), "ba(na){1,2}")
 ```
 
-<div id="htmlwidget-3b82a4ca4ba9fb3cbc58" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-3b82a4ca4ba9fb3cbc58">{"x":{"html":"<ul>\n  <li><span class='match'>banana<\/span><\/li>\n  <li><span class='match'>banana<\/span>na<\/li>\n  <li><span class='match'>bana<\/span><\/li>\n  <li><span class='match'>bana<\/span><span class='match'>banana<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-fa0dda4e801849e08249" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-fa0dda4e801849e08249">{"x":{"html":"<ul>\n  <li><span class='match'>banana<\/span><\/li>\n  <li><span class='match'>banana<\/span>na<\/li>\n  <li><span class='match'>bana<\/span><\/li>\n  <li><span class='match'>bana<\/span><span class='match'>banana<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 ]
 ]
 
@@ -703,8 +705,8 @@ count: false
 str_view(c("banana", "bananana", "bana", "banabanana"), "ba(na){1,2}")
 ```
 
-<div id="htmlwidget-8685c60dda6c40d9fe1e" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-8685c60dda6c40d9fe1e">{"x":{"html":"<ul>\n  <li><span class='match'>banana<\/span><\/li>\n  <li><span class='match'>banana<\/span>na<\/li>\n  <li><span class='match'>bana<\/span><\/li>\n  <li><span class='match'>bana<\/span>banana<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-d826aba0061cc689530c" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d826aba0061cc689530c">{"x":{"html":"<ul>\n  <li><span class='match'>banana<\/span><\/li>\n  <li><span class='match'>banana<\/span>na<\/li>\n  <li><span class='match'>bana<\/span><\/li>\n  <li><span class='match'>bana<\/span>banana<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 
 ]
 .item[
@@ -713,8 +715,8 @@ str_view(c("banana", "bananana", "bana", "banabanana"), "ba(na){1,2}")
 str_view_all(c("banana", "bananana", "bana", "banabanana"), "ba(na){1,2}")
 ```
 
-<div id="htmlwidget-a4b60568e3db36e3acec" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a4b60568e3db36e3acec">{"x":{"html":"<ul>\n  <li><span class='match'>banana<\/span><\/li>\n  <li><span class='match'>banana<\/span>na<\/li>\n  <li><span class='match'>bana<\/span><\/li>\n  <li><span class='match'>bana<\/span><span class='match'>banana<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-b0e94cb89293e6148452" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b0e94cb89293e6148452">{"x":{"html":"<ul>\n  <li><span class='match'>banana<\/span><\/li>\n  <li><span class='match'>banana<\/span>na<\/li>\n  <li><span class='match'>bana<\/span><\/li>\n  <li><span class='match'>bana<\/span><span class='match'>banana<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 ]
 ]
 
@@ -1062,6 +1064,27 @@ stringr::str_glue_data(df, "I love {animal}, it's so {quality}!")
 ## I love kangaroo, it's so cool!
 ## I love numbat, it's so cute!
 ```
+---
+
+
+class: exercise middle hide-slide-number
+
+# &lt;i class="fas fa-code"&gt;&lt;/i&gt; If you installed the `dwexercise` package, &lt;br&gt; run below in your R console
+
+```r
+learnr::run_tutorial("day1-exercise-03", package = "dwexercise")
+```
+
+&lt;br&gt;
+
+# &lt;i class="fas fa-link"&gt;&lt;/i&gt; If the above doesn't work for you, go [here](https://ebsmonash.shinyapps.io/dw-day1-exercise-03).
+
+# &lt;i class="fas fa-question"&gt;&lt;/i&gt; Questions or issues, let us know!
+&lt;center&gt;
+<div class="countdown clock" id="timer_5fc4c8fb" style="right:0;bottom:0;" data-warnwhen="0">
+<code class="countdown-time"><span class="countdown-digits minutes">15</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+&lt;/center&gt;
 
 ---
 
@@ -1091,7 +1114,7 @@ devtools::session_info()
 ##  collate  en_AU.UTF-8                 
 ##  ctype    en_AU.UTF-8                 
 ##  tz       Australia/Melbourne         
-##  date     2020-11-26                  
+##  date     2020-11-30                  
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────
 ##  package            * version    date       lib
@@ -1105,6 +1128,7 @@ devtools::session_info()
 ##  classInt             0.4-3      2020-04-07 [1]
 ##  cli                  2.2.0      2020-11-20 [1]
 ##  colorspace           2.0-0      2020-11-11 [1]
+##  countdown            0.3.5      2020-07-20 [1]
 ##  crayon               1.3.4      2017-09-16 [2]
 ##  crosstalk            1.1.0.1    2020-03-13 [1]
 ##  DBI                  1.1.0      2019-12-15 [1]
@@ -1168,104 +1192,107 @@ devtools::session_info()
 ##  stringi              1.5.3      2020-09-09 [2]
 ##  stringr            * 1.4.0      2019-02-10 [2]
 ##  testthat             3.0.0      2020-10-31 [1]
-##  tibble             * 3.0.4      2020-10-12 [1]
+##  tibble             * 3.0.4.9000 2020-11-26 [1]
 ##  tidyr              * 1.1.2      2020-08-27 [1]
 ##  tidyselect           1.1.0      2020-05-11 [2]
 ##  tidyverse          * 1.3.0      2019-11-21 [1]
 ##  units                0.6-7      2020-06-13 [1]
 ##  usethis              1.6.3      2020-09-17 [1]
-##  vctrs                0.3.5      2020-11-17 [1]
+##  vctrs                0.3.5.9000 2020-11-26 [1]
+##  whisker              0.4        2019-08-28 [2]
 ##  withr                2.3.0      2020-09-22 [1]
 ##  xaringan             0.18       2020-10-21 [1]
 ##  xfun                 0.19       2020-10-30 [1]
 ##  xml2                 1.3.2      2020-04-23 [2]
 ##  yaml                 2.2.1      2020-02-01 [1]
-##  source                           
-##  Github (emitanaka/anicon@0b756df)
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.1)                   
-##  CRAN (R 4.0.1)                   
-##  CRAN (R 4.0.1)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.0)                   
-##  Github (kbodwin/flair@b3054f2)   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  Github (emitanaka/icon@8458546)  
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.1)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.1)                   
-##  CRAN (R 4.0.1)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.2)                   
-##  Github (tidyverse/reprex@9594ee9)
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.1)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.1)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.2)                   
-##  CRAN (R 4.0.0)                   
-##  CRAN (R 4.0.2)                   
+##  source                              
+##  Github (emitanaka/anicon@0b756df)   
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.1)                      
+##  CRAN (R 4.0.1)                      
+##  CRAN (R 4.0.1)                      
+##  CRAN (R 4.0.2)                      
+##  Github (gadenbuie/countdown@a544fa4)
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.0)                      
+##  Github (kbodwin/flair@b3054f2)      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  Github (emitanaka/icon@8458546)     
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.1)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.1)                      
+##  CRAN (R 4.0.1)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
+##  Github (tidyverse/reprex@9594ee9)   
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.1)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.1)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
+##  Github (tidyverse/tibble@9eeef4d)   
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  Github (r-lib/vctrs@957baf7)        
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.2)                      
+##  CRAN (R 4.0.0)                      
+##  CRAN (R 4.0.2)                      
 ## 
 ## [1] /Users/etan0038/Library/R/4.0/library
 ## [2] /Library/Frameworks/R.framework/Versions/4.0/Resources/library

@@ -794,6 +794,10 @@ author_dat %>%
 ]
 ]
 
+---
+
+```{r exerciseslide, child="assets/exerciseslide.Rmd"}
+```
 
 ---
 

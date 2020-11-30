@@ -8,6 +8,8 @@
     <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
     <link href="libs/font-awesome-animation-1.0/font-awesome-animation-emi.css" rel="stylesheet" />
     <script src="libs/fontawesome-5.0.13/js/fontawesome-all.min.js"></script>
+    <link href="libs/countdown-0.3.5/countdown.css" rel="stylesheet" />
+    <script src="libs/countdown-0.3.5/countdown.js"></script>
     <link rel="stylesheet" href="assets/animate.css" type="text/css" />
     <link rel="stylesheet" href="assets/custom.css" type="text/css" />
     <link rel="stylesheet" href="assets/fira-code.css" type="text/css" />
@@ -560,13 +562,13 @@ filter(cars, speed &gt; 24)
 
 
 ```r
-data(frogsignal, package = "dwexercise")
-str(frogsignal) 
+data(frog_signal, package = "dwexercise")
+str(frog_signal) 
 ```
 
 ```
 ## 'data.frame':	535 obs. of  22 variables:
-##  $ FrogID            : num  13196 13197 13198 13206 13207 ...
+##  $ FrogID            : chr  "13196" "13197" "13198" "13206" ...
 ##  $ AlternativeCD     : num  28 27 31 33 26 31 33 28 29 34 ...
 ##  $ AlternativeCR     : num  12 15 13 15 11 6 15 12 14 12 ...
 ##  $ AlternativeDF     : num  2315 2304 2646 2281 2789 ...
@@ -581,7 +583,7 @@ str(frogsignal)
 ##  $ TwoChoiceLatency  : num  134 47 273 281 110 107 187 113 70 63 ...
 ##  $ TwoChoice         : chr  "Standard" "Alternative" "Alternative" "Standard" ...
 ##  $ ChoiceBinary      : num  0 1 1 0 1 0 1 1 1 0 ...
-##  $ StandardAverage   : chr  "45" "50" "109" "114" ...
+##  $ StandardAverage   : num  45 50 109 114 94 77 55 222 108 57 ...
 ##  $ AlternativeAverage: num  40 32 155 81 87 120 38 144 80 53 ...
 ##  $ PhonotaxisScore   : num  0.0588 0.2195 -0.1742 0.1692 0.0387 ...
 ##  $ ScorePreference   : num  1 1 0 1 1 0 1 1 1 1 ...
@@ -598,7 +600,7 @@ str(frogsignal)
 .item50[
 
 
-&lt;code class ='r hljs remark-code'&gt;frogsignal %&gt;% &lt;br&gt;&amp;nbsp;&lt;span style="background-color:#ffff7f"&gt;select&lt;/span&gt;(Standard1, Standard2, Standard3)&lt;/code&gt;
+&lt;code class ='r hljs remark-code'&gt;frog_signal %&gt;% &lt;br&gt;&amp;nbsp;&lt;span style="background-color:#ffff7f"&gt;select&lt;/span&gt;(Standard1, Standard2, Standard3)&lt;/code&gt;
 
 ```
 
@@ -1151,7 +1153,7 @@ str(frogsignal)
 
 
 
-&lt;code class ='r hljs remark-code'&gt;frogsignal %&gt;% &lt;br&gt;&amp;nbsp;&amp;nbsp;select(Standard1&lt;span style="background-color:#ffff7f"&gt;:&lt;/span&gt;Standard3)&lt;/code&gt;
+&lt;code class ='r hljs remark-code'&gt;frog_signal %&gt;% &lt;br&gt;&amp;nbsp;&amp;nbsp;select(Standard1&lt;span style="background-color:#ffff7f"&gt;:&lt;/span&gt;Standard3)&lt;/code&gt;
 
 ```
 
@@ -1706,7 +1708,7 @@ The &lt;code&gt;tidyselect&lt;/code&gt; syntax &lt;code class="monash-blue"&gt;:
 .item50[
 
 ```r
-frogsignal %&gt;% 
+frog_signal %&gt;% 
   select(starts_with("Standard"))
 ```
 
@@ -2259,7 +2261,7 @@ frogsignal %&gt;%
 
 
 ```r
-frogsignal %&gt;% 
+frog_signal %&gt;% 
   select(num_range("Standard", 1:3))
 ```
 
@@ -2811,7 +2813,7 @@ frogsignal %&gt;%
 * `&amp;` or `|` for selecting intersection or union of two sets of variables, e.g. 
 
 ```r
-frogsignal %&gt;% 
+frog_signal %&gt;% 
   select(starts_with("Alt") &amp; ends_with("1")) %&gt;% 
   str()
 ```
@@ -3324,6 +3326,159 @@ mtcars %&gt;%
 ## 6     5     1   1.51   1.51
 ```
 
+---
+
+#  `across` .tag.flash.animated[NEW in `dplyr` v1.0.0]
+
+* Using `across`, you can more easily apply a function to multiple columns
+
+
+```r
+mtcars %&gt;% 
+  group_by(gear, vs) %&gt;% 
+* summarise(across(everything(), mean))
+```
+
+```
+## # A tibble: 6 x 11
+## # Groups:   gear [3]
+##    gear    vs   mpg   cyl  disp    hp  drat    wt  qsec    am  carb
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     3     0  15.0  8    358.  194.   3.12  4.10  17.1   0    3.08
+## 2     3     1  20.3  5.33 201.  104    3.18  3.05  19.9   0    1   
+## 3     4     0  21    6    160   110    3.9   2.75  16.7   1    4   
+## 4     4     1  25.2  4.4  116.   85.4  4.07  2.59  19.4   0.6  2   
+## 5     5     0  19.1  6.5  229.  216.   3.95  2.91  15.3   1    5   
+## 6     5     1  30.4  4     95.1 113    3.77  1.51  16.9   1    2
+```
+
+---
+
+#  `where` .tag.flash.animated[NEW in `dplyr` v1.0.0]
+
+* You can combine `across` with the selection helper `where` 
+
+
+```r
+mtcars %&gt;% 
+  group_by(gear, vs) %&gt;% 
+* summarise(across(where(function(x) n_distinct(x) &gt; 10), mean))
+```
+
+```
+## # A tibble: 6 x 8
+## # Groups:   gear [3]
+##    gear    vs   mpg  disp    hp  drat    wt  qsec
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     3     0  15.0 358.  194.   3.12  4.10  17.1
+## 2     3     1  20.3 201.  104    3.18  3.05  19.9
+## 3     4     0  21   160   110    3.9   2.75  16.7
+## 4     4     1  25.2 116.   85.4  4.07  2.59  19.4
+## 5     5     0  19.1 229.  216.   3.95  2.91  15.3
+## 6     5     1  30.4  95.1 113    3.77  1.51  16.9
+```
+
+---
+
+#  `c_across` .tag.flash.animated[NEW in `dplyr` v1.0.0]
+
+* Remember tidy selection only works with functions that are compatible
+
+
+```r
+mtcars %&gt;% 
+  rowwise() %&gt;% 
+  summarise(disp = disp, hp = hp, drat = drat, wt = wt,
+*           score = sum(c_across(disp:wt)))
+```
+
+```
+## # A tibble: 32 x 5
+##     disp    hp  drat    wt score
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  160    110  3.9   2.62  277.
+##  2  160    110  3.9   2.88  277.
+##  3  108     93  3.85  2.32  207.
+##  4  258    110  3.08  3.22  374.
+##  5  360    175  3.15  3.44  542.
+##  6  225    105  2.76  3.46  336.
+##  7  360    245  3.21  3.57  612.
+##  8  147.    62  3.69  3.19  216.
+##  9  141.    95  3.92  3.15  243.
+## 10  168.   123  3.92  3.44  298.
+## # … with 22 more rows
+```
+---
+
+#  `rowwise`?
+
+* What happens if you omit `rowwise`?
+
+
+```r
+mtcars %&gt;% 
+  #rowwise() %&gt;% 
+  summarise(disp = disp, hp = hp, drat = drat, wt = wt,
+*           score = sum(c_across(disp:wt)))
+```
+
+```
+##     disp  hp drat    wt    score
+## 1  160.0 110 3.90 2.620 12295.14
+## 2  160.0 110 3.90 2.875 12295.14
+## 3  108.0  93 3.85 2.320 12295.14
+## 4  258.0 110 3.08 3.215 12295.14
+## 5  360.0 175 3.15 3.440 12295.14
+## 6  225.0 105 2.76 3.460 12295.14
+## 7  360.0 245 3.21 3.570 12295.14
+## 8  146.7  62 3.69 3.190 12295.14
+## 9  140.8  95 3.92 3.150 12295.14
+## 10 167.6 123 3.92 3.440 12295.14
+## 11 167.6 123 3.92 3.440 12295.14
+## 12 275.8 180 3.07 4.070 12295.14
+## 13 275.8 180 3.07 3.730 12295.14
+## 14 275.8 180 3.07 3.780 12295.14
+## 15 472.0 205 2.93 5.250 12295.14
+## 16 460.0 215 3.00 5.424 12295.14
+## 17 440.0 230 3.23 5.345 12295.14
+## 18  78.7  66 4.08 2.200 12295.14
+## 19  75.7  52 4.93 1.615 12295.14
+## 20  71.1  65 4.22 1.835 12295.14
+## 21 120.1  97 3.70 2.465 12295.14
+## 22 318.0 150 2.76 3.520 12295.14
+## 23 304.0 150 3.15 3.435 12295.14
+## 24 350.0 245 3.73 3.840 12295.14
+## 25 400.0 175 3.08 3.845 12295.14
+## 26  79.0  66 4.08 1.935 12295.14
+## 27 120.3  91 4.43 2.140 12295.14
+## 28  95.1 113 3.77 1.513 12295.14
+## 29 351.0 264 4.22 3.170 12295.14
+## 30 145.0 175 3.62 2.770 12295.14
+## 31 301.0 335 3.54 3.570 12295.14
+## 32 121.0 109 4.11 2.780 12295.14
+```
+
+---
+
+
+class: exercise middle hide-slide-number
+
+# &lt;i class="fas fa-code"&gt;&lt;/i&gt; If you installed the `dwexercise` package, &lt;br&gt; run below in your R console
+
+```r
+learnr::run_tutorial("day1-exercise-02", package = "dwexercise")
+```
+
+&lt;br&gt;
+
+# &lt;i class="fas fa-link"&gt;&lt;/i&gt; If the above doesn't work for you, go [here](https://ebsmonash.shinyapps.io/dw-day1-exercise-02).
+
+# &lt;i class="fas fa-question"&gt;&lt;/i&gt; Questions or issues, let us know!
+&lt;center&gt;
+<div class="countdown clock" id="timer_5fc4c5aa" style="right:0;bottom:0;" data-warnwhen="0">
+<code class="countdown-time"><span class="countdown-digits minutes">15</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+&lt;/center&gt;
 
 ---
 
@@ -3353,59 +3508,61 @@ devtools::session_info()
 ##  collate  en_AU.UTF-8                 
 ##  ctype    en_AU.UTF-8                 
 ##  tz       Australia/Melbourne         
-##  date     2020-11-26                  
+##  date     2020-11-30                  
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────
-##  package     * version date       lib source                           
-##  anicon        0.1.0   2020-06-21 [1] Github (emitanaka/anicon@0b756df)
-##  assertthat    0.2.1   2019-03-21 [2] CRAN (R 4.0.0)                   
-##  callr         3.5.1   2020-10-13 [1] CRAN (R 4.0.2)                   
-##  cli           2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
-##  crayon        1.3.4   2017-09-16 [2] CRAN (R 4.0.0)                   
-##  desc          1.2.0   2018-05-01 [2] CRAN (R 4.0.0)                   
-##  devtools      2.3.2   2020-09-18 [1] CRAN (R 4.0.2)                   
-##  digest        0.6.27  2020-10-24 [1] CRAN (R 4.0.2)                   
-##  dplyr       * 1.0.2   2020-08-18 [1] CRAN (R 4.0.2)                   
-##  ellipsis      0.3.1   2020-05-15 [2] CRAN (R 4.0.0)                   
-##  evaluate      0.14    2019-05-28 [2] CRAN (R 4.0.0)                   
-##  fansi         0.4.1   2020-01-08 [2] CRAN (R 4.0.0)                   
-##  flair       * 0.0.2   2020-11-21 [1] Github (kbodwin/flair@b3054f2)   
-##  fs            1.5.0   2020-07-31 [1] CRAN (R 4.0.2)                   
-##  generics      0.1.0   2020-10-31 [2] CRAN (R 4.0.2)                   
-##  glue          1.4.2   2020-08-27 [1] CRAN (R 4.0.2)                   
-##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 4.0.2)                   
-##  icon          0.1.0   2020-06-21 [1] Github (emitanaka/icon@8458546)  
-##  knitr         1.30    2020-09-22 [1] CRAN (R 4.0.2)                   
-##  lifecycle     0.2.0   2020-03-06 [1] CRAN (R 4.0.0)                   
-##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.0.2)                   
-##  memoise       1.1.0   2017-04-21 [2] CRAN (R 4.0.0)                   
-##  pillar        1.4.7   2020-11-20 [1] CRAN (R 4.0.1)                   
-##  pkgbuild      1.1.0   2020-07-13 [2] CRAN (R 4.0.1)                   
-##  pkgconfig     2.0.3   2019-09-22 [2] CRAN (R 4.0.0)                   
-##  pkgload       1.1.0   2020-05-29 [2] CRAN (R 4.0.0)                   
-##  prettyunits   1.1.1   2020-01-24 [2] CRAN (R 4.0.0)                   
-##  processx      3.4.4   2020-09-03 [1] CRAN (R 4.0.2)                   
-##  ps            1.4.0   2020-10-07 [1] CRAN (R 4.0.2)                   
-##  purrr         0.3.4   2020-04-17 [2] CRAN (R 4.0.0)                   
-##  R6            2.5.0   2020-10-28 [1] CRAN (R 4.0.2)                   
-##  remotes       2.2.0   2020-07-21 [1] CRAN (R 4.0.2)                   
-##  rlang         0.4.8   2020-10-08 [1] CRAN (R 4.0.2)                   
-##  rmarkdown     2.5     2020-10-21 [1] CRAN (R 4.0.1)                   
-##  rprojroot     2.0.2   2020-11-15 [1] CRAN (R 4.0.2)                   
-##  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.0.1)                   
-##  sessioninfo   1.1.1   2018-11-05 [2] CRAN (R 4.0.0)                   
-##  stringi       1.5.3   2020-09-09 [2] CRAN (R 4.0.2)                   
-##  stringr       1.4.0   2019-02-10 [2] CRAN (R 4.0.0)                   
-##  testthat      3.0.0   2020-10-31 [1] CRAN (R 4.0.2)                   
-##  tibble        3.0.4   2020-10-12 [1] CRAN (R 4.0.2)                   
-##  tidyselect    1.1.0   2020-05-11 [2] CRAN (R 4.0.0)                   
-##  usethis       1.6.3   2020-09-17 [1] CRAN (R 4.0.2)                   
-##  utf8          1.1.4   2018-05-24 [2] CRAN (R 4.0.0)                   
-##  vctrs         0.3.5   2020-11-17 [1] CRAN (R 4.0.2)                   
-##  withr         2.3.0   2020-09-22 [1] CRAN (R 4.0.2)                   
-##  xaringan      0.18    2020-10-21 [1] CRAN (R 4.0.2)                   
-##  xfun          0.19    2020-10-30 [1] CRAN (R 4.0.2)                   
-##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.0.2)                   
+##  package     * version    date       lib source                              
+##  anicon        0.1.0      2020-06-21 [1] Github (emitanaka/anicon@0b756df)   
+##  assertthat    0.2.1      2019-03-21 [2] CRAN (R 4.0.0)                      
+##  callr         3.5.1      2020-10-13 [1] CRAN (R 4.0.2)                      
+##  cli           2.2.0      2020-11-20 [1] CRAN (R 4.0.1)                      
+##  countdown     0.3.5      2020-07-20 [1] Github (gadenbuie/countdown@a544fa4)
+##  crayon        1.3.4      2017-09-16 [2] CRAN (R 4.0.0)                      
+##  desc          1.2.0      2018-05-01 [2] CRAN (R 4.0.0)                      
+##  devtools      2.3.2      2020-09-18 [1] CRAN (R 4.0.2)                      
+##  digest        0.6.27     2020-10-24 [1] CRAN (R 4.0.2)                      
+##  dplyr       * 1.0.2      2020-08-18 [1] CRAN (R 4.0.2)                      
+##  ellipsis      0.3.1      2020-05-15 [2] CRAN (R 4.0.0)                      
+##  evaluate      0.14       2019-05-28 [2] CRAN (R 4.0.0)                      
+##  fansi         0.4.1      2020-01-08 [2] CRAN (R 4.0.0)                      
+##  flair       * 0.0.2      2020-11-21 [1] Github (kbodwin/flair@b3054f2)      
+##  fs            1.5.0      2020-07-31 [1] CRAN (R 4.0.2)                      
+##  generics      0.1.0      2020-10-31 [2] CRAN (R 4.0.2)                      
+##  glue          1.4.2      2020-08-27 [1] CRAN (R 4.0.2)                      
+##  htmltools     0.5.0      2020-06-16 [1] CRAN (R 4.0.2)                      
+##  icon          0.1.0      2020-06-21 [1] Github (emitanaka/icon@8458546)     
+##  knitr         1.30       2020-09-22 [1] CRAN (R 4.0.2)                      
+##  lifecycle     0.2.0      2020-03-06 [1] CRAN (R 4.0.0)                      
+##  magrittr      2.0.1      2020-11-17 [1] CRAN (R 4.0.2)                      
+##  memoise       1.1.0      2017-04-21 [2] CRAN (R 4.0.0)                      
+##  pillar        1.4.7      2020-11-20 [1] CRAN (R 4.0.1)                      
+##  pkgbuild      1.1.0      2020-07-13 [2] CRAN (R 4.0.1)                      
+##  pkgconfig     2.0.3      2019-09-22 [2] CRAN (R 4.0.0)                      
+##  pkgload       1.1.0      2020-05-29 [2] CRAN (R 4.0.0)                      
+##  prettyunits   1.1.1      2020-01-24 [2] CRAN (R 4.0.0)                      
+##  processx      3.4.4      2020-09-03 [1] CRAN (R 4.0.2)                      
+##  ps            1.4.0      2020-10-07 [1] CRAN (R 4.0.2)                      
+##  purrr         0.3.4      2020-04-17 [2] CRAN (R 4.0.0)                      
+##  R6            2.5.0      2020-10-28 [1] CRAN (R 4.0.2)                      
+##  remotes       2.2.0      2020-07-21 [1] CRAN (R 4.0.2)                      
+##  rlang         0.4.8      2020-10-08 [1] CRAN (R 4.0.2)                      
+##  rmarkdown     2.5        2020-10-21 [1] CRAN (R 4.0.1)                      
+##  rprojroot     2.0.2      2020-11-15 [1] CRAN (R 4.0.2)                      
+##  rstudioapi    0.13       2020-11-12 [1] CRAN (R 4.0.1)                      
+##  sessioninfo   1.1.1      2018-11-05 [2] CRAN (R 4.0.0)                      
+##  stringi       1.5.3      2020-09-09 [2] CRAN (R 4.0.2)                      
+##  stringr       1.4.0      2019-02-10 [2] CRAN (R 4.0.0)                      
+##  testthat      3.0.0      2020-10-31 [1] CRAN (R 4.0.2)                      
+##  tibble        3.0.4.9000 2020-11-26 [1] Github (tidyverse/tibble@9eeef4d)   
+##  tidyselect    1.1.0      2020-05-11 [2] CRAN (R 4.0.0)                      
+##  usethis       1.6.3      2020-09-17 [1] CRAN (R 4.0.2)                      
+##  utf8          1.1.4      2018-05-24 [2] CRAN (R 4.0.0)                      
+##  vctrs         0.3.5.9000 2020-11-26 [1] Github (r-lib/vctrs@957baf7)        
+##  whisker       0.4        2019-08-28 [2] CRAN (R 4.0.0)                      
+##  withr         2.3.0      2020-09-22 [1] CRAN (R 4.0.2)                      
+##  xaringan      0.18       2020-10-21 [1] CRAN (R 4.0.2)                      
+##  xfun          0.19       2020-10-30 [1] CRAN (R 4.0.2)                      
+##  yaml          2.2.1      2020-02-01 [1] CRAN (R 4.0.2)                      
 ## 
 ## [1] /Users/etan0038/Library/R/4.0/library
 ## [2] /Library/Frameworks/R.framework/Versions/4.0/Resources/library

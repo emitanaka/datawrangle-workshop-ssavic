@@ -181,18 +181,22 @@ cat(readLines(here::here("schedule/schedule-day2.md")), sep = "\n")
 
 # Getting Started
 
+```{r, eval = FALSE}
+remotes::install_github("emitanaka/dwexercise")
+```
 
 
 .info-box.pad20[
-
-
-
 * Find the latest updated material at .blue[<i class="fas fa-globe"></i> http://emitanaka.org/datawrangle-workshop-ssavic/]
 * All materials are hosted in GitHub repo [here](https://github.com/emitanaka/datawrangle-workshop-ssavic)
+* All exercises are hosted as an R-package on GitHub repo [here](https://github.com/emitanaka/dwexercise)
 * You can download the current material [here](https://github.com/emitanaka/datawrangle-workshop-ssavic/archive/main.zip)
 ]
 
-
+.font_small[
+* Some materials may be updated before the workshop is completed so it will be better to re-download the latest material at the conclusion of the workshop. 
+* I will send you a follow up email with link to download all material
+]
 
 ---
 
