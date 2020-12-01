@@ -1,0 +1,468 @@
+---
+title: "Data Wrangling with R: Day 2"
+subtitle: "Dealing with dates with `lubridate`"
+author: "Emi Tanaka"
+email: "emi.tanaka@monash.edu"
+date: "2nd December 2020 @ Statistical Society of Australia | Zoom"
+length: "30 minutes"
+titleslide_bgimg: "images/bg1.jpg"
+exercise: "day2-exercise-03"
+output:
+  xaringan::moon_reader:
+    css:
+      - ninjutsu 
+      - "assets/animate.css"
+      - "assets/custom.css"
+      - "assets/fira-code.css"
+      - "assets/boxes.css"
+      - "assets/styles.css"
+      - "assets/monash-brand.css"
+    self_contained: false 
+    seal: false 
+    chakra: 'libs/remark-latest.min.js'
+    lib_dir: libs
+    mathjax: "assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+    nature:
+      highlightStyle: github
+      highlightLanguage: r 
+      highlightLines: true
+      highlightSpans: false 
+      countIncrementalSlides: false
+      slideNumberFormat: '%current%/%total%'
+      navigation:
+        scroll: false 
+        touch: true
+        click: false
+      ratio: '16:9'
+---
+
+```{r, include = FALSE}
+current_file <- knitr::current_input()
+library(tidyverse)
+library(lubridate)
+```
+```{r titleslide, child="assets/titleslide.Rmd"}
+```
+
+---
+
+# Date in R .font_small[Base R .font_small[Part ]1]
+
+* Dealing with dates alone is relatively straightforward .font_small[compared to date and time]
+--
+
+* Dealing with date _and_ time is ... 
+--
+tricky
+--
+ so let's start with dates
+
+--
+```{r}
+Sys.Date() # System Date, gets the date when the command is run
+```
+--
+* Dates in R have class .monash-blue[**`Date`**] 📅 even though it looks like `character` 🔢
+```{r}
+class(Sys.Date())
+```
+
+--
+* It's actually a numerical value under the hood{{content}}
+```{r}
+unclass(Sys.Date())
+```
+--
+, what is this number? 🤔
+
+
+---
+
+# Date in R .font_small[Base R .font_small[Part ]2]
+
+* <i class="fas fa-info-circle"></i> **1st January 1970** is a special reference point
+--
+
+* Let's have a look at the numerical value under the hood of `Date` objects
+--
+
+```{r}
+unclass(as.Date("1970/01/02"))
+```
+--
+```{r}
+unclass(as.Date("1969/12/31"))
+```
+--
+* Yup, the number under the hood is the number of days after (if positive) or before (if negative) 1st January 1970
+--
+
+* And yes, you can use `as.Date` to convert objects to `Date` <i class="fas fa-calendar"></i>
+
+---
+
+# Date in R .font_small[Base R .font_small[Part ]3]
+
+* Dates do no have to be in the format of "YYYY/MM/DD" .font_small[(in fact, there are many format in the wild)]
+--
+
+* If it has a different format, then you can use the conversion specification with a "%" symbol followed by a single letter .font_small[note quite regex, but like it]
+```{r}
+as.Date("Xmas is 25 December 2020", format = "Xmas is %d %B %Y")
+```
+--
+
+* You can find some widely used conversion specification in documentation at<br> `?strptime` but some _depends on your operating system_
+
+
+* Below are some common ones:
+
+.grid[
+.item[
+* `%b` abbreviated month
+* `%B` full month
+
+]
+.item[
+* `%e` day of the month (01, 02, ..., 31)
+* `%d` day of the month (1, 2, ..., 31)
+
+
+]
+.item[
+* `%y` year without century (00-99)
+* `%Y` year with century, e.g. 1999
+]
+]
+
+---
+
+# <img src="images/no-toilet-roll.png" height = "40px"> System locale
+
+* "aralık" is December in Turkey
+
+```{r}
+as.Date("Xmas is 25 aralık 2020", format = "Xmas is %d %B %Y")
+```
+--
+
+* Let's temorary set our system locale to Turkey
+
+```{r, results="hide"}
+Sys.setlocale("LC_TIME", "tr_TR.UTF-8") # temporary set to Turkey locale
+```
+```{r, eval = FALSE}
+as.Date("Xmas is 25 aralık 2020", format = "Xmas is %d %B %Y")
+```
+--
+```{r, echo = FALSE}
+as.Date("Xmas is 25 aralık 2020", format = "Xmas is %d %B %Y")
+```
+--
+(And set it back to English again) .font_small["UTF-8" might only for Unix and Linux systems]
+```{r, results="hide"}
+Sys.setlocale("LC_TIME", "en_AU.UTF-8")
+```
+
+---
+
+# Date and Time in R .font_small[Base R .font_small[Part ]1]
+
+
+* two main date-time classes in R: .monash-blue[**`POSIXct`**] and .monash-blue[**`POSIXlt`**] .font_small[avoid using `POSIXlt` if possible]
+--
+
+* POSIX stands for Portable Operating System Interface
+* `ct` stands for calendar time
+
+```{r}
+as.POSIXct("2020-12-02 13:00", format = "%Y-%m-%e %H:%M")
+```
+--
+```{r}
+unclass(as.POSIXct("2020-12-02 13:00", format = "%Y-%m-%e %H:%M"))
+```
+--
+* <i class="fas fa-info-circle"></i>  **1970/01/01 00:00:00 UTC** is a special reference point called **_Unix epoch_** and the above number is the number of seconds after Unix epoch
+
+---
+
+# Date and Time in R .font_small[Base R .font_small[Part ]2]
+
+* `POSIXlt` seems like it's the same as `POSIXlt`
+```{r}
+as.POSIXlt("2020-12-02 13:00", format = "%Y-%m-%e %H:%M")
+```
+--
+
+* But under the hood, it's a list of time attributes
+```{r}
+unclass(as.POSIXlt("2020-12-02 13:00", format = "%Y-%m-%e %H:%M"))
+```
+
+
+---
+
+* `lubridate` is a package in Tidyverse but not part of the core pacakges 
+* This means that you need to `library(lubridate)` explicitly if you need to use it
+
+---
+
+# Time zone 
+
+
+```{r}
+melb <- as.POSIXct("2020-12-02 13:00", format = "%Y-%m-%e %H:%M",
+           tz = "Australia/Melbourne") #<<
+
+perth <- as.POSIXct("2020-12-02 13:00", format = "%Y-%m-%e %H:%M",
+           tz = "Australia/Perth") #<<
+
+melb - perth
+```
+--
+
+* You can find the names of the time zones using .monash-blue[**`OlsonNames()`**]
+--
+
+* If you want to know which time zone your system is using:
+
+```{r}
+Sys.timezone()
+```
+
+---
+
+class: transition middle
+
+# Working with `lubridate`
+
+---
+
+# Date in R .font_small[`lubridate`]
+
+* Remember, `lubridate` isn't part of core `tidyverse` so you have to load it up explicitly
+```{r, eval = FALSE}
+library(lubridate)
+```
+--
+
+* To convert string to a `Date`, you can use `ymd` and friends. E.g. 
+
+```{r}
+ymd("2012 Dec 30th")
+```
+--
+
+```{r}
+mdy("01/30 99")
+```
+--
+
+```{r}
+dmy("1st January 2015")
+```
+
+--
+
+<div class="info-box pad20" style="position:absolute;right:10px;bottom:10px;width:480px;">
+You might have guessed it but:<br> <code>y</code> = year, <code>m</code> = month, and <code>d</code> = day.
+<br><br>
+The order determines the expected order of its appearance in the string
+</div>
+
+---
+
+# Date and time in R .font_small[`lubridate`]
+
+* To convert string to `POSIXct`, you can use `ymd_hms` and friends
+
+--
+```{r}
+ymd_hms("20140101 201001", tz = "Australia/Melbourne")
+```
+--
+```{r}
+mdy_h("09/09/2010 4PM")
+```
+--
+```{r}
+ydm_hm("Today is not 2009 9th Sep 4:30PM")
+```
+--
+```{r}
+ydm_hms("19 9 July | 4:30:03.34343")
+```
+
+--
+
+<div class="info-box pad20" style="position:absolute;right:10px;bottom:10px;width:480px;margin-right:10px;">
+<code>h</code> = hour, <code>m</code> = minute, and <br><code>s</code> = second.
+<br><br>
+It's remarkably clever!
+<br><br>
+The time has to be after date though.
+</div>
+
+---
+
+# Conversion to date and time .font_small[`lubridate`]
+
+Making `Date` from individual date components:
+
+
+```{r}
+make_date(year = 2018,
+          month = 8,
+          day = 3)
+```
+
+Making `POSIXct` from individual components:
+
+
+```{r}
+make_datetime(year = 2018,
+              month = 8,
+              day = 3,
+              hour = 10,
+              min = 3,
+              sec = 30)
+```
+
+
+
+
+---
+
+# Extracting date or time components .font_small[`lubridate`]
+
+```{r}
+t1 <- ymd_hms("20101010 13:30:30")
+```
+```{r}
+month(t1, label = TRUE)
+```
+
+.grid[
+.item[
+```{r}
+year(t1)
+month(t1)
+day(t1)
+```
+
+]
+.item[
+```{r}
+hour(t1)
+minute(t1)
+second(t1)
+```
+]
+.item[
+```{r}
+yday(t1)
+mday(t1)
+wday(t1)
+```
+
+]
+
+]
+
+
+
+---
+
+# Date and time modifiers
+
+```{r}
+month(t1) <- 3
+t1
+
+mday(t1) <- 20
+t1
+
+with_tz(t1, "Australia/Perth")
+```
+
+
+---
+
+# Durations .font_small[`lubridate`]
+
+* `Duration` is a special class in `lubridate`
+* Some convenient constructors for `Duration` are:
+```{r}
+dyears(1)
+dweeks(10)
+ddays(4)
+dhours(3)
+```
+---
+
+# Maths with Durations .font_small[`lubridate`]
+
+```{r}
+ddays(4) + dweeks(1)
+ymd("2013-01-01") + ddays(5)
+
+ymd_hms("2020-10-1 2:00:00", tz = "Australia/Melbourne") + ddays(1)
+```
+--
+
+* What happened below?
+
+```{r}
+ymd_hms("2020-10-4 1:00:00", tz = "Australia/Melbourne") + dhours(1)
+```
+--
+* Day light saving started at Sun 4th Oct 2020 2AM in Melbourne
+
+
+---
+
+# Period .font_small[`lubridate`]
+
+* `Period` is a special class in `lubridate`
+* Constructors for `Period` are like for `Duration` but without the prefix "d":
+```{r}
+years(1)
+weeks(10)
+days(4)
+hours(3)
+```
+
+---
+
+# Maths with Period .font_small[`lubridate`]
+
+```{r}
+days(4) + weeks(1)
+ymd("2013-01-01") + days(5)
+
+ymd_hms("2020-10-1 2:00:00", tz = "Australia/Melbourne") + days(1)
+```
+--
+
+```{r}
+ymd_hms("2020-10-4 1:00:00", tz = "Australia/Melbourne") + hours(1)
+```
+
+--
+
+```{r}
+ymd_hms("2020-10-4 1:00:00", tz = "Australia/Melbourne") + hours(2)
+```
+
+
+
+---
+
+```{r exerciseslide, child="assets/exerciseslide.Rmd"}
+```
+
+---
+
+```{r endslide, child="assets/endslide.Rmd"}
+```
