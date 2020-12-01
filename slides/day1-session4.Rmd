@@ -645,6 +645,7 @@ Kevin Wright (2020). agridat: Agricultural Datasets. R package version 1.17
 
 ```{r, eval = FALSE}
 pivot_longer(crop_wide, 
+             cols = -c(year, state),
             names_to = c("crop", "metric"), 
             names_pattern = "(.+)_(.+)",
             values_to = "value")
