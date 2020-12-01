@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Data Wrangling with R: Day 2</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Emi Tanaka" />
+    <script src="libs/header-attrs-2.5/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <link href="libs/font-awesome-animation-1.0/font-awesome-animation-emi.css" rel="stylesheet" />
+    <script src="libs/fontawesome-5.0.13/js/fontawesome-all.min.js"></script>
+    <link href="libs/countdown-0.3.5/countdown.css" rel="stylesheet" />
+    <script src="libs/countdown-0.3.5/countdown.js"></script>
+    <link rel="stylesheet" href="assets/animate.css" type="text/css" />
+    <link rel="stylesheet" href="assets/custom.css" type="text/css" />
+    <link rel="stylesheet" href="assets/fira-code.css" type="text/css" />
+    <link rel="stylesheet" href="assets/boxes.css" type="text/css" />
+    <link rel="stylesheet" href="assets/styles.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-brand.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class: monash-bg-blue center middle hide-slide-number 
+
+
+
+&lt;div class="bg-black white"  style="width:45%;right:0;bottom:0;padding-left:5px;border: solid 4px white;margin: auto;"&gt;
+&lt;i class="fas fa-exclamation-circle"&gt;&lt;/i&gt; These slides are viewed best by Chrome and occasionally need to be refreshed if elements did not load properly. See here for &lt;a href=day2-session3.pdf&gt;PDF &lt;i class="fas fa-file-pdf"&gt;&lt;/i&gt;&lt;/a&gt;. 
+&lt;/div&gt;
+
+&lt;br&gt;
+
+.white[Press the **right arrow** to progress to the next slide!]
+
+
+---
+
+count: false
+background-image: url(images/bg1.jpg)
+background-size: cover
+class: hide-slide-number title-slide
+
+
+&lt;div class="grid-row" style="grid: 1fr / 2fr;"&gt;
+
+.item.center[
+
+# &lt;span style="text-shadow: 2px 2px 30px white;"&gt;Data Wrangling with R: Day 2&lt;/span&gt;
+
+&lt;!-- ## &lt;span style="color:;text-shadow: 2px 2px 30px black;"&gt;Dealing with dates with `lubridate`&lt;/span&gt; --&gt;
+
+]
+
+.center.shade_black.animated.bounceInUp.slower[
+&lt;br&gt;&lt;br&gt;
+## &lt;span style="color: #ccf2ff; text-shadow: 10px 10px 100px white;"&gt;Dealing with dates with `lubridate`&lt;/span&gt;
+
+&lt;br&gt;
+
+Presented by Emi Tanaka
+
+Department of Econometrics and Business Statistics
+
+&lt;img src="images/monash-one-line-reversed.png" style="width:500px"&gt;&lt;br&gt;
+<span>&lt;i class="fas  fa-envelope faa-float animated "&gt;&lt;/i&gt;</span>  emi.tanaka@monash.edu
+<span>&lt;i class="fab  fa-twitter faa-float animated faa-fast "&gt;&lt;/i&gt;</span>  @statsgen
+
+.bottom_abs.width100.bg-black[
+2nd December 2020 @ Statistical Society of Australia | Zoom
+]
+
+
+]
+
+&lt;/div&gt;
+
+
+
+
+
+
+---
+
+# Date in R .font_small[Base R .font_small[Part ]1]
+
+* Dealing with dates alone is relatively straightforward .font_small[compared to date and time]
+--
+
+* Dealing with date _and_ time is ... 
+--
+tricky
+--
+ so let's start with dates
+
+--
+
+```r
+Sys.Date() # System Date, gets the date when the command is run
+```
+
+```
+## [1] "2020-12-02"
+```
+--
+* Dates in R have class .monash-blue[**`Date`**] 📅 even though it looks like `character` 🔢
+
+```r
+class(Sys.Date())
+```
+
+```
+## [1] "Date"
+```
+
+--
+* It's actually a numerical value under the hood{{content}}
+
+```r
+unclass(Sys.Date())
+```
+
+```
+## [1] 18598
+```
+--
+, what is this number? 🤔
+
+
+---
+
+# Date in R .font_small[Base R .font_small[Part ]2]
+
+* &lt;i class="fas fa-info-circle"&gt;&lt;/i&gt; **1st January 1970** is a special reference point
+--
+
+* Let's have a look at the numerical value under the hood of `Date` objects
+--
+
+
+```r
+unclass(as.Date("1970/01/02"))
+```
+
+```
+## [1] 1
+```
+--
+
+```r
+unclass(as.Date("1969/12/31"))
+```
+
+```
+## [1] -1
+```
+--
+* Yup, the number under the hood is the number of days after (if positive) or before (if negative) 1st January 1970
+--
+
+* And yes, you can use `as.Date` to convert objects to `Date` &lt;i class="fas fa-calendar"&gt;&lt;/i&gt;
+
+---
+
+# Date in R .font_small[Base R .font_small[Part ]3]
+
+* Dates do no have to be in the format of "YYYY/MM/DD" .font_small[(in fact, there are many format in the wild)]
+--
+
+* If it has a different format, then you can use the conversion specification with a "%" symbol followed by a single letter .font_small[note quite regex, but like it]
+
+```r
+as.Date("Xmas is 25 December 2020", format = "Xmas is %d %B %Y")
+```
+
+```
+## [1] "2020-12-25"
+```
+--
+
+* You can find some widely used conversion specification in documentation at&lt;br&gt; `?strptime` but some _depends on your operating system_
+
+
+* Below are some common ones:
+
+.grid[
+.item[
+* `%b` abbreviated month
+* `%B` full month
+
+]
+.item[
+* `%e` day of the month (01, 02, ..., 31)
+* `%d` day of the month (1, 2, ..., 31)
+
+
+]
+.item[
+* `%y` year without century (00-99)
+* `%Y` year with century, e.g. 1999
+]
+]
+
+---
+
+# &lt;img src="images/no-toilet-roll.png" height = "40px"&gt; System locale
+
+* "aralık" is December in Turkey
+
+
+```r
+as.Date("Xmas is 25 aralık 2020", format = "Xmas is %d %B %Y")
+```
+
+```
+## [1] NA
+```
+--
+
+* Let's temorary set our system locale to Turkey
+
+
+```r
+Sys.setlocale("LC_TIME", "tr_TR.UTF-8") # temporary set to Turkey locale
+```
+
+```r
+as.Date("Xmas is 25 aralık 2020", format = "Xmas is %d %B %Y")
+```
+--
+
+```
+## [1] "2020-12-25"
+```
+--
+(And set it back to English again) .font_small["UTF-8" might only for Unix and Linux systems]
+
+```r
+Sys.setlocale("LC_TIME", "en_AU.UTF-8")
+```
+
+---
+
+# Date and Time in R .font_small[Base R .font_small[Part ]1]
+
+
+* two main date-time classes in R: .monash-blue[**`POSIXct`**] and .monash-blue[**`POSIXlt`**] .font_small[avoid using `POSIXlt` if possible]
+--
+
+* POSIX stands for Portable Operating System Interface
+* `ct` stands for calendar time
+
+
+```r
+as.POSIXct("2020-12-02 13:00", format = "%Y-%m-%e %H:%M")
+```
+
+```
+## [1] "2020-12-02 13:00:00 AEDT"
+```
+--
+
+```r
+unclass(as.POSIXct("2020-12-02 13:00", format = "%Y-%m-%e %H:%M"))
+```
+
+```
+## [1] 1606874400
+## attr(,"tzone")
+## [1] ""
+```
+--
+* &lt;i class="fas fa-info-circle"&gt;&lt;/i&gt;  **1970/01/01 00:00:00 UTC** is a special reference point called **_Unix epoch_** and the above number is the number of seconds after Unix epoch
+
+---
+
+# Date and Time in R .font_small[Base R .font_small[Part ]2]
+
+* `POSIXlt` seems like it's the same as `POSIXlt`
+
+```r
+as.POSIXlt("2020-12-02 13:00", format = "%Y-%m-%e %H:%M")
+```
+
+```
+## [1] "2020-12-02 13:00:00 AEDT"
+```
+--
+
+* But under the hood, it's a list of time attributes
+
+```r
+unclass(as.POSIXlt("2020-12-02 13:00", format = "%Y-%m-%e %H:%M"))
+```
+
+```
+## $sec
+## [1] 0
+## 
+## $min
+## [1] 0
+## 
+## $hour
+## [1] 13
+## 
+## $mday
+## [1] 2
+## 
+## $mon
+## [1] 11
+## 
+## $year
+## [1] 120
+## 
+## $wday
+## [1] 3
+## 
+## $yday
+## [1] 336
+## 
+## $isdst
+## [1] 1
+## 
+## $zone
+## [1] "AEDT"
+## 
+## $gmtoff
+## [1] NA
+```
+
+
+---
+
+* `lubridate` is a package in Tidyverse but not part of the core pacakges 
+* This means that you need to `library(lubridate)` explicitly if you need to use it
+
+---
+
+# Time zone 
+
+
+
+```r
+melb &lt;- as.POSIXct("2020-12-02 13:00", format = "%Y-%m-%e %H:%M",
+*          tz = "Australia/Melbourne")
+
+perth &lt;- as.POSIXct("2020-12-02 13:00", format = "%Y-%m-%e %H:%M",
+*          tz = "Australia/Perth")
+
+melb - perth
+```
+
+```
+## Time difference of -3 hours
+```
+--
+
+* You can find the names of the time zones using .monash-blue[**`OlsonNames()`**]
+--
+
+* If you want to know which time zone your system is using:
+
+
+```r
+Sys.timezone()
+```
+
+```
+## [1] "Australia/Melbourne"
+```
+
+---
+
+class: transition middle
+
+# Working with `lubridate`
+
+---
+
+# Date in R .font_small[`lubridate`]
+
+* Remember, `lubridate` isn't part of core `tidyverse` so you have to load it up explicitly
+
+```r
+library(lubridate)
+```
+--
+
+* To convert string to a `Date`, you can use `ymd` and friends. E.g. 
+
+
+```r
+ymd("2012 Dec 30th")
+```
+
+```
+## [1] "2012-12-30"
+```
+--
+
+
+```r
+mdy("01/30 99")
+```
+
+```
+## [1] "1999-01-30"
+```
+--
+
+
+```r
+dmy("1st January 2015")
+```
+
+```
+## [1] "2015-01-01"
+```
+
+--
+
+&lt;div class="info-box pad20" style="position:absolute;right:10px;bottom:10px;width:480px;"&gt;
+You might have guessed it but:&lt;br&gt; &lt;code&gt;y&lt;/code&gt; = year, &lt;code&gt;m&lt;/code&gt; = month, and &lt;code&gt;d&lt;/code&gt; = day.
+&lt;br&gt;&lt;br&gt;
+The order determines the expected order of its appearance in the string
+&lt;/div&gt;
+
+---
+
+# Date and time in R .font_small[`lubridate`]
+
+* To convert string to `POSIXct`, you can use `ymd_hms` and friends
+
+--
+
+```r
+ymd_hms("20140101 201001", tz = "Australia/Melbourne")
+```
+
+```
+## [1] "2014-01-01 20:10:01 AEDT"
+```
+--
+
+```r
+mdy_h("09/09/2010 4PM")
+```
+
+```
+## [1] "2010-09-09 16:00:00 UTC"
+```
+--
+
+```r
+ydm_hm("Today is not 2009 9th Sep 4:30PM")
+```
+
+```
+## [1] "2009-09-09 16:30:00 UTC"
+```
+--
+
+```r
+ydm_hms("19 9 July | 4:30:03.34343")
+```
+
+```
+## [1] "2019-07-09 04:30:03 UTC"
+```
+
+--
+
+&lt;div class="info-box pad20" style="position:absolute;right:10px;bottom:10px;width:480px;margin-right:10px;"&gt;
+&lt;code&gt;h&lt;/code&gt; = hour, &lt;code&gt;m&lt;/code&gt; = minute, and &lt;br&gt;&lt;code&gt;s&lt;/code&gt; = second.
+&lt;br&gt;&lt;br&gt;
+It's remarkably clever!
+&lt;br&gt;&lt;br&gt;
+The time has to be after date though.
+&lt;/div&gt;
+
+---
+
+# Conversion to date and time .font_small[`lubridate`]
+
+Making `Date` from individual date components:
+
+
+
+```r
+make_date(year = 2018,
+          month = 8,
+          day = 3)
+```
+
+```
+## [1] "2018-08-03"
+```
+
+Making `POSIXct` from individual components:
+
+
+
+```r
+make_datetime(year = 2018,
+              month = 8,
+              day = 3,
+              hour = 10,
+              min = 3,
+              sec = 30)
+```
+
+```
+## [1] "2018-08-03 10:03:30 UTC"
+```
+
+
+
+
+---
+
+# Extracting date or time components .font_small[`lubridate`]
+
+
+```r
+t1 &lt;- ymd_hms("20101010 13:30:30")
+```
+
+```r
+month(t1, label = TRUE)
+```
+
+```
+## [1] Oct
+## 12 Levels: Jan &lt; Feb &lt; Mar &lt; Apr &lt; May &lt; Jun &lt; Jul &lt; Aug &lt; Sep &lt; ... &lt; Dec
+```
+
+.grid[
+.item[
+
+```r
+year(t1)
+```
+
+```
+## [1] 2010
+```
+
+```r
+month(t1)
+```
+
+```
+## [1] 10
+```
+
+```r
+day(t1)
+```
+
+```
+## [1] 10
+```
+
+]
+.item[
+
+```r
+hour(t1)
+```
+
+```
+## [1] 13
+```
+
+```r
+minute(t1)
+```
+
+```
+## [1] 30
+```
+
+```r
+second(t1)
+```
+
+```
+## [1] 30
+```
+]
+.item[
+
+```r
+yday(t1)
+```
+
+```
+## [1] 283
+```
+
+```r
+mday(t1)
+```
+
+```
+## [1] 10
+```
+
+```r
+wday(t1)
+```
+
+```
+## [1] 1
+```
+
+]
+
+]
+
+
+
+---
+
+# Date and time modifiers
+
+
+```r
+month(t1) &lt;- 3
+t1
+```
+
+```
+## [1] "2010-03-10 13:30:30 UTC"
+```
+
+```r
+mday(t1) &lt;- 20
+t1
+```
+
+```
+## [1] "2010-03-20 13:30:30 UTC"
+```
+
+```r
+with_tz(t1, "Australia/Perth")
+```
+
+```
+## [1] "2010-03-20 21:30:30 AWST"
+```
+
+
+---
+
+# Durations .font_small[`lubridate`]
+
+* `Duration` is a special class in `lubridate`
+* Some convenient constructors for `Duration` are:
+
+```r
+dyears(1)
+```
+
+```
+## [1] "31557600s (~1 years)"
+```
+
+```r
+dweeks(10)
+```
+
+```
+## [1] "6048000s (~10 weeks)"
+```
+
+```r
+ddays(4)
+```
+
+```
+## [1] "345600s (~4 days)"
+```
+
+```r
+dhours(3)
+```
+
+```
+## [1] "10800s (~3 hours)"
+```
+---
+
+# Maths with Durations .font_small[`lubridate`]
+
+
+```r
+ddays(4) + dweeks(1)
+```
+
+```
+## [1] "950400s (~1.57 weeks)"
+```
+
+```r
+ymd("2013-01-01") + ddays(5)
+```
+
+```
+## [1] "2013-01-06"
+```
+
+```r
+ymd_hms("2020-10-1 2:00:00", tz = "Australia/Melbourne") + ddays(1)
+```
+
+```
+## [1] "2020-10-02 02:00:00 AEST"
+```
+--
+
+* What happened below?
+
+
+```r
+ymd_hms("2020-10-4 1:00:00", tz = "Australia/Melbourne") + dhours(1)
+```
+
+```
+## [1] "2020-10-04 03:00:00 AEDT"
+```
+--
+* Day light saving started at Sun 4th Oct 2020 2AM in Melbourne
+
+
+---
+
+# Period .font_small[`lubridate`]
+
+* `Period` is a special class in `lubridate`
+* Constructors for `Period` are like for `Duration` but without the prefix "d":
+
+```r
+years(1)
+```
+
+```
+## [1] "1y 0m 0d 0H 0M 0S"
+```
+
+```r
+weeks(10)
+```
+
+```
+## [1] "70d 0H 0M 0S"
+```
+
+```r
+days(4)
+```
+
+```
+## [1] "4d 0H 0M 0S"
+```
+
+```r
+hours(3)
+```
+
+```
+## [1] "3H 0M 0S"
+```
+
+---
+
+# Maths with Period .font_small[`lubridate`]
+
+
+```r
+days(4) + weeks(1)
+```
+
+```
+## [1] "11d 0H 0M 0S"
+```
+
+```r
+ymd("2013-01-01") + days(5)
+```
+
+```
+## [1] "2013-01-06"
+```
+
+```r
+ymd_hms("2020-10-1 2:00:00", tz = "Australia/Melbourne") + days(1)
+```
+
+```
+## [1] "2020-10-02 02:00:00 AEST"
+```
+--
+
+
+```r
+ymd_hms("2020-10-4 1:00:00", tz = "Australia/Melbourne") + hours(1)
+```
+
+```
+## [1] NA
+```
+
+--
+
+
+```r
+ymd_hms("2020-10-4 1:00:00", tz = "Australia/Melbourne") + hours(2)
+```
+
+```
+## [1] "2020-10-04 03:00:00 AEDT"
+```
+
+
+
+---
+
+
+class: exercise middle hide-slide-number
+
+# &lt;i class="fas fa-code"&gt;&lt;/i&gt; If you installed the `dwexercise` package, &lt;br&gt; run below in your R console
+
+```r
+learnr::run_tutorial("day2-exercise-03", package = "dwexercise")
+```
+
+&lt;br&gt;
+
+# &lt;i class="fas fa-link"&gt;&lt;/i&gt; If the above doesn't work for you, go [here](https://ebsmonash.shinyapps.io/dw-day2-exercise-03).
+
+# &lt;i class="fas fa-question"&gt;&lt;/i&gt; Questions or issues, let us know!
+&lt;center&gt;
+<div class="countdown clock" id="timer_5fc6785b" style="right:0;bottom:0;" data-warnwhen="0">
+<code class="countdown-time"><span class="countdown-digits minutes">15</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+&lt;/center&gt;
+
+---
+
+
+
+class: font_smaller
+background-color: #e5e5e5
+
+# Session Information
+
+.scroll-350[
+
+
+
+```r
+devtools::session_info()
+```
+
+```
+## ─ Session info ───────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       macOS Catalina 10.15.7      
+##  system   x86_64, darwin17.0          
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_AU.UTF-8                 
+##  ctype    en_AU.UTF-8                 
+##  tz       Australia/Melbourne         
+##  date     2020-12-02                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────
+##  package     * version    date       lib source                              
+##  anicon        0.1.0      2020-06-21 [1] Github (emitanaka/anicon@0b756df)   
+##  assertthat    0.2.1      2019-03-21 [2] CRAN (R 4.0.0)                      
+##  backports     1.2.0      2020-11-02 [1] CRAN (R 4.0.2)                      
+##  broom         0.7.2      2020-10-20 [1] CRAN (R 4.0.2)                      
+##  callr         3.5.1      2020-10-13 [1] CRAN (R 4.0.2)                      
+##  cellranger    1.1.0      2016-07-27 [2] CRAN (R 4.0.0)                      
+##  cli           2.2.0      2020-11-20 [1] CRAN (R 4.0.1)                      
+##  colorspace    2.0-0      2020-11-11 [1] CRAN (R 4.0.2)                      
+##  countdown     0.3.5      2020-07-20 [1] Github (gadenbuie/countdown@a544fa4)
+##  crayon        1.3.4      2017-09-16 [2] CRAN (R 4.0.0)                      
+##  DBI           1.1.0      2019-12-15 [1] CRAN (R 4.0.2)                      
+##  dbplyr        2.0.0      2020-11-03 [1] CRAN (R 4.0.2)                      
+##  desc          1.2.0      2018-05-01 [2] CRAN (R 4.0.0)                      
+##  devtools      2.3.2      2020-09-18 [1] CRAN (R 4.0.2)                      
+##  digest        0.6.27     2020-10-24 [1] CRAN (R 4.0.2)                      
+##  dplyr       * 1.0.2      2020-08-18 [1] CRAN (R 4.0.2)                      
+##  ellipsis      0.3.1      2020-05-15 [2] CRAN (R 4.0.0)                      
+##  evaluate      0.14       2019-05-28 [2] CRAN (R 4.0.0)                      
+##  fansi         0.4.1      2020-01-08 [2] CRAN (R 4.0.0)                      
+##  forcats     * 0.5.0      2020-03-01 [2] CRAN (R 4.0.0)                      
+##  fs            1.5.0      2020-07-31 [1] CRAN (R 4.0.2)                      
+##  generics      0.1.0      2020-10-31 [2] CRAN (R 4.0.2)                      
+##  ggplot2     * 3.3.2      2020-06-19 [1] CRAN (R 4.0.2)                      
+##  glue          1.4.2      2020-08-27 [1] CRAN (R 4.0.2)                      
+##  gtable        0.3.0      2019-03-25 [2] CRAN (R 4.0.0)                      
+##  haven         2.3.1      2020-06-01 [2] CRAN (R 4.0.0)                      
+##  hms           0.5.3      2020-01-08 [2] CRAN (R 4.0.0)                      
+##  htmltools     0.5.0      2020-06-16 [1] CRAN (R 4.0.2)                      
+##  httr          1.4.2      2020-07-20 [1] CRAN (R 4.0.2)                      
+##  icon          0.1.0      2020-06-21 [1] Github (emitanaka/icon@8458546)     
+##  jsonlite      1.7.1      2020-09-07 [1] CRAN (R 4.0.2)                      
+##  knitr         1.30       2020-09-22 [1] CRAN (R 4.0.2)                      
+##  lifecycle     0.2.0      2020-03-06 [1] CRAN (R 4.0.0)                      
+##  lubridate   * 1.7.9      2020-06-08 [2] CRAN (R 4.0.1)                      
+##  magrittr      2.0.1      2020-11-17 [1] CRAN (R 4.0.2)                      
+##  memoise       1.1.0      2017-04-21 [2] CRAN (R 4.0.0)                      
+##  modelr        0.1.8      2020-05-19 [2] CRAN (R 4.0.0)                      
+##  munsell       0.5.0      2018-06-12 [2] CRAN (R 4.0.0)                      
+##  pillar        1.4.7      2020-11-20 [1] CRAN (R 4.0.1)                      
+##  pkgbuild      1.1.0      2020-07-13 [2] CRAN (R 4.0.1)                      
+##  pkgconfig     2.0.3      2019-09-22 [2] CRAN (R 4.0.0)                      
+##  pkgload       1.1.0      2020-05-29 [2] CRAN (R 4.0.0)                      
+##  prettyunits   1.1.1      2020-01-24 [2] CRAN (R 4.0.0)                      
+##  processx      3.4.4      2020-09-03 [1] CRAN (R 4.0.2)                      
+##  ps            1.4.0      2020-10-07 [1] CRAN (R 4.0.2)                      
+##  purrr       * 0.3.4      2020-04-17 [2] CRAN (R 4.0.0)                      
+##  R6            2.5.0      2020-10-28 [1] CRAN (R 4.0.2)                      
+##  Rcpp          1.0.5      2020-07-06 [1] CRAN (R 4.0.0)                      
+##  readr       * 1.4.0      2020-10-05 [2] CRAN (R 4.0.2)                      
+##  readxl        1.3.1      2019-03-13 [2] CRAN (R 4.0.0)                      
+##  remotes       2.2.0      2020-07-21 [1] CRAN (R 4.0.2)                      
+##  reprex        0.3.0.9001 2020-08-08 [1] Github (tidyverse/reprex@9594ee9)   
+##  rlang         0.4.8      2020-10-08 [1] CRAN (R 4.0.2)                      
+##  rmarkdown     2.5        2020-10-21 [1] CRAN (R 4.0.1)                      
+##  rprojroot     2.0.2      2020-11-15 [1] CRAN (R 4.0.2)                      
+##  rstudioapi    0.13       2020-11-12 [1] CRAN (R 4.0.1)                      
+##  rvest         0.3.6      2020-07-25 [1] CRAN (R 4.0.2)                      
+##  scales        1.1.1      2020-05-11 [2] CRAN (R 4.0.0)                      
+##  sessioninfo   1.1.1      2018-11-05 [2] CRAN (R 4.0.0)                      
+##  stringi       1.5.3      2020-09-09 [2] CRAN (R 4.0.2)                      
+##  stringr     * 1.4.0      2019-02-10 [2] CRAN (R 4.0.0)                      
+##  testthat      3.0.0      2020-10-31 [1] CRAN (R 4.0.2)                      
+##  tibble      * 3.0.4.9000 2020-11-26 [1] Github (tidyverse/tibble@9eeef4d)   
+##  tidyr       * 1.1.2      2020-08-27 [1] CRAN (R 4.0.2)                      
+##  tidyselect    1.1.0      2020-05-11 [2] CRAN (R 4.0.0)                      
+##  tidyverse   * 1.3.0      2019-11-21 [1] CRAN (R 4.0.2)                      
+##  usethis       1.6.3      2020-09-17 [1] CRAN (R 4.0.2)                      
+##  vctrs         0.3.5.9000 2020-11-26 [1] Github (r-lib/vctrs@957baf7)        
+##  whisker       0.4        2019-08-28 [2] CRAN (R 4.0.0)                      
+##  withr         2.3.0      2020-09-22 [1] CRAN (R 4.0.2)                      
+##  xaringan      0.18       2020-10-21 [1] CRAN (R 4.0.2)                      
+##  xfun          0.19       2020-10-30 [1] CRAN (R 4.0.2)                      
+##  xml2          1.3.2      2020-04-23 [2] CRAN (R 4.0.0)                      
+##  yaml          2.2.1      2020-02-01 [1] CRAN (R 4.0.2)                      
+## 
+## [1] /Users/etan0038/Library/R/4.0/library
+## [2] /Library/Frameworks/R.framework/Versions/4.0/Resources/library
+```
+]
+
+
+These slides are licensed under &lt;br&gt;&lt;center&gt;&lt;a href="https://creativecommons.org/licenses/by-sa/3.0/au/"&gt;&lt;img src="images/cc.svg" style="height:2em;"/&gt;&lt;img src="images/by.svg" style="height:2em;"/&gt;&lt;img src="images/sa.svg" style="height:2em;"/&gt;&lt;/a&gt;&lt;/center&gt;
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLanguage": "r",
+"highlightLines": true,
+"highlightSpans": false,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%",
+"navigation": {
+"scroll": false,
+"touch": true,
+"click": false
+},
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
