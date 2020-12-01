@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Data Wrangling with R: Day 2</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Emi Tanaka" />
+    <script src="libs/header-attrs-2.5/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <link href="libs/font-awesome-animation-1.0/font-awesome-animation-emi.css" rel="stylesheet" />
+    <script src="libs/fontawesome-5.0.13/js/fontawesome-all.min.js"></script>
+    <link href="libs/countdown-0.3.5/countdown.css" rel="stylesheet" />
+    <script src="libs/countdown-0.3.5/countdown.js"></script>
+    <link rel="stylesheet" href="assets/animate.css" type="text/css" />
+    <link rel="stylesheet" href="assets/custom.css" type="text/css" />
+    <link rel="stylesheet" href="assets/fira-code.css" type="text/css" />
+    <link rel="stylesheet" href="assets/boxes.css" type="text/css" />
+    <link rel="stylesheet" href="assets/styles.css" type="text/css" />
+    <link rel="stylesheet" href="assets/monash-brand.css" type="text/css" />
+    <link rel="stylesheet" href="assets/table.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class: monash-bg-blue center middle hide-slide-number 
+
+
+
+&lt;div class="bg-black white"  style="width:45%;right:0;bottom:0;padding-left:5px;border: solid 4px white;margin: auto;"&gt;
+&lt;i class="fas fa-exclamation-circle"&gt;&lt;/i&gt; These slides are viewed best by Chrome and occasionally need to be refreshed if elements did not load properly. See here for &lt;a href=day2-session4.pdf&gt;PDF &lt;i class="fas fa-file-pdf"&gt;&lt;/i&gt;&lt;/a&gt;. 
+&lt;/div&gt;
+
+&lt;br&gt;
+
+.white[Press the **right arrow** to progress to the next slide!]
+
+
+---
+
+count: false
+background-image: url(images/bg1.jpg)
+background-size: cover
+class: hide-slide-number title-slide
+
+
+&lt;div class="grid-row" style="grid: 1fr / 2fr;"&gt;
+
+.item.center[
+
+# &lt;span style="text-shadow: 2px 2px 30px white;"&gt;Data Wrangling with R: Day 2&lt;/span&gt;
+
+&lt;!-- ## &lt;span style="color:;text-shadow: 2px 2px 30px black;"&gt;Advanced data wrangling starring `purrr`&lt;/span&gt; --&gt;
+
+]
+
+.center.shade_black.animated.bounceInUp.slower[
+&lt;br&gt;&lt;br&gt;
+## &lt;span style="color: #ccf2ff; text-shadow: 10px 10px 100px white;"&gt;Advanced data wrangling starring `purrr`&lt;/span&gt;
+
+&lt;br&gt;
+
+Presented by Emi Tanaka
+
+Department of Econometrics and Business Statistics
+
+&lt;img src="images/monash-one-line-reversed.png" style="width:500px"&gt;&lt;br&gt;
+<span>&lt;i class="fas  fa-envelope faa-float animated "&gt;&lt;/i&gt;</span>  emi.tanaka@monash.edu
+<span>&lt;i class="fab  fa-twitter faa-float animated faa-fast "&gt;&lt;/i&gt;</span>  @statsgen
+
+.bottom_abs.width100.bg-black[
+2nd December 2020 @ Statistical Society of Australia | Zoom
+]
+
+
+]
+
+&lt;/div&gt;
+
+
+
+
+
+
+
+---
+
+# Repetitive tasks
+
+
+```r
+df &lt;- forcats::gss_cat
+```
+* 🎯  Let's calculate the number of distinct values for each column and store it in `n`
+
+```r
+n &lt;- vector("integer", length = ncol(df))
+n[1] &lt;- n_distinct(df[[1]])
+n[2] &lt;- n_distinct(df[[2]])
+n[3] &lt;- n_distinct(df[[3]])
+n[4] &lt;- n_distinct(df[[4]])
+n[5] &lt;- n_distinct(df[[5]])
+n[6] &lt;- n_distinct(df[[6]])
+n[7] &lt;- n_distinct(df[[6]])
+n[8] &lt;- n_distinct(df[[8]])
+n[9] &lt;- n_distinct(df[[9]])
+```
+--
+
+* Anything you notice from above?
+
+---
+
+# Using for loops
+
+
+```r
+n &lt;- vector("integer", length = ncol(df))
+for(i in 1:ncol(df)) {
+  n[i] &lt;- n_distinct(df[[i]])
+}
+```
+--
+
+* But R is notoriously known for being slow using for loops
+--
+
+* The new `across` function in `dplyr` can do this without for loops
+
+
+```r
+df %&gt;% 
+  summarise(across(everything(), n_distinct))
+```
+
+```
+## # A tibble: 1 x 9
+##    year marital   age  race rincome partyid relig denom tvhours
+##   &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;
+## 1     8       6    73     3      16      10    15    30      25
+```
+--
+
+* But the result is a data.frame
+
+---
+
+class: font_small
+
+# Functional programming .font_small[`purrr` .font_small[Part] 1]
+
+* `purrr` is part of the core `tidyverse` packages
+* It contains a series of `map` and `walk` functions
+
+
+```r
+map_int(df, n_distinct)
+```
+
+```
+##    year marital     age    race rincome partyid   relig   denom tvhours 
+##       8       6      73       3      16      10      15      30      25
+```
+
+```r
+map_chr(df, n_distinct)
+```
+
+```
+##    year marital     age    race rincome partyid   relig   denom tvhours 
+##     "8"     "6"    "73"     "3"    "16"    "10"    "15"    "30"    "25"
+```
+
+```r
+map_df(df, n_distinct)
+```
+
+```
+## # A tibble: 1 x 9
+##    year marital   age  race rincome partyid relig denom tvhours
+##   &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;
+## 1     8       6    73     3      16      10    15    30      25
+```
+
+--
+
+&lt;div class="info-box" style="position:absolute;right:10px;bottom:10px;width:800px;margin-right:10px;"&gt;
+&lt;ul&gt;
+&lt;li&gt;The related functions in &lt;code&gt;purrr&lt;/code&gt; have been design so that that input are consistent&lt;/li&gt;
+&lt;li&gt;The user is required to think of the expected output before seeing the output, e.g. &lt;/li&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;map_int&lt;/code&gt; returns a vector of integer&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;map_df&lt;/code&gt; returns a data frame &lt;/li&gt;
+&lt;/ul&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+---
+
+#  `map` functions in `purrr`
+
+* .monash-blue[`map`]`(.x, .f, ...)` returns list
+* .monash-blue[`map_chr`]`(.x, .f, ...)` returns a vector of character
+* .monash-blue[`map_dbl`]`(.x, .f, ...)` returns a vector of numeric
+* .monash-blue[`map_int`]`(.x, .f, ...)` returns a vector of integer
+* .monash-blue[`map_lgl`]`(.x, .f, ...)` returns a vector of logical
+* .monash-blue[`map_raw`]`(.x, .f, ...)` returns a vector of raw
+* .monash-blue[`map_df`]`(.x, .f, ...)`, .monash-blue[`map_dfr`]`(.x, .f, ...)` returns a data frame, combining data.frame by row
+* .monash-blue[`map_dfc`]`(.x, .f, ...)` returns a data frame, combining data.frame by column
+
+---
+
+# Conditional maps in `purrr`
+
+* .monash-blue[`map_if`]`(.x, .p, .f, ...)` uses `.p` to determine if `.f` will be applied to `.x` 
+* .monash-blue[`map_at`]`(.x, .at, .f, ...)` applies `.f` to `.x` at `.at` (name or position)
+* .monash-blue[`map_depth`]`(.x, .depth, .f, ...)` apples `.f` to `.x` at a specific depth level of a nested vector
+* **The return object is always a list**
+
+
+```r
+map_if(df, is.factor, as.character) %&gt;% as_tibble()
+```
+
+```
+## # A tibble: 21,483 x 9
+##     year marital     age race  rincome    partyid     relig     denom    tvhours
+##    &lt;int&gt; &lt;chr&gt;     &lt;int&gt; &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;      &lt;int&gt;
+##  1  2000 Never ma…    26 White $8000 to … Ind,near r… Protesta… Souther…      12
+##  2  2000 Divorced     48 White $8000 to … Not str re… Protesta… Baptist…      NA
+##  3  2000 Widowed      67 White Not appli… Independent Protesta… No deno…       2
+##  4  2000 Never ma…    39 White Not appli… Ind,near r… Orthodox… Not app…       4
+##  5  2000 Divorced     25 White Not appli… Not str de… None      Not app…       1
+##  6  2000 Married      25 White $20000 - … Strong dem… Protesta… Souther…      NA
+##  7  2000 Never ma…    36 White $25000 or… Not str re… Christian Not app…       3
+##  8  2000 Divorced     44 White $7000 to … Ind,near d… Protesta… Luthera…      NA
+##  9  2000 Married      44 White $25000 or… Not str de… Protesta… Other          0
+## 10  2000 Married      47 White $25000 or… Strong rep… Protesta… Souther…       3
+## # … with 21,473 more rows
+```
+
+---
+
+# Functional programming .font_small[Base R]
+
+* `lapply`, `Map`, `mapply`, `sapply`, `tapply`, `apply`, and `vapply` are variants of functional programming in Base R
+--
+
+* Some function outputs in Base R are more predictable than others:
+  * `purrr::map` is a variant of `lapply` (which always returns list)
+  * `purrr::pmap` is a variant of `Map` (which takes more than one input)
+--
+
+* &lt;img src="images/no-toilet-roll.png" height = "40px"&gt; `sapply` doesn't require users to specify the output type, instead it'll try to figure out what looks best for the user... great for interactive use but require great caution for programming
+--
+
+* So setting return type expectation is the reason to use `purrr`?
+
+---
+
+# Anonymous functions .font_small[.font_small[Part] 1]
+
+* Also called **lambda expression** in computer programming
+--
+
+* These are functions without names
+--
+
+
+```r
+map_int(df, function(x) length(unique(x)))
+```
+
+```
+##    year marital     age    race rincome partyid   relig   denom tvhours 
+##       8       6      73       3      16      10      15      30      25
+```
+--
+* Tidyverse often employs a special shorthand using a formula and `.x` as a special placeholder for input
+
+```r
+map_int(df, ~length(unique(.x)))
+```
+
+```
+##    year marital     age    race rincome partyid   relig   denom tvhours 
+##       8       6      73       3      16      10      15      30      25
+```
+
+---
+
+# Anonymous functions .font_small[.font_small[Part] 2]
+
+* And yes, it's not just for `purrr` functions:
+
+
+```r
+df %&gt;% 
+  summarise(across(everything(), ~length(unique(.x))))
+```
+
+```
+## # A tibble: 1 x 9
+##    year marital   age  race rincome partyid relig denom tvhours
+##   &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;
+## 1     8       6    73     3      16      10    15    30      25
+```
+
+--
+
+* This formula anonymous function is expanded to an actual anonymous function under the hood using `rlang::as_function()`
+--
+
+* Most `tidyverse` functions would support this formula approach to anonymous function, but likely not outside of that ecosystem unless developers adopt the same system
+
+---
+
+# Functions with two inputs
+
+* For functions with two inputs, you can use the `map2` variants in `purrr`
+
+
+```r
+x &lt;- c(1, 2, 3)
+y &lt;- c(0.1, 0.2, 0.3)
+map2_dbl(x, y, function(.x, .y)  .x + .y)
+```
+
+```
+## [1] 1.1 2.2 3.3
+```
+--
+
+* For anonymous functions with two inputs, the first input is `.x` (as before) and the second is `.y`
+
+```r
+map2_dbl(x, y, ~.x + .y)
+```
+
+```
+## [1] 1.1 2.2 3.3
+```
+---
+
+# Functions with more than two inputs
+
+* What about if there are more than two input?
+--
+
+* You can use `pmap` variants in `purrr`
+--
+
+* But no formula anonymous function supported:
+
+
+```r
+x &lt;- c(1, 2, 3)
+y &lt;- c(0.1, 0.2, 0.3)
+z &lt;- c(10, 20, 30)
+pmap_dbl(list(x, y, z), function(.x, .y, .z)  .x + .y + .z)
+```
+
+```
+## [1] 11.1 22.2 33.3
+```
+
+---
+
+# Other functions in `purrr`
+
+**Using names of input**
+* The `imap(x)` variants are shorthand for `map2(x, names(x))`
+
+```r
+imap_chr(list(x = 1L, y = 4L), ~paste0(.y, ":", .x))
+```
+
+```
+##     x     y 
+## "x:1" "y:4"
+```
+
+
+--
+**Expecting no return object**
+
+* If you are looking to get a side effect rather than return, you can use the `walk` variants
+
+
+```r
+iwalk(df, ~write.csv(.x, file = paste0(.y, ".csv")))
+```
+
+---
+
+# A simulated study .font_small[.font_small[Part] 1]
+
+* Let's simulate response of size 400 from a data generating process where it is a simple linear model with slope as -2 and intercept as 1 with error from `\(N(0, 1)\)`
+
+
+```r
+set.seed(1)
+dat &lt;- tibble(id = 1:400) %&gt;% # 400 observations
+  mutate(x = runif(n(), 0, 10), # independent covariate
+         y = 1 - 2 * x + rnorm(n())) # dependent response 
+```
+--
+
+* Let's then fit a linear model and a robust linear model to compare their estimates
+
+
+```r
+fit_lm &lt;- lm(y ~ x, data = dat)
+fit_rlm &lt;- MASS::rlm(y ~ x, data = dat)
+```
+--
+.grid[
+.item[
+
+```r
+coef(fit_lm)
+```
+
+```
+## (Intercept)           x 
+##   0.9965522  -1.9994216
+```
+]
+.item[
+
+
+```r
+coef(fit_rlm)
+```
+
+```
+## (Intercept)           x 
+##    1.012063   -1.999890
+```
+
+]
+
+]
+
+
+---
+
+# A simulated study .font_small[.font_small[Part] 2]
+
+* Let's make it interesting but adding a few outliers
+
+
+```r
+set.seed(1)
+dat$y[1:3] &lt;- 100
+```
+--
+
+* Let's refit the model
+
+
+```r
+fit_lm &lt;- lm(y ~ x, data = dat)
+fit_rlm &lt;- MASS::rlm(y ~ x, data = dat)
+```
+--
+.grid[
+.item[
+
+```r
+coef(fit_lm)
+```
+
+```
+## (Intercept)           x 
+##    2.233095   -2.089164
+```
+]
+.item[
+
+
+```r
+coef(fit_rlm)
+```
+
+```
+## (Intercept)           x 
+##    1.019283   -2.000755
+```
+
+]
+
+]
+
+
+---
+
+class: font_small
+
+# A simulated study .font_small[.font_small[Part] 3]
+
+* For a proper simulation, you need to run it a multiple times
+* Let's do the same simulation 200 times
+
+
+```r
+set.seed(1)
+map_dfr(1:200, ~{
+  dat &lt;- tibble(id = 1:400) %&gt;% # 400 observations
+    mutate(x = runif(n(), 0, 10), # independent covariate
+           y = 1 - 2 * x + rnorm(n())) # dependent response 
+  dat$y[1:3] &lt;- 100
+  fit_lm &lt;- lm(y ~ x, data = dat)
+  fit_rlm &lt;- MASS::rlm(y ~ x, data = dat)
+  
+  tibble(intercept_lm = coef(fit_lm)[1], intercept_rlm = coef(fit_rlm)[1],
+         slope_lm = coef(fit_lm)[2], slope_rlm = coef(fit_rlm)[2], sim = .x)})
+```
+
+```
+## # A tibble: 200 x 5
+##    intercept_lm intercept_rlm slope_lm slope_rlm   sim
+##           &lt;dbl&gt;         &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt;
+##  1        2.23          1.02     -2.09     -2.00     1
+##  2        0.982         1.04     -1.83     -2.01     2
+##  3        2.22          1.00     -2.09     -2.00     3
+##  4        0.972         1.06     -1.82     -2.01     4
+##  5        1.75          1.04     -1.97     -1.99     5
+##  6        0.977         1.06     -1.82     -2.00     6
+##  7        1.54          0.849    -1.95     -1.97     7
+##  8        1.99          0.955    -2.04     -1.99     8
+##  9        1.38          1.04     -1.91     -2.01     9
+## 10        0.550         0.989    -1.73     -1.99    10
+## # … with 190 more rows
+```
+
+---
+
+class: font_small
+
+# A simulated study .font_small[.font_small[Part] 4]
+
+* You can speed up your simulations by using parallel processing with `furrr` package
+
+
+```r
+set.seed(1)
+library(furrr)
+*plan(multisession, workers = 2)
+*future_map_dfr(1:200, ~{
+  dat &lt;- tibble(id = 1:400) %&gt;% # 400 observations
+    mutate(x = runif(n(), 0, 10), # independent covariate
+           y = 1 - 2 * x + rnorm(n())) # dependent response 
+  dat$y[1:3] &lt;- 100
+  fit_lm &lt;- lm(y ~ x, data = dat)
+  fit_rlm &lt;- MASS::rlm(y ~ x, data = dat)
+  
+  tibble(intercept_lm = coef(fit_lm)[1], intercept_rlm = coef(fit_rlm)[1],
+         slope_lm = coef(fit_lm)[2], slope_rlm = coef(fit_rlm)[2], sim = .x)})
+```
+
+```
+## # A tibble: 200 x 5
+##    intercept_lm intercept_rlm slope_lm slope_rlm   sim
+##           &lt;dbl&gt;         &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt;
+##  1        0.870         0.749    -1.81     -1.95     1
+##  2        1.46          1.00     -1.92     -1.99     2
+##  3        1.41          1.03     -1.92     -2.01     3
+##  4        1.40          1.08     -1.91     -2.01     4
+##  5        2.02          0.979    -2.03     -1.98     5
+##  6        2.30          1.06     -2.08     -2.00     6
+##  7        2.99          0.876    -2.24     -1.97     7
+##  8        2.35          1.22     -2.11     -2.04     8
+##  9        2.98          1.06     -2.24     -2.01     9
+## 10        1.40          1.04     -1.92     -2.01    10
+## # … with 190 more rows
+```
+
+---
+
+class: middle
+
+
+.info-box[
+* There are many functions in `tidyverse`, the key is _not_ to remember them all but remember key points to have a mental trigger where to look
+* There are multiple of ways to data wrangle to get to the same result
+* What's more important that code is readable and done in a way to satisfy your objective to you _and_ others that you share your work with, e.g. in production, backward compatibility in Base R may be more important
+]
+
+---
+
+# Top downloaded CRAN packages
+
+&lt;style type="text/css"&gt;
+.scroll-vert{
+  height: 500px;
+  overflow: scroll;
+}
+&lt;/style&gt;
+
+
+&lt;div class="grid" style="grid: 1fr / 1.5fr 1fr"&gt;
+.item[
+&lt;br&gt;
+.scroll-vert[
+
+| rank|package    |   count|from       |to         |
+|----:|:----------|-------:|:----------|:----------|
+|    1|jsonlite   | 2322852|2020-11-01 |2020-11-30 |
+|    2|rlang      | 1813779|2020-11-01 |2020-11-30 |
+|    3|ggplot2    | 1801691|2020-11-01 |2020-11-30 |
+|    4|vctrs      | 1651019|2020-11-01 |2020-11-30 |
+|    5|fs         | 1618762|2020-11-01 |2020-11-30 |
+|    6|devtools   | 1590942|2020-11-01 |2020-11-30 |
+|    7|usethis    | 1520368|2020-11-01 |2020-11-30 |
+|    8|dplyr      | 1394366|2020-11-01 |2020-11-30 |
+|    9|tibble     | 1250293|2020-11-01 |2020-11-30 |
+|   10|glue       | 1190160|2020-11-01 |2020-11-30 |
+|   11|tidyselect | 1131151|2020-11-01 |2020-11-30 |
+|   12|lifecycle  | 1125890|2020-11-01 |2020-11-30 |
+|   13|xfun       | 1057799|2020-11-01 |2020-11-30 |
+|   14|pillar     | 1001912|2020-11-01 |2020-11-30 |
+|   15|ellipsis   |  958145|2020-11-01 |2020-11-30 |
+|   16|magrittr   |  930052|2020-11-01 |2020-11-30 |
+|   17|cli        |  908144|2020-11-01 |2020-11-30 |
+|   18|Hmisc      |  905340|2020-11-01 |2020-11-30 |
+|   19|Rcpp       |  897014|2020-11-01 |2020-11-30 |
+|   20|digest     |  894615|2020-11-01 |2020-11-30 |
+|   21|testthat   |  868069|2020-11-01 |2020-11-30 |
+|   22|R6         |  860787|2020-11-01 |2020-11-30 |
+|   23|knitr      |  858255|2020-11-01 |2020-11-30 |
+|   24|waldo      |  848136|2020-11-01 |2020-11-30 |
+|   25|cpp11      |  843535|2020-11-01 |2020-11-30 |
+|   26|callr      |  840748|2020-11-01 |2020-11-30 |
+|   27|processx   |  822638|2020-11-01 |2020-11-30 |
+|   28|rmarkdown  |  822220|2020-11-01 |2020-11-30 |
+|   29|diffobj    |  817737|2020-11-01 |2020-11-30 |
+|   30|tinytex    |  814966|2020-11-01 |2020-11-30 |
+|   31|brio       |  798659|2020-11-01 |2020-11-30 |
+|   32|ps         |  790416|2020-11-01 |2020-11-30 |
+|   33|sf         |  771887|2020-11-01 |2020-11-30 |
+|   34|stringr    |  770111|2020-11-01 |2020-11-30 |
+|   35|tidyverse  |  757729|2020-11-01 |2020-11-30 |
+|   36|purrr      |  755636|2020-11-01 |2020-11-30 |
+|   37|stringi    |  753381|2020-11-01 |2020-11-30 |
+|   38|rstudioapi |  745300|2020-11-01 |2020-11-30 |
+|   39|broom      |  744498|2020-11-01 |2020-11-30 |
+|   40|pkgbuild   |  743352|2020-11-01 |2020-11-30 |
+
+]
+.center[
+scroll for more
+]]
+.item[
+
+* How many of the top downloaded package in the past month is `tidyverse` related? 
+
+{{content}}
+
+]
+
+&lt;/div&gt;
+
+--
+
+* It's hard to ignore what is widely used 
+* Also a duty to be aware with the latest if you work with data?
+
+{{content}}
+
+--
+
+Enjoy your data wrangling journey!
+
+
+
+---
+
+
+class: exercise middle hide-slide-number
+
+# &lt;i class="fas fa-code"&gt;&lt;/i&gt; If you installed the `dwexercise` package, &lt;br&gt; run below in your R console
+
+```r
+learnr::run_tutorial("day2-exercise-04", package = "dwexercise")
+```
+
+&lt;br&gt;
+
+# &lt;i class="fas fa-link"&gt;&lt;/i&gt; If the above doesn't work for you, go [here](https://ebsmonash.shinyapps.io/dw-day2-exercise-04).
+
+# &lt;i class="fas fa-question"&gt;&lt;/i&gt; Questions or issues, let us know!
+&lt;center&gt;
+<div class="countdown clock" id="timer_5fc6cd2a" style="right:0;bottom:0;" data-warnwhen="0">
+<code class="countdown-time"><span class="countdown-digits minutes">15</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+&lt;/center&gt;
+
+---
+
+
+
+class: font_smaller
+background-color: #e5e5e5
+
+# Session Information
+
+.scroll-350[
+
+
+
+```r
+devtools::session_info()
+```
+
+```
+## ─ Session info ───────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       macOS Catalina 10.15.7      
+##  system   x86_64, darwin17.0          
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_AU.UTF-8                 
+##  ctype    en_AU.UTF-8                 
+##  tz       Australia/Melbourne         
+##  date     2020-12-02                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────
+##  package     * version    date       lib source                              
+##  anicon        0.1.0      2020-06-21 [1] Github (emitanaka/anicon@0b756df)   
+##  assertthat    0.2.1      2019-03-21 [2] CRAN (R 4.0.0)                      
+##  backports     1.2.0      2020-11-02 [1] CRAN (R 4.0.2)                      
+##  broom         0.7.2      2020-10-20 [1] CRAN (R 4.0.2)                      
+##  callr         3.5.1      2020-10-13 [1] CRAN (R 4.0.2)                      
+##  cellranger    1.1.0      2016-07-27 [2] CRAN (R 4.0.0)                      
+##  cli           2.2.0      2020-11-20 [1] CRAN (R 4.0.1)                      
+##  codetools     0.2-18     2020-11-04 [2] CRAN (R 4.0.1)                      
+##  colorspace    2.0-0      2020-11-11 [1] CRAN (R 4.0.2)                      
+##  countdown     0.3.5      2020-07-20 [1] Github (gadenbuie/countdown@a544fa4)
+##  cranlogs      2.1.1      2019-04-29 [1] CRAN (R 4.0.0)                      
+##  crayon        1.3.4      2017-09-16 [2] CRAN (R 4.0.0)                      
+##  curl          4.3        2019-12-02 [2] CRAN (R 4.0.0)                      
+##  DBI           1.1.0      2019-12-15 [1] CRAN (R 4.0.2)                      
+##  dbplyr        2.0.0      2020-11-03 [1] CRAN (R 4.0.2)                      
+##  desc          1.2.0      2018-05-01 [2] CRAN (R 4.0.0)                      
+##  devtools      2.3.2      2020-09-18 [1] CRAN (R 4.0.2)                      
+##  digest        0.6.27     2020-10-24 [1] CRAN (R 4.0.2)                      
+##  dplyr       * 1.0.2      2020-08-18 [1] CRAN (R 4.0.2)                      
+##  ellipsis      0.3.1      2020-05-15 [2] CRAN (R 4.0.0)                      
+##  evaluate      0.14       2019-05-28 [2] CRAN (R 4.0.0)                      
+##  fansi         0.4.1      2020-01-08 [2] CRAN (R 4.0.0)                      
+##  forcats     * 0.5.0      2020-03-01 [2] CRAN (R 4.0.0)                      
+##  fs            1.5.0      2020-07-31 [1] CRAN (R 4.0.2)                      
+##  furrr       * 0.2.1      2020-10-21 [1] CRAN (R 4.0.2)                      
+##  future      * 1.20.1     2020-11-03 [1] CRAN (R 4.0.2)                      
+##  generics      0.1.0      2020-10-31 [2] CRAN (R 4.0.2)                      
+##  ggplot2     * 3.3.2      2020-06-19 [1] CRAN (R 4.0.2)                      
+##  globals       0.13.1     2020-10-11 [1] CRAN (R 4.0.2)                      
+##  glue          1.4.2      2020-08-27 [1] CRAN (R 4.0.2)                      
+##  gtable        0.3.0      2019-03-25 [2] CRAN (R 4.0.0)                      
+##  haven         2.3.1      2020-06-01 [2] CRAN (R 4.0.0)                      
+##  highr         0.8        2019-03-20 [2] CRAN (R 4.0.0)                      
+##  hms           0.5.3      2020-01-08 [2] CRAN (R 4.0.0)                      
+##  htmltools     0.5.0      2020-06-16 [1] CRAN (R 4.0.2)                      
+##  httr          1.4.2      2020-07-20 [1] CRAN (R 4.0.2)                      
+##  icon          0.1.0      2020-06-21 [1] Github (emitanaka/icon@8458546)     
+##  jsonlite      1.7.1      2020-09-07 [1] CRAN (R 4.0.2)                      
+##  knitr         1.30       2020-09-22 [1] CRAN (R 4.0.2)                      
+##  lifecycle     0.2.0      2020-03-06 [1] CRAN (R 4.0.0)                      
+##  listenv       0.8.0      2019-12-05 [1] CRAN (R 4.0.2)                      
+##  lubridate     1.7.9      2020-06-08 [2] CRAN (R 4.0.1)                      
+##  magrittr      2.0.1      2020-11-17 [1] CRAN (R 4.0.2)                      
+##  MASS          7.3-53     2020-09-09 [1] CRAN (R 4.0.2)                      
+##  memoise       1.1.0      2017-04-21 [2] CRAN (R 4.0.0)                      
+##  modelr        0.1.8      2020-05-19 [2] CRAN (R 4.0.0)                      
+##  munsell       0.5.0      2018-06-12 [2] CRAN (R 4.0.0)                      
+##  parallelly    1.21.0     2020-10-27 [1] CRAN (R 4.0.2)                      
+##  pillar        1.4.7      2020-11-20 [1] CRAN (R 4.0.1)                      
+##  pkgbuild      1.1.0      2020-07-13 [2] CRAN (R 4.0.1)                      
+##  pkgconfig     2.0.3      2019-09-22 [2] CRAN (R 4.0.0)                      
+##  pkgload       1.1.0      2020-05-29 [2] CRAN (R 4.0.0)                      
+##  prettyunits   1.1.1      2020-01-24 [2] CRAN (R 4.0.0)                      
+##  processx      3.4.4      2020-09-03 [1] CRAN (R 4.0.2)                      
+##  ps            1.4.0      2020-10-07 [1] CRAN (R 4.0.2)                      
+##  purrr       * 0.3.4      2020-04-17 [2] CRAN (R 4.0.0)                      
+##  R6            2.5.0      2020-10-28 [1] CRAN (R 4.0.2)                      
+##  Rcpp          1.0.5      2020-07-06 [1] CRAN (R 4.0.0)                      
+##  readr       * 1.4.0      2020-10-05 [2] CRAN (R 4.0.2)                      
+##  readxl        1.3.1      2019-03-13 [2] CRAN (R 4.0.0)                      
+##  remotes       2.2.0      2020-07-21 [1] CRAN (R 4.0.2)                      
+##  reprex        0.3.0.9001 2020-08-08 [1] Github (tidyverse/reprex@9594ee9)   
+##  rlang         0.4.8      2020-10-08 [1] CRAN (R 4.0.2)                      
+##  rmarkdown     2.5        2020-10-21 [1] CRAN (R 4.0.1)                      
+##  rprojroot     2.0.2      2020-11-15 [1] CRAN (R 4.0.2)                      
+##  rstudioapi    0.13       2020-11-12 [1] CRAN (R 4.0.1)                      
+##  rvest         0.3.6      2020-07-25 [1] CRAN (R 4.0.2)                      
+##  scales        1.1.1      2020-05-11 [2] CRAN (R 4.0.0)                      
+##  sessioninfo   1.1.1      2018-11-05 [2] CRAN (R 4.0.0)                      
+##  stringi       1.5.3      2020-09-09 [2] CRAN (R 4.0.2)                      
+##  stringr     * 1.4.0      2019-02-10 [2] CRAN (R 4.0.0)                      
+##  testthat      3.0.0      2020-10-31 [1] CRAN (R 4.0.2)                      
+##  tibble      * 3.0.4.9000 2020-11-26 [1] Github (tidyverse/tibble@9eeef4d)   
+##  tidyr       * 1.1.2      2020-08-27 [1] CRAN (R 4.0.2)                      
+##  tidyselect    1.1.0      2020-05-11 [2] CRAN (R 4.0.0)                      
+##  tidyverse   * 1.3.0      2019-11-21 [1] CRAN (R 4.0.2)                      
+##  usethis       1.6.3      2020-09-17 [1] CRAN (R 4.0.2)                      
+##  utf8          1.1.4      2018-05-24 [2] CRAN (R 4.0.0)                      
+##  vctrs         0.3.5.9000 2020-11-26 [1] Github (r-lib/vctrs@957baf7)        
+##  whisker       0.4        2019-08-28 [2] CRAN (R 4.0.0)                      
+##  withr         2.3.0      2020-09-22 [1] CRAN (R 4.0.2)                      
+##  xaringan      0.18       2020-10-21 [1] CRAN (R 4.0.2)                      
+##  xfun          0.19       2020-10-30 [1] CRAN (R 4.0.2)                      
+##  xml2          1.3.2      2020-04-23 [2] CRAN (R 4.0.0)                      
+##  yaml          2.2.1      2020-02-01 [1] CRAN (R 4.0.2)                      
+## 
+## [1] /Users/etan0038/Library/R/4.0/library
+## [2] /Library/Frameworks/R.framework/Versions/4.0/Resources/library
+```
+]
+
+
+These slides are licensed under &lt;br&gt;&lt;center&gt;&lt;a href="https://creativecommons.org/licenses/by-sa/3.0/au/"&gt;&lt;img src="images/cc.svg" style="height:2em;"/&gt;&lt;img src="images/by.svg" style="height:2em;"/&gt;&lt;img src="images/sa.svg" style="height:2em;"/&gt;&lt;/a&gt;&lt;/center&gt;
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLanguage": "r",
+"highlightLines": true,
+"highlightSpans": false,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%",
+"navigation": {
+"scroll": false,
+"touch": true,
+"click": false
+},
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
