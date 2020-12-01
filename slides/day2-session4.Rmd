@@ -1,0 +1,451 @@
+---
+title: "Data Wrangling with R: Day 2"
+subtitle: "Advanced data wrangling starring `purrr`"
+author: "Emi Tanaka"
+email: "emi.tanaka@monash.edu"
+date: "2nd December 2020 @ Statistical Society of Australia | Zoom"
+length: "30 minutes"
+titleslide_bgimg: "images/bg1.jpg"
+exercise: "day2-exercise-04"
+output:
+  xaringan::moon_reader:
+    css:
+      - ninjutsu 
+      - "assets/animate.css"
+      - "assets/custom.css"
+      - "assets/fira-code.css"
+      - "assets/boxes.css"
+      - "assets/styles.css"
+      - "assets/monash-brand.css"
+      - "assets/table.css"
+    self_contained: false 
+    seal: false 
+    chakra: 'libs/remark-latest.min.js'
+    lib_dir: libs
+    mathjax: "assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+    nature:
+      highlightStyle: github
+      highlightLanguage: r 
+      highlightLines: true
+      highlightSpans: false 
+      countIncrementalSlides: false
+      slideNumberFormat: '%current%/%total%'
+      navigation:
+        scroll: false 
+        touch: true
+        click: false
+      ratio: '16:9'
+---
+
+```{r, include = FALSE}
+library(tidyverse)
+current_file <- knitr::current_input()
+```
+```{r titleslide, child="assets/titleslide.Rmd"}
+```
+
+
+---
+
+# Repetitive tasks
+
+```{r}
+df <- forcats::gss_cat
+```
+* 🎯  Let's calculate the number of distinct values for each column and store it in `n`
+```{r}
+n <- vector("integer", length = ncol(df))
+n[1] <- n_distinct(df[[1]])
+n[2] <- n_distinct(df[[2]])
+n[3] <- n_distinct(df[[3]])
+n[4] <- n_distinct(df[[4]])
+n[5] <- n_distinct(df[[5]])
+n[6] <- n_distinct(df[[6]])
+n[7] <- n_distinct(df[[6]])
+n[8] <- n_distinct(df[[8]])
+n[9] <- n_distinct(df[[9]])
+```
+--
+
+* Anything you notice from above?
+
+---
+
+# Using for loops
+
+```{r}
+n <- vector("integer", length = ncol(df))
+for(i in 1:ncol(df)) {
+  n[i] <- n_distinct(df[[i]])
+}
+```
+--
+
+* But R is notoriously known for being slow using for loops
+--
+
+* The new `across` function in `dplyr` can do this without for loops
+
+```{r}
+df %>% 
+  summarise(across(everything(), n_distinct))
+```
+--
+
+* But the result is a data.frame
+
+---
+
+class: font_small
+
+# Functional programming .font_small[`purrr` .font_small[Part] 1]
+
+* `purrr` is part of the core `tidyverse` packages
+* It contains a series of `map` and `walk` functions
+
+```{r}
+map_int(df, n_distinct)
+map_chr(df, n_distinct)
+map_df(df, n_distinct)
+```
+
+--
+
+<div class="info-box" style="position:absolute;right:10px;bottom:10px;width:800px;margin-right:10px;">
+<ul>
+<li>The related functions in <code>purrr</code> have been design so that that input are consistent</li>
+<li>The user is required to think of the expected output before seeing the output, e.g. </li>
+<ul>
+<li><code>map_int</code> returns a vector of integer</li>
+<li><code>map_df</code> returns a data frame </li>
+</ul>
+</ul>
+</div>
+
+---
+
+#  `map` functions in `purrr`
+
+* .monash-blue[`map`]`(.x, .f, ...)` returns list
+* .monash-blue[`map_chr`]`(.x, .f, ...)` returns a vector of character
+* .monash-blue[`map_dbl`]`(.x, .f, ...)` returns a vector of numeric
+* .monash-blue[`map_int`]`(.x, .f, ...)` returns a vector of integer
+* .monash-blue[`map_lgl`]`(.x, .f, ...)` returns a vector of logical
+* .monash-blue[`map_raw`]`(.x, .f, ...)` returns a vector of raw
+* .monash-blue[`map_df`]`(.x, .f, ...)`, .monash-blue[`map_dfr`]`(.x, .f, ...)` returns a data frame, combining data.frame by row
+* .monash-blue[`map_dfc`]`(.x, .f, ...)` returns a data frame, combining data.frame by column
+
+---
+
+# Conditional maps in `purrr`
+
+* .monash-blue[`map_if`]`(.x, .p, .f, ...)` uses `.p` to determine if `.f` will be applied to `.x` 
+* .monash-blue[`map_at`]`(.x, .at, .f, ...)` applies `.f` to `.x` at `.at` (name or position)
+* .monash-blue[`map_depth`]`(.x, .depth, .f, ...)` apples `.f` to `.x` at a specific depth level of a nested vector
+* **The return object is always a list**
+
+```{r}
+map_if(df, is.factor, as.character) %>% as_tibble()
+```
+
+---
+
+# Functional programming .font_small[Base R]
+
+* `lapply`, `Map`, `mapply`, `sapply`, `tapply`, `apply`, and `vapply` are variants of functional programming in Base R
+--
+
+* Some function outputs in Base R are more predictable than others:
+  * `purrr::map` is a variant of `lapply` (which always returns list)
+  * `purrr::pmap` is a variant of `Map` (which takes more than one input)
+--
+
+* <img src="images/no-toilet-roll.png" height = "40px"> `sapply` doesn't require users to specify the output type, instead it'll try to figure out what looks best for the user... great for interactive use but require great caution for programming
+--
+
+* So setting return type expectation is the reason to use `purrr`?
+
+---
+
+# Anonymous functions .font_small[.font_small[Part] 1]
+
+* Also called **lambda expression** in computer programming
+--
+
+* These are functions without names
+--
+
+```{r}
+map_int(df, function(x) length(unique(x)))
+```
+--
+* Tidyverse often employs a special shorthand using a formula and `.x` as a special placeholder for input
+```{r}
+map_int(df, ~length(unique(.x)))
+```
+
+---
+
+# Anonymous functions .font_small[.font_small[Part] 2]
+
+* And yes, it's not just for `purrr` functions:
+
+```{r}
+df %>% 
+  summarise(across(everything(), ~length(unique(.x))))
+```
+
+--
+
+* This formula anonymous function is expanded to an actual anonymous function under the hood using `rlang::as_function()`
+--
+
+* Most `tidyverse` functions would support this formula approach to anonymous function, but likely not outside of that ecosystem unless developers adopt the same system
+
+---
+
+# Functions with two inputs
+
+* For functions with two inputs, you can use the `map2` variants in `purrr`
+
+```{r}
+x <- c(1, 2, 3)
+y <- c(0.1, 0.2, 0.3)
+map2_dbl(x, y, function(.x, .y)  .x + .y)
+```
+--
+
+* For anonymous functions with two inputs, the first input is `.x` (as before) and the second is `.y`
+```{r}
+map2_dbl(x, y, ~.x + .y)
+```
+---
+
+# Functions with more than two inputs
+
+* What about if there are more than two input?
+--
+
+* You can use `pmap` variants in `purrr`
+--
+
+* But no formula anonymous function supported:
+
+```{r}
+x <- c(1, 2, 3)
+y <- c(0.1, 0.2, 0.3)
+z <- c(10, 20, 30)
+pmap_dbl(list(x, y, z), function(.x, .y, .z)  .x + .y + .z)
+```
+
+---
+
+# Other functions in `purrr`
+
+**Using names of input**
+* The `imap(x)` variants are shorthand for `map2(x, names(x))`
+```{r}
+imap_chr(list(x = 1L, y = 4L), ~paste0(.y, ":", .x))
+```
+
+
+--
+**Expecting no return object**
+
+* If you are looking to get a side effect rather than return, you can use the `walk` variants
+
+```{r, eval = FALSE}
+iwalk(df, ~write.csv(.x, file = paste0(.y, ".csv")))
+```
+
+---
+
+# A simulated study .font_small[.font_small[Part] 1]
+
+* Let's simulate response of size 400 from a data generating process where it is a simple linear model with slope as -2 and intercept as 1 with error from $N(0, 1)$
+
+```{r}
+set.seed(1)
+dat <- tibble(id = 1:400) %>% # 400 observations
+  mutate(x = runif(n(), 0, 10), # independent covariate
+         y = 1 - 2 * x + rnorm(n())) # dependent response 
+```
+--
+
+* Let's then fit a linear model and a robust linear model to compare their estimates
+
+```{r}
+fit_lm <- lm(y ~ x, data = dat)
+fit_rlm <- MASS::rlm(y ~ x, data = dat)
+```
+--
+.grid[
+.item[
+```{r}
+coef(fit_lm)
+```
+]
+.item[
+
+```{r}
+coef(fit_rlm)
+```
+
+]
+
+]
+
+
+---
+
+# A simulated study .font_small[.font_small[Part] 2]
+
+* Let's make it interesting but adding a few outliers
+
+```{r}
+set.seed(1)
+dat$y[1:3] <- 100
+```
+--
+
+* Let's refit the model
+
+```{r}
+fit_lm <- lm(y ~ x, data = dat)
+fit_rlm <- MASS::rlm(y ~ x, data = dat)
+```
+--
+.grid[
+.item[
+```{r}
+coef(fit_lm)
+```
+]
+.item[
+
+```{r}
+coef(fit_rlm)
+```
+
+]
+
+]
+
+
+---
+
+class: font_small
+
+# A simulated study .font_small[.font_small[Part] 3]
+
+* For a proper simulation, you need to run it a multiple times
+* Let's do the same simulation 200 times
+
+```{r}
+set.seed(1)
+map_dfr(1:200, ~{
+  dat <- tibble(id = 1:400) %>% # 400 observations
+    mutate(x = runif(n(), 0, 10), # independent covariate
+           y = 1 - 2 * x + rnorm(n())) # dependent response 
+  dat$y[1:3] <- 100
+  fit_lm <- lm(y ~ x, data = dat)
+  fit_rlm <- MASS::rlm(y ~ x, data = dat)
+  
+  tibble(intercept_lm = coef(fit_lm)[1], intercept_rlm = coef(fit_rlm)[1],
+         slope_lm = coef(fit_lm)[2], slope_rlm = coef(fit_rlm)[2], sim = .x)})
+
+```
+
+---
+
+class: font_small
+
+# A simulated study .font_small[.font_small[Part] 4]
+
+* You can speed up your simulations by using parallel processing with `furrr` package
+
+```{r, warning = FALSE, message = FALSE}
+set.seed(1)
+library(furrr)
+plan(multisession, workers = 2) #<<
+future_map_dfr(1:200, ~{ #<<
+  dat <- tibble(id = 1:400) %>% # 400 observations
+    mutate(x = runif(n(), 0, 10), # independent covariate
+           y = 1 - 2 * x + rnorm(n())) # dependent response 
+  dat$y[1:3] <- 100
+  fit_lm <- lm(y ~ x, data = dat)
+  fit_rlm <- MASS::rlm(y ~ x, data = dat)
+  
+  tibble(intercept_lm = coef(fit_lm)[1], intercept_rlm = coef(fit_rlm)[1],
+         slope_lm = coef(fit_lm)[2], slope_rlm = coef(fit_rlm)[2], sim = .x)})
+
+```
+
+---
+
+class: middle
+
+
+.info-box[
+* There are many functions in `tidyverse`, the key is _not_ to remember them all but remember key points to have a mental trigger where to look
+* There are multiple of ways to data wrangle to get to the same result
+* What's more important that code is readable and done in a way to satisfy your objective to you _and_ others that you share your work with, e.g. in production, backward compatibility in Base R may be more important
+]
+
+---
+
+# Top downloaded CRAN packages
+
+```{css, echo = FALSE}
+.scroll-vert{
+  height: 500px;
+  overflow: scroll;
+}
+```
+
+
+<div class="grid" style="grid: 1fr / 1.5fr 1fr">
+.item[
+<br>
+.scroll-vert[
+```{r top20, echo = FALSE}
+df <- cranlogs::cran_top_downloads(when = "last-month", 40)
+knitr::kable(df)
+```
+
+]
+.center[
+scroll for more
+]]
+.item[
+
+* How many of the top downloaded package in the past month is `tidyverse` related? 
+
+{{content}}
+
+]
+
+</div>
+
+--
+
+* It's hard to ignore what is widely used 
+* Also a duty to be aware with the latest if you work with data?
+
+{{content}}
+
+--
+
+Enjoy your data wrangling journey!
+
+
+
+---
+
+```{r exerciseslide, child="assets/exerciseslide.Rmd"}
+```
+
+---
+
+```{r endslide, child="assets/endslide.Rmd"}
+```
