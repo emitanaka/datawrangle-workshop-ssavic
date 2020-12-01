@@ -1,0 +1,597 @@
+---
+title: "Data Wrangling with R: Day 2"
+subtitle: "Formatting factors with `forcats`"
+author: "Emi Tanaka"
+email: "emi.tanaka@monash.edu"
+date: "2nd December 2020 @ Statistical Society of Australia | Zoom"
+length: "30 minutes"
+titleslide_bgimg: "images/bg1.jpg"
+exercise: "day2-exercise-02"
+output:
+  xaringan::moon_reader:
+    css:
+      - ninjutsu 
+      - "assets/animate.css"
+      - "assets/custom.css"
+      - "assets/fira-code.css"
+      - "assets/boxes.css"
+      - "assets/styles.css"
+      - "assets/monash-brand.css"
+    self_contained: false 
+    seal: false 
+    chakra: 'libs/remark-latest.min.js'
+    lib_dir: libs
+    mathjax: "assets/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+    nature:
+      highlightStyle: github
+      highlightLanguage: r 
+      highlightLines: true
+      highlightSpans: false 
+      countIncrementalSlides: false
+      slideNumberFormat: '%current%/%total%'
+      navigation:
+        scroll: false 
+        touch: true
+        click: false
+      ratio: '16:9'
+---
+
+```{r, include = FALSE}
+
+library(tidyverse)
+current_file <- knitr::current_input()
+theme_set(theme_bw(base_size = 18))
+knitr::opts_chunk$set(fig.path = "images/day2-session2/")
+```
+```{r titleslide, child="assets/titleslide.Rmd"}
+```
+
+---
+
+class: middle
+
+## There are two types of categorical variables
+
+--
+
+<br><br>
+
+#### .monash-blue[**Nominal**] where there is no intrinsic ordering to the categories
+E.g. blue, grey, black, white.
+
+--
+
+<br>
+
+#### .monash-blue[**Ordinal**] where there is a clear order to the categories
+E.g. Strongly disagree, disagree, neutral, agree, strongly agree.
+
+---
+
+# Categorical variables in R .font_small[.font_small[Part] 1]
+
+* In R, categorical variables may be encoded in various ways.
+
+```{r}
+cat_chr <- c("red", "white", "blue")
+cat_fct <- factor(c("red", "white", "blue"))
+
+class(cat_chr)
+class(cat_fct)
+```
+--
+
+* Then you have categorical variables that look like a numerical variable<br> (e.g. coded variables like say 1=male, 2=female)
+* And also those that have fixed levels of numerical values <br>(e.g. `ToothGrowth$dose`: 0.5, 1.0 and 2.0)
+
+
+---
+
+class: middle center
+
+## So why encode as .monash-blue[`factor`] instead of .monash-blue[`character`]?
+
+--
+
+<br>
+
+### In some cases, characters are converted to factors (or vice-versa) in functions so they can be similar. 
+
+--
+
+<br>
+
+### The main idea of a factor is that the variable has a<br> *fixed number of levels*
+
+---
+
+# Categorical variables in R .font_small[.font_small[Part] 2]
+
+
+* When a variable is encoded as a **factor** then there is an attribute with the levels
+```{r factors, echo = TRUE}
+data <- c(2, 2, 1, 1, 3, 3, 3, 1)
+factor(data)
+```
+* You can easily change the labels of the variables:
+```{r factor-labels, echo = TRUE}
+factor(data, 
+       labels = c("I", "II", "III"))
+```
+
+
+---
+
+# Categorical variables in R .font_small[.font_small[Part] 3]
+
+* Order of the factors are determined by the input:
+
+```{r factor-input, echo = TRUE}
+# numerical input are ordered in increasing order #<<
+factor(c(1, 3, 10))
+# character input are ordered alphabetically #<<
+factor(c("1", "3", "10"))
+# you can specify order of levels explicitly #<<
+factor(c("1", "3", "10"),  levels = c("1", "3", "10"))
+```
+
+---
+
+# Why would the order of the levels matter?
+
+--
+
+* Some downstream analysis may use it 
+
+--
+
+.grid[
+.item[
+```{r, fig.height = 3.5}
+data("population", package = "tidyr")
+population %>% 
+  filter(year == 2013) %>% 
+  # just choose 5 countries
+  slice(c(1, 11, 21, 31, 41)) %>% 
+  ggplot(aes(population, country)) +
+  geom_col()
+```
+
+]
+.item50[
+{{content}}
+]
+]
+
+--
+
+```{r, fig.height = 3.5}
+population %>% 
+  filter(year == 2013) %>% 
+  slice(c(1, 11, 21, 31, 41)) %>% 
+  mutate(country = 
+      reorder(country, population)) %>% #<<
+  ggplot(aes(population, country)) +
+  geom_col()
+```
+
+---
+
+class: middle transition
+
+<img src="images/no-toilet-roll.png" width = "200px">
+
+#  Cautionary tales of working with factors
+
+
+---
+
+# Numerical factors in R
+
+```{r, echo = TRUE, warning = TRUE}
+x <- factor(c(10, 20, 30, 10, 20))
+mean(x)
+```
+
+--
+
+<i class="fas fa-exclamation-triangle"></i> `as.numeric` function returns the internal integer values of the factor
+```{r, echo = TRUE}
+mean(as.numeric(x))
+```
+
+--
+
+You probably want to use:
+
+<div class="grid" style="padding-left:5%;margin-right:20%">
+
+.item[
+```{r, echo = TRUE}
+mean(as.numeric(levels(x)[x]))
+```
+
+]
+.item[
+```{r, echo = TRUE}
+mean(as.numeric(as.character(x)))
+```
+
+].
+
+</div>
+
+---
+
+# Defining levels explicitly .font_small[.font_small[Part] 1]
+
+* If the variable contain values that are not in the levels of the factors, then those values will become a missing value
+
+```{r}
+factor(c("Yes", "No", "Maybe"), levels = c("Yes", "No"))
+```
+
+--
+
+* This can be useful at times, but it's a good idea to check the values before it is transformed as `NA`
+
+```{r}
+factor(c("Yes", "No", "No", "Yess"), levels = c("Yes", "No"))
+```
+
+---
+
+# Defining levels explicitly .font_small[.font_small[Part] 2]
+
+* You can have levels that are not observed
+
+```{r}
+f <- factor(c("Yes", "Yes", "Yes", "No"), levels = c("Yes", "Maybe", "No"))
+f
+```
+--
+
+* This can be useful at times downstream, e.g. 
+
+```{r}
+table(f)
+```
+
+---
+
+# Combining factors .font_small[as vectors]
+
+```{r}
+f1 <- factor(c("F", "M", "F"))
+f2 <- factor(c("F", "F"))
+```
+
+* What do you think the output will be for below?
+
+```{r cfct, eval = FALSE}
+c(f1, f2)
+```
+
+--
+
+```{r cfct, echo = FALSE}
+```
+
+--
+
+* Was that expected?
+--
+
+* The `c` function strips the class when you combine factors
+
+
+```{r}
+unclass(f1)
+```
+
+---
+
+# Combining factors .font_small[in a data frame]
+
+
+```{r}
+df1 <- data.frame(f = factor(c("a", "b")))
+df2 <- data.frame(f = factor(c("c", "b")))
+```
+* What do you think the output below will be?
+```{r, eval = FALSE}
+rbind(df1, df2)
+```
+--
+
+```{r, echo = FALSE}
+rbind(df1, df2)
+```
+--
+```{r}
+rbind(df1, df2)$f
+```
+
+
+
+
+---
+
+class: transition middle
+
+# Working with factors with `forcats`
+
+---
+
+# Formatting factors
+
+.footnote[
+Hadley Wickham (2020). forcats: Tools for Working with
+  Categorical Variables (Factors). R package version 0.5.0.
+]
+
+* The `forcats` package is part of `tidyverse` 
+--
+
+
+* Like the `stringr` package the main functions in `forcats` **prefix with `fct_` or `lvls_`** and the **first argument is a factor (or a character) vector**<br> .font_small[some functions do not allow character as input, e.g. `fct_c`]
+--
+
+
+* The list of available commands are:
+
+.grid.font_small[
+.item[
+* `fct_anon`
+* `fct_c`
+* `fct_collapse`
+* `fct_count`
+* `fct_cross`
+* `fct_drop`
+* `fct_expand`
+* `fct_explicit_na`
+
+]
+.item[
+* `fct_infreq`
+* `fct_inorder`
+* `fct_inseq`
+* `fct_lump`
+* `fct_lump_lowfreq`
+* `fct_lump_min`
+* `fct_lump_n`
+* `fct_lump_prop`
+]
+.item[
+* `fct_match`
+* `fct_other`
+* `fct_recode`
+* `fct_relabel`
+* `fct_relevel`
+* `fct_reorder`
+* `fct_reorder2`
+* `fct_rev`
+
+]
+.item[
+* `fct_shift`
+* `fct_shuffle`
+* `fct_unify`
+* `fct_unique`
+* `lvls_expand`
+* `lvls_reorder`
+* `lvls_revalue`
+* `lvls_union`
+
+]
+]
+]
+
+---
+
+count: false
+
+
+# Formatting factors
+
+.footnote[
+Hadley Wickham (2020). forcats: Tools for Working with
+  Categorical Variables (Factors). R package version 0.5.0.
+]
+
+* The `forcats` package is part of `tidyverse` 
+
+
+* Like the `stringr` package the main functions in `forcats` **prefix with `fct_` or `lvls_`** and the **first argument is a factor (or a character) vector**<br> .font_small[some functions do not allow character as input, e.g. `fct_c`]
+
+
+* The list of available commands are:
+
+.grid.font_small[
+.item[
+* `fct_anon`
+* .monash-blue[`fct_c`]
+* .monash-blue[`fct_collapse`]
+* .monash-blue[`fct_count`]
+* `fct_cross`
+* `fct_drop`
+* `fct_expand`
+* `fct_explicit_na`
+
+]
+.item[
+* `fct_infreq`
+* `fct_inorder`
+* `fct_inseq`
+* .monash-blue[`fct_lump`]
+* .monash-blue[`fct_lump_lowfreq`]
+* .monash-blue[`fct_lump_min`]
+* .monash-blue[`fct_lump_n`]
+* .monash-blue[`fct_lump_prop`]
+]
+.item[
+* `fct_match`
+* `fct_other`
+* `fct_recode`
+* `fct_relabel`
+* .monash-blue[`fct_relevel`]
+* `fct_reorder`
+* `fct_reorder2`
+* `fct_rev`
+
+]
+.item[
+* `fct_shift`
+* `fct_shuffle`
+* `fct_unify`
+* `fct_unique`
+* `lvls_expand`
+* `lvls_reorder`
+* `lvls_revalue`
+* `lvls_union`
+
+]
+]
+]
+
+---
+
+# Combining factors .font_small[as vectors with `forcats`]
+
+```{r}
+f1 <- factor(c("F", "M", "F"))
+f2 <- factor(c("F", "F"))
+
+c(f1, f2)
+```
+--
+```{r, eval = FALSE}
+fct_c(f1, f2)
+```
+--
+
+```{r, echo = FALSE}
+fct_c(f1, f2)
+```
+--
+
+```{r, eval = FALSE}
+c1 <- c("F", "M", "F")
+
+fct_c(c1, f2)
+```
+--
+```{r, echo = FALSE, error = TRUE}
+c1 <- c("F", "M", "F")
+
+fct_c(c1, f2)
+```
+
+---
+
+# Count levels in a factor
+
+```{r}
+data("gss_cat", package = "forcats")
+table(gss_cat$race)
+```
+* `table` in Base R is useful but you may want the output as a data frame
+--
+
+```{r}
+fct_count(gss_cat$race, sort = TRUE, prop = TRUE)
+```
+
+---
+
+# Collapse levels in a factor
+
+```{r}
+levels(gss_cat$marital)
+```
+--
+
+```{r}
+gss_cat$marital %>% 
+  fct_collapse(Single = c("Never married", "Separated", "Divorced")) %>% #<<
+  fct_count()
+```
+
+---
+
+count: false
+
+# Collapse levels in a factor
+
+```{r}
+levels(gss_cat$marital)
+```
+
+```{r}
+gss_cat$marital %>% 
+  fct_collapse(Single = c("Never married", "Separated", "Divorced")) %>% 
+  fct_relevel("No answer", after = Inf) %>% # move to last place #<<
+  fct_count()
+```
+
+---
+
+# Lumping factor levels .font_small[.font_small[Part] 1]
+
+
+* Sometimes you have a lot of levels and you'd prefer to lump some of them together to the "Other" category
+--
+
+* What criterion do you use to lump levels together?
+
+--
+
+
+* There are four main criterion to lump levels using `fct_lump*` functions:
+  * .monash-blue[`fct_lump_n`]: lump all levels except the `n` most frequent
+  * .monash-blue[`fct_lump_min`]: lump together those less than `min` counts
+  * .monash-blue[`fct_lump_prop`]: lump together those less than proportion of `prop`
+  * .monash-blue[`fct_lump_lowfreq`]: lump up least frequent levels such that the Other level is still the smallest level
+  * `fct_lump` <img src="https://raw.githubusercontent.com/r-lib/lifecycle/master/man/figures/lifecycle-superseded.svg">, it is better to use one of the above functions instead
+
+---
+
+# Lumping factor levels .font_small[.font_small[Part] 2]
+
+.grid[
+.item[
+
+```{r}
+levels(gss_cat$relig)
+```
+
+]
+.item[
+
+{{content}}
+
+]
+
+]
+
+--
+
+```{r}
+fct_lump_n(gss_cat$relig, n = 2) %>% 
+  fct_count(sort = TRUE, prop = TRUE)
+
+fct_lump_lowfreq(gss_cat$relig) %>% 
+  fct_count(sort = TRUE, prop = TRUE)
+```
+
+
+
+---
+
+```{r exerciseslide, child="assets/exerciseslide.Rmd"}
+```
+
+---
+
+```{r endslide, child="assets/endslide.Rmd"}
+```
