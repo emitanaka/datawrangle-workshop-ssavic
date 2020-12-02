@@ -189,7 +189,7 @@ unclass(as.POSIXct("2020-12-02 13:00", format = "%Y-%m-%e %H:%M"))
 
 # Date and Time in R .font_small[Base R .font_small[Part ]2]
 
-* `POSIXlt` seems like it's the same as `POSIXlt`
+* `POSIXlt` seems like it's the same as `POSIXct`
 ```{r}
 as.POSIXlt("2020-12-02 13:00", format = "%Y-%m-%e %H:%M")
 ```
