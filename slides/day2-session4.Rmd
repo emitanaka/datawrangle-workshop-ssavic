@@ -388,9 +388,18 @@ class: middle
 
 .info-box[
 * There are many functions in `tidyverse`, the key is _not_ to remember them all but remember key points to have a mental trigger where to look
-* There are multiple of ways to data wrangle to get to the same result
-* What's more important that code is readable and done in a way to satisfy your objective to you _and_ others that you share your work with, e.g. in production, backward compatibility in Base R may be more important
+{{content}}
 ]
+
+--
+
+* There are multiple of ways to data wrangle to get to the same result
+{{content}}
+--
+
+* What's more important that code is readable and done in a way to satisfy your objective to you _and_ others that you share your work with, e.g. in production, backward compatibility in Base R may be more important
+
+
 
 ---
 
@@ -432,15 +441,27 @@ scroll for more
 * It's hard to ignore what is widely used 
 * Also a duty to be aware with the latest if you work with data?
 
-{{content}}
-
---
-
-Enjoy your data wrangling journey!
-
 
 
 ---
+
+class: transition middle 
+
+# Software language is an evolving language
+
+--
+
+Tidyverse evolution has at least now slowed down compared to before
+
+--
+
+<br>
+
+## Enjoy your evolving data wrangling journey!
+
+---
+
+
 
 ```{r exerciseslide, child="assets/exerciseslide.Rmd"}
 ```
