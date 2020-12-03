@@ -203,11 +203,6 @@ unclass(as.POSIXlt("2020-12-02 13:00", format = "%Y-%m-%e %H:%M"))
 
 ---
 
-* `lubridate` is a package in Tidyverse but not part of the core pacakges 
-* This means that you need to `library(lubridate)` explicitly if you need to use it
-
----
-
 # Time zone 
 
 
